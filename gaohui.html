@@ -821,8 +821,10 @@ img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
     init();
 </script>
 
+<script>
 // Page transition fade-out
 (function(){var t;document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href');if(!h||h.startsWith('#')||h.startsWith('http')||h.startsWith('javascript'))return;e.preventDefault();clearTimeout(t);document.body.style.transition='opacity .25s ease';document.body.style.opacity='0';t=setTimeout(function(){window.location.href=h},230)})})();
+</script>
 
 
 <div style="text-align:center;padding:20px 16px;font-size:12px;color:#C27E4A;border-top:1px solid rgba(255,149,45,0.12);margin-top:20px;background:rgba(255,248,240,0.5)">
