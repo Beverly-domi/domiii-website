@@ -434,13 +434,22 @@ function addCoins(amt) {
   function bd2(){
     const cfg=gc2(lv);tp=cfg.p;tt.textContent=tp;
     const sel=sh([...PHOTOS]).slice(0,tp);
-    // 将每对的两个副本拆分到前后两区，各自打乱，大幅减少相邻匹配
-    const pairs = sel.map((src,i) => ({id:i, src}));
-    const p2 = sh([...pairs]);
-    const half = tp;
-    const a = [], b = [];
-    p2.forEach(p => { a.push({id:p.id, src:p.src}); b.push({id:p.id, src:p.src}) });
-    return [...sh(a), ...sh(b)];
+    const dk=[];
+    sel.forEach((src,i)=>{dk.push({id:i,src});dk.push({id:i,src})});
+    // 全随机洗牌
+    sh(dk);
+    // 后处理：把相邻匹配的对子拉开
+    for(let i=0;i<dk.length-1;i++){
+      if(dk[i].id===dk[i+1].id){
+        for(let j=i+2;j<dk.length;j++){
+          if(dk[j].id!==dk[i].id){
+            [dk[i+1],dk[j]]=[dk[j],dk[i+1]];
+            break;
+          }
+        }
+      }
+    }
+    return dk;
   }
 
   function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
