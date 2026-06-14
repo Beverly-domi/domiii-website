@@ -77,6 +77,20 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backgr
 .fs{font-size:0.85rem;color:var(--soft);margin-top:.15rem}
 
 /* 小猪窝样式 */
+/* ===== 悬浮音乐播放器 ===== */
+.music-bar{position:fixed;bottom:0;left:0;width:100%;z-index:60;background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);border-top:1px solid rgba(255,149,45,0.2);padding:8px 16px;display:none;align-items:center;gap:12px;transition:transform .35s ease;font-size:14px}
+.music-bar.show{display:flex}
+.music-bar .mb-play{width:36px;height:36px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.music-bar .mb-play:hover{transform:scale(1.08)}
+.music-bar .mb-play.playing{animation:mbPulse 2s ease-in-out infinite}
+@keyframes mbPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,149,45,0.4)}50%{box-shadow:0 0 0 6px rgba(255,149,45,0)}}
+.music-bar .mb-info{flex:1;min-width:0;display:flex;flex-direction:column}
+.music-bar .mb-name{font-size:13px;font-weight:600;color:var(--dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.music-bar .mb-artist{font-size:11px;color:var(--soft)}
+.music-bar .mb-close{background:none;border:none;color:var(--soft);font-size:18px;cursor:pointer;padding:0 4px;line-height:1;transition:color .2s}
+.music-bar .mb-close:hover{color:var(--primary)}
+.music-bar .mb-progress{position:absolute;top:-2px;left:0;height:2px;background:linear-gradient(135deg,var(--primary),var(--primary-light));width:0%;transition:width .3s linear;border-radius:0 2px 2px 0}
+
 .pig-nest{position:fixed;bottom:20px;right:20px;z-index:55;cursor:pointer;transition:transform .3s}
 .pig-house{width:72px;height:62px;background:linear-gradient(145deg,#D4A574,#C09060);border-radius:50% 50% 8px 8px;position:relative;box-shadow:0 6px 20px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center}
 .pig-house::before{content:'';position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:38px solid transparent;border-right:38px solid transparent;border-bottom:18px solid #B08050}
@@ -157,6 +171,10 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backgr
   /* Toast位置 */
   .toast { top: 60px; }
 }
+
+/* page fade in/out */
+body{animation:pgIn .35s ease}
+@keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -190,6 +208,17 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backgr
       <img id="pigFaceImg" class="pig-face-img" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_normal.png" alt="小猪">
     </div>
   </div>
+</div>
+
+<!-- ===== 悬浮音乐播放器 ===== -->
+<div class="music-bar" id="musicBar">
+  <div class="mb-progress" id="mbProgress"></div>
+  <button class="mb-play" id="mbPlay"><i class="fas fa-play"></i></button>
+  <div class="mb-info">
+    <div class="mb-name" id="mbName">未播放</div>
+    <div class="mb-artist" id="mbArtist">点击播放</div>
+  </div>
+  <button class="mb-close" id="mbClose">&times;</button>
 </div>
 
 <!-- 图片和视频全局模态框 -->
@@ -361,11 +390,129 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backgr
     vid.src = '';
   };
   
+  // ☆☆☆ 入场彩蛋：随机祝福语 ☆☆☆
+  (function(){
+    const msgs = [
+      '✨ 欢迎回到瞳瞳的小星球~',
+      '🧡 今天也是爱瞳瞳的一天~',
+      '🐷 小猪星球的居民来啦~',
+      '🌟 你已登陆橙色星球！',
+      '🍊 今日橙意满满~',
+      '🎵 要不要听听音乐？',
+      '💫 星星在为你闪烁~',
+      '🥰 瞳瞳也很想你哦~',
+      '🎈 今天也要开心呀~',
+      '🌙 这里的梦境很甜~',
+    ];
+    setTimeout(() => {
+      showToast(msgs[Math.floor(Math.random() * msgs.length)], 2500);
+    }, 600);
+  })();
+
+  // ☆☆☆ 音乐播放器 ☆☆☆
+  (function(){
+    // ===== 在这里添加你的歌曲 =====
+    // 格式: { name:'歌名', artist:'歌手/来源', src:'https://...mp3' }
+    const PLAYLIST = [
+      // 示例 - 替换成你的 OSS mp3 地址
+      // { name:'瞳瞳的歌', artist:'瞳瞳', src:'https://domiii.oss-cn-hangzhou.aliyuncs.com/music/song1.mp3' },
+    ];
+    // ==============================
+
+    if (PLAYLIST.length === 0) return;
+
+    const bar = document.getElementById('musicBar');
+    const btn = document.getElementById('mbPlay');
+    const nameEl = document.getElementById('mbName');
+    const artistEl = document.getElementById('mbArtist');
+    const prog = document.getElementById('mbProgress');
+    const closeBtn = document.getElementById('mbClose');
+    const icon = btn.querySelector('i');
+
+    let audio = null;
+    let currentIdx = 0;
+    let isPlaying = false;
+
+    bar.classList.add('show');
+
+    function loadTrack(idx) {
+      if (audio) { audio.pause(); audio = null; }
+      const track = PLAYLIST[idx];
+      nameEl.textContent = track.name;
+      artistEl.textContent = track.artist;
+      prog.style.width = '0%';
+      audio = new Audio(track.src);
+      audio.addEventListener('timeupdate', function() {
+        if (audio.duration) {
+          prog.style.width = (audio.currentTime / audio.duration * 100) + '%';
+        }
+      });
+      audio.addEventListener('ended', function() {
+        nextTrack();
+      });
+      audio.addEventListener('error', function() {
+        nameEl.textContent = '加载失败';
+        artistEl.textContent = '请检查mp3地址';
+        btn.classList.remove('playing');
+        icon.className = 'fas fa-play';
+        isPlaying = false;
+      });
+    }
+
+    function playTrack() {
+      if (!audio) loadTrack(currentIdx);
+      audio.play().then(function() {
+        isPlaying = true;
+        btn.classList.add('playing');
+        icon.className = 'fas fa-pause';
+      }).catch(function() {});
+    }
+
+    function pauseTrack() {
+      if (audio) audio.pause();
+      isPlaying = false;
+      btn.classList.remove('playing');
+      icon.className = 'fas fa-play';
+    }
+
+    function togglePlay() {
+      if (PLAYLIST.length === 0) return;
+      if (isPlaying) { pauseTrack(); }
+      else { playTrack(); }
+    }
+
+    function nextTrack() {
+      currentIdx = (currentIdx + 1) % PLAYLIST.length;
+      loadTrack(currentIdx);
+      playTrack();
+    }
+
+    btn.addEventListener('click', togglePlay);
+
+    // 双击歌名切下一首
+    nameEl.addEventListener('dblclick', nextTrack);
+
+    // 关闭播放器
+    closeBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (audio) { audio.pause(); audio = null; }
+      isPlaying = false;
+      bar.classList.remove('show');
+    });
+
+    // 自动加载第一首
+    loadTrack(0);
+  })();
+
   // 页面关闭前无需额外清理星星，但保留效果
   window.addEventListener('beforeunload', () => {
     if (starInt) clearInterval(starInt);
   });
 })();
 </script>
+
+// Page transition fade-out
+(function(){var t;document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href');if(!h||h.startsWith('#')||h.startsWith('http')||h.startsWith('javascript'))return;e.preventDefault();clearTimeout(t);document.body.style.transition='opacity .25s ease';document.body.style.opacity='0';t=setTimeout(function(){window.location.href=h},230)})})();
+
 </body>
 </html>

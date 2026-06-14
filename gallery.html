@@ -89,7 +89,11 @@
         .floating-bubble:hover { transform: scale(1.05); }
         .particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
         .tip-hint { position: fixed; bottom: 18px; left: 0; right: 0; text-align: center; font-size: 0.7rem; color: #B45A2C; background: rgba(255,245,230,0.8); backdrop-filter: blur(12px); width: fit-content; margin: 0 auto; padding: 5px 20px; border-radius: 60px; pointer-events: none; z-index: 45; }
-    </style>
+    
+/* page fade in/out */
+body{animation:pgIn .35s ease}
+@keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
 </head>
 <body>
 <div class="top-nav">
@@ -202,5 +206,9 @@
     }
     init();
 </script>
+
+// Page transition fade-out
+(function(){var t;document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href');if(!h||h.startsWith('#')||h.startsWith('http')||h.startsWith('javascript'))return;e.preventDefault();clearTimeout(t);document.body.style.transition='opacity .25s ease';document.body.style.opacity='0';t=setTimeout(function(){window.location.href=h},230)})})();
+
 </body>
 </html>

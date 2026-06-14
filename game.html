@@ -302,6 +302,10 @@ body{
 }
 .nf:hover .ft2{opacity:1}
 @media(max-width:620px){.nf{width:44px;height:44px;font-size:16px;bottom:16px;right:16px}}
+
+/* page fade in/out */
+body{animation:pgIn .35s ease}
+@keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -557,5 +561,9 @@ function addCoins(amt) {
   render();
 })();
 </script>
+
+// Page transition fade-out
+(function(){var t;document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href');if(!h||h.startsWith('#')||h.startsWith('http')||h.startsWith('javascript'))return;e.preventDefault();clearTimeout(t);document.body.style.transition='opacity .25s ease';document.body.style.opacity='0';t=setTimeout(function(){window.location.href=h},230)})})();
+
 </body>
 </html>
