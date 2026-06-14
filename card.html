@@ -534,6 +534,67 @@ body::after{
   color:var(--text-muted);font-size:15px;
 }
 
+/* ===== 卡片放大查看弹窗 ===== */
+.card-zoom-overlay{
+  position:fixed;inset:0;z-index:99999;
+  background:rgba(0,0,0,0.72);opacity:0;pointer-events:none;
+  transition:opacity 0.3s ease;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+}
+.card-zoom-overlay.open{opacity:1;pointer-events:auto}
+.card-zoom-content{
+  position:relative;
+  width:90vw;max-width:420px;max-height:90vh;
+  transform:scale(0.6);opacity:0;
+  transition:transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease;
+  will-change:transform,opacity;
+}
+.card-zoom-overlay.open .card-zoom-content{
+  transform:scale(1);opacity:1;
+}
+.card-zoom-content img{
+  width:100%;height:auto;display:block;
+  border-radius:18px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.45), 0 0 0 2px rgba(255,255,255,0.1);
+  object-fit:cover;aspect-ratio:3/4;
+}
+.card-zoom-info{
+  position:absolute;bottom:-36px;left:0;right:0;
+  text-align:center;
+}
+.card-zoom-name{
+  color:#fff;font-size:18px;font-weight:700;
+  text-shadow:0 2px 8px rgba(0,0,0,0.5);
+  margin-bottom:4px;
+}
+.card-zoom-rarity{
+  display:inline-block;padding:4px 16px;border-radius:20px;
+  font-size:13px;font-weight:700;letter-spacing:1px;
+  backdrop-filter:blur(8px);
+}
+.card-zoom-rarity.N{background:rgba(158,158,158,0.3);color:#e0e0e0}
+.card-zoom-rarity.R{background:rgba(66,165,245,0.3);color:#bbdefb}
+.card-zoom-rarity.SR{background:rgba(171,71,188,0.3);color:#e1bee7}
+.card-zoom-rarity.SSR{background:rgba(255,215,0,0.3);color:#fff8e1}
+.card-zoom-rarity.SP{background:rgba(255,107,107,0.3);color:#ffcdd2}
+.card-zoom-close{
+  position:absolute;top:-16px;right:-16px;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,0.95);border:2px solid rgba(255,149,45,0.2);
+  color:var(--text-dark);font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform 0.25s, background 0.25s;
+  box-shadow:0 4px 16px rgba(0,0,0,0.2);
+  z-index:2;
+}
+.card-zoom-close:hover{transform:scale(1.1) rotate(90deg);background:#fff}
+@media(max-width:600px){
+  .card-zoom-content{width:88vw;max-width:340px}
+  .card-zoom-close{top:-12px;right:-12px;width:36px;height:36px;font-size:18px}
+  .card-zoom-name{font-size:16px}
+}
+
 /* ===== Gallery Drawer ===== */
 .gallery-overlay{
   position:fixed;inset:0;z-index:9999;
@@ -731,6 +792,18 @@ body::after{
     <div class="section-title"><i class="fas fa-folder-open"></i> 我的收藏 <span id="collectionCount" style="font-size:13px;color:var(--text-muted);font-weight:400"></span></div>
     <div class="cards-grid" id="collectionGrid">
       <div class="empty-collection">🎴 还没有抽到卡片，试试手气吧！</div>
+    </div>
+  </div>
+
+  <!-- ===== 卡片放大弹窗 ===== -->
+  <div class="card-zoom-overlay" id="cardZoomOverlay">
+    <div class="card-zoom-content">
+      <button class="card-zoom-close" id="cardZoomClose">✕</button>
+      <img src="" alt="" id="cardZoomImg">
+      <div class="card-zoom-info">
+        <div class="card-zoom-name" id="cardZoomName"></div>
+        <div class="card-zoom-rarity" id="cardZoomRarity"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -1377,6 +1450,7 @@ function renderCollection() {
 
     const div = document.createElement('div');
     div.className = 'collection-card rarity-' + cardData.rarity;
+    div.dataset.cardId = cardData.id;
     div.style.animationDelay = (idx * 0.04) + 's';
 
     const time = new Date(oc.timestamp);
@@ -1592,6 +1666,29 @@ function initBgStars() {
 }
 
 // ======================================================================
+// CARD ZOOM - 收藏卡片点击放大
+// ======================================================================
+function openCardZoom(cardData) {
+  const overlay = document.getElementById('cardZoomOverlay');
+  const img = document.getElementById('cardZoomImg');
+  const name = document.getElementById('cardZoomName');
+  const rarity = document.getElementById('cardZoomRarity');
+
+  img.src = cardData.img;
+  name.textContent = cardData.name;
+  rarity.textContent = RARITY_LABELS[cardData.rarity];
+  rarity.className = 'card-zoom-rarity ' + cardData.rarity;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCardZoom() {
+  const overlay = document.getElementById('cardZoomOverlay');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ======================================================================
 // TOAST
 // ======================================================================
 let toastTimer;
@@ -1627,6 +1724,22 @@ function init() {
   document.getElementById('galleryClose').addEventListener('click', closeGallery);
   document.getElementById('galleryOverlay').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeGallery();
+  });
+
+  // 收藏卡片点击放大
+  document.getElementById('collectionGrid').addEventListener('click', (e) => {
+    const card = e.target.closest('.collection-card');
+    if (!card) return;
+    const cardId = card.dataset.cardId;
+    const cardData = ALL_CARDS.find(c => c.id === cardId);
+    if (cardData) openCardZoom(cardData);
+  });
+  document.getElementById('cardZoomClose').addEventListener('click', closeCardZoom);
+  document.getElementById('cardZoomOverlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeCardZoom();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeCardZoom();
   });
 
   // Click on card pack to draw
