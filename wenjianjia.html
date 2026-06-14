@@ -306,7 +306,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
     }
     
     // 小猪窝迸发小泡泡
-    spawnBubbles(px, py);
+    try { spawnBubbles(px, py); } catch(e) {}
     
     // 祝福语飘浮（更小字体 + 向左偏移）
     const blessings = ['好运+1 🍀', '暴富 💰', '舞台闪闪发光 ✨', '快乐+1 🎈', '暴瘦 👗', '美梦成真 🌙'];
