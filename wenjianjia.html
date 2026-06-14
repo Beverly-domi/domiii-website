@@ -121,7 +121,42 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backgr
 
 /* 响应式 */
 @media (max-width: 900px) { .dream-grid { gap: 1rem; } }
-@media (max-width: 650px) { .dream-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } .df-gallery, .df-variety, .df-game, .df-fancam { grid-column: span 1; grid-row: span 1; aspect-ratio: 1/1; } .df-variety, .df-game { aspect-ratio: 1/1; } .df-fancam { aspect-ratio: 1/1; } }
+@media (max-width: 650px) {
+  /* 导航栏移动端适配 - 防止文字遮挡 */
+  .dream-nav {
+    padding: 0.5rem 0.8rem;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    min-height: 48px;
+  }
+  .nav-logo { font-size: 0.95rem; }
+  .nav-back {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    min-height: 36px;
+  }
+  /* 主内容区避开导航栏 */
+  .folder-page { padding-top: calc(3.5rem + env(safe-area-inset-top, 0px)); }
+  /* 文件夹网格 */
+  .dream-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+  .df-gallery, .df-variety, .df-game, .df-fancam { grid-column: span 1; grid-row: span 1; aspect-ratio: 1/1; }
+  .df-variety, .df-game { aspect-ratio: 1/1; } .df-fancam { aspect-ratio: 1/1; }
+  /* 图标缩放 */
+  .fe { font-size: 1.5rem; }
+  .ft { font-size: 1rem; }
+  .fs { font-size: 0.75rem; }
+  .df { padding: 0.7rem; border-radius: 20px; }
+  /* 欢迎区 */
+  .dream-welcome { margin-bottom: 1.2rem; }
+  .welcome-hello { font-size: 1.3rem; }
+  /* 小猪窝 */
+  .pig-nest { bottom: 14px; right: 14px; }
+  .pig-house { width: 56px; height: 48px; }
+  .pig-face-img { width: 36px; height: 36px; }
+  /* Toast位置 */
+  .toast { top: 60px; }
+}
 </style>
 </head>
 <body>
