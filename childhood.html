@@ -319,7 +319,7 @@ const CHILDHOOD_BASE = "https://domiii.oss-cn-hangzhou.aliyuncs.com/childhood/";
 const childhoodPhotos = [];
 for (let i = 1; i <= 34; i++) {
     childhoodPhotos.push({
-        src: CHILDHOOD_BASE + `童年${i}.jpg?x-oss-process=image/resize,w_800/quality,q_80`,
+        src: CHILDHOOD_BASE + `童年${i}.jpg
         caption: `🍬 童年时光 · 珍藏瞬间 ${i}`,
         fallback: `https://picsum.photos/id/${(i*31+150)%400}/400/400`
     });
@@ -642,7 +642,7 @@ init();
 
 // ========================== 背景星星 & 角落PNG ==========================
 (function() {
-    const pngs = ['https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_normal.png?x-oss-process=image/resize,w_300/quality,q_80', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_happy.png?x-oss-process=image/resize,w_300/quality,q_80', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/桃心猪.png?x-oss-process=image/resize,w_300/quality,q_80'];
+    const pngs = ['https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_normal.png', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_happy.png', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/桃心猪.png'];
     const el = document.getElementById('cornerPng');
     if (el) {
         el.src = pngs[Math.floor(Math.random() * pngs.length)];

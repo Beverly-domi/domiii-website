@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>日常碎片 · 微博时光机 | 橙白镭射相册</title>
+    <title>鏃ュ父纰庣墖 路 寰崥鏃跺厜鏈?| 姗欑櫧闀皠鐩稿唽</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif; }
@@ -27,7 +27,7 @@
             pointer-events: none; z-index: 1;
         }
 
-        /* 顶部导航栏 */
+        /* 椤堕儴瀵艰埅鏍?*/
         .top-nav {
             position: sticky; top: 0; z-index: 100;
             display: flex; align-items: center;
@@ -60,7 +60,7 @@
             }
         }
 
-        /* 左右布局：左侧筛选栏 + 右侧内容 */
+        /* 宸﹀彸甯冨眬锛氬乏渚х瓫閫夋爮 + 鍙充晶鍐呭 */
         .main-layout {
             display: flex;
             max-width: 1400px;
@@ -68,7 +68,7 @@
             padding: 0 1.2rem;
             gap: 1.5rem;
         }
-        /* 左侧筛选栏 */
+        /* 宸︿晶绛涢€夋爮 */
         .filter-sidebar {
             width: 240px;
             flex-shrink: 0;
@@ -159,12 +159,12 @@
             transform: scale(0.95);
         }
 
-        /* 右侧内容区 */
+        /* 鍙充晶鍐呭鍖?*/
         .weibo-container {
             flex: 1;
             min-width: 0;
         }
-        /* 微博卡片列表 */
+        /* 寰崥鍗＄墖鍒楄〃 */
         .weibo-cards-list {
             display: flex; flex-direction: column; gap: 1.5rem;
         }
@@ -220,7 +220,7 @@
             font-size: 0.7rem; color: #E67E22; display: flex; align-items: center; gap: 0.3rem;
             font-weight: 600;
         }
-        /* 空状态 */
+        /* 绌虹姸鎬?*/
         .empty-state {
             text-align: center;
             padding: 3rem;
@@ -229,7 +229,7 @@
             color: #B45A2C;
         }
 
-        /* 详情页面样式 */
+        /* 璇︽儏椤甸潰鏍峰紡 */
         .weibo-detail-view {
             background: rgba(255,248,240,0.92); backdrop-filter: blur(20px);
             border-radius: 48px; padding: 1.2rem;
@@ -264,7 +264,7 @@
         .gallery-item img, .gallery-item video { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; }
         .item-caption { padding: 0.5rem 0.4rem; font-size: 0.65rem; text-align: center; color: #B45F2B; background: #FFFDF9; word-break: break-word; }
 
-        /* 灯箱放大 */
+        /* 鐏鏀惧ぇ */
         .lightbox {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); backdrop-filter: blur(20px);
@@ -277,7 +277,7 @@
         }
         .lightbox-video { background: #000; }
 
-        /* 飘浮小泡泡 */
+        /* 椋樻诞灏忔场娉?*/
         .floating-bubble {
             position: fixed; border-radius: 50%;
             background: radial-gradient(circle at 35% 30%, rgba(255,250,235,0.6), rgba(255,240,215,0.4), rgba(255,230,190,0.3));
@@ -311,58 +311,57 @@
 </head>
 <body>
 <div class="top-nav">
-    <a href="gallery.html" class="back-home"><i class="fas fa-home"></i> 返回主相册</a>
+    <a href="gallery.html" class="back-home"><i class="fas fa-home"></i> 杩斿洖涓荤浉鍐?/a>
 </div>
 <div class="main-layout">
-    <!-- 左侧筛选栏 -->
+    <!-- 宸︿晶绛涢€夋爮 -->
     <div class="filter-sidebar" id="filterSidebar"></div>
-    <!-- 右侧内容区 -->
+    <!-- 鍙充晶鍐呭鍖?-->
     <div class="weibo-container" id="weiboContainer"></div>
 </div>
-<div class="tip-hint">✨ 点击卡片查看完整内容 | 左右滑动查看更多照片 ✨</div>
+<div class="tip-hint">鉁?鐐瑰嚮鍗＄墖鏌ョ湅瀹屾暣鍐呭 | 宸﹀彸婊戝姩鏌ョ湅鏇村鐓х墖 鉁?/div>
 <canvas id="particleCanvas" class="particle-canvas"></canvas>
 
 <script>
-    // ======================= 微博数据 (完整版，基于原数据) =======================
+    // ======================= 寰崥鏁版嵁 (瀹屾暣鐗堬紝鍩轰簬鍘熸暟鎹? =======================
     const WEIBO_BASE = "https://domiii.oss-cn-hangzhou.aliyuncs.com/weibo/";
-const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
     const weiboEntries = [
-        { time: "2024-01-29", year: 2024, month: 1, text: "哈喽(´∀`)ﾉ大家好呀~(¯▽¯~)~第一次和大家在微博里面见面੭ᐕ)੭*⁾⁾非常的开心[嘻嘻]马上就要新年音乐会了٩(๑^o^๑)۶很期待和大家见面[嘻嘻]新年也快到了[嘻嘻]祝大家新年快乐～天天开心[嘻嘻][嘻嘻][嘻嘻][嘻嘻][嘻嘻] ​​​", link: "https://weibo.com/6574105934/NE81AoBHv", photos: ["weibo1.jpg","weibo2.jpg","weibo3.jpg","weibo4.jpg","weibo5.jpg","weibo6.jpg","weibo7.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-02-05", year: 2024, month: 2, text: "两天的演出结束啦～这段时间都辛苦了～另外很开心能跟大家见面～希望你们看了演出后也同样开心[可爱] ​​​", link: "https://weibo.com/6574105934/NFcEyyTyj", photos: ["weibo8.jpg","weibo9.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-02-11", year: 2024, month: 2, text: "这次新年音乐会圆满结束啦♫(/^_^)/♫ 也是非常开心可以回家过年吃好吃的了🎉(>ω<)🎉。但是这次舞台我有坏有好(๑´ڡ`๑)。不过还是感觉非常良好，只是《再次重逢的世界》这个舞台，在这之前我没有信心把这支舞跳好(▰˘◡˘▰)♫ 觉得会出现失误。在台上还是出现了小失误๑乛◡乛๑，但是我们也是尽全力了(ง•̀_•́)ง。其他舞台我觉得都完成得非常不错✧٩(ˊωˋ*)و✧。以后我还是要继续加油(ง•̀_•́)ง再创辉煌٩(๑^o^๑)۶😁", link: "https://weibo.com/6574105934/O09lfmIrV", photos: ["weibo10.jpg","weibo11.jpg","weibo12.jpg","weibo13.jpg","weibo14.jpg","weibo15.jpg","weibo16.jpg","weibo17.jpg","weibo18.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-02-15", year: 2024, month: 2, text: "久等了大家(>ω<)🎉[害羞]今天是大年初六～也是我姥爷的生日(˶╹ꇴ╹˶)🧨㊗️我亲爱的姥爷生日快乐🎂长命百岁✧٩(ˊωˋ*)و✧很高兴今天也可以浅尝一下生日蛋糕(≧∇≦)/🎂[挤眼] ​​​", link: "https://weibo.com/6574105934/O0JaN1lHO", photos: ["weibo19.jpg","weibo20.jpg","weibo21.jpg","weibo22.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-02-29", year: 2024, month: 2, text: "今天是四年一遇的日子٩(๑^o^๑)۶2月29日o(^▽^)o 四年了2月的29这个数字才来这么一次～所以大家要珍惜这一天｡°(°¯᷄◠¯᷅°)°｡2月份是辛苦的一个月[委屈]～也是开心的一个月[耶]～也是大家成长的一个月[加油]٩(๑^o^๑)۶希望四年后的今天٩(๑^o^๑)۶我瘦了[比耶]٩(๑^o^๑)۶长高了[比耶](o^з^o)💞也更懂事了[耶]～让我们在四年后的29日再度相见～我在这里等你们～[抱抱][抱抱][抱抱]", link: "https://weibo.com/6574105934/O2SD7cbe8", photos: ["weibo23.jpg","weibo24.jpg","weibo25.jpg","weibo26.jpg","weibo27.jpg","weibo28.jpg","weibo29.jpg","weibo30.jpg","weibo31.jpg","weibo32.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-03-07", year: 2024, month: 3, text: "在家也不忘小小锻炼下💪('ω'💪)<br>我家小呆一点都不呆～它属于热情奔放型(ಡωಡ)下去遛它完全感觉它在遛我～拉不住根本拉不住(o^з^o)[嘻嘻] ​​​", link: "https://weibo.com/6574105934/O3WIrvVur", photos: ["weibo33.jpg","weibo34.jpg","weibo35.jpg","weibo36.jpg","weibo37.jpg","weibo38.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-03-14", year: 2024, month: 3, text: "哈喽啊 我又来啦~(¯▽¯~)~今天是差点把耳机搞丢的一天[裂开]。然后祝你们天天开心٩(๑^o^๑)۶", link: "https://weibo.com/6574105934/O50Pcqhi8", photos: ["weibo39.jpg","weibo40.mp4","weibo41.jpg","weibo42.jpg","weibo43.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-03-24", year: 2024, month: 3, text: "哈哈哈 今天又是个开森的一天 别问我为什么那么开森 问就是开森~(¯▽¯~)~[嘻嘻][给你小心心]", link: "https://weibo.com/6574105934/O6wDqaE8s", photos: ["weibo44.jpg","weibo45.jpg","weibo46.mp4","weibo47.jpg","weibo48.mp4","weibo49.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-03-31", year: 2024, month: 3, text: "哈喽啊 我来啦 在这里我们一起和三月说再见四月你好 ┏(＾0＾)┛一起共同努力吧ヾ(＾∇＾)哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈 o(*≧▽≦)ツ ​​​", link: "https://weibo.com/6574105934/O7BjKmwkF", photos: ["weibo50.jpg","weibo51.mp4","weibo52.mp4","weibo53.jpg","weibo54.mp4","weibo55.jpg","weibo56.jpg","weibo57.mp4","weibo58.mp4"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-04-18", year: 2024, month: 4, text: "“深渊之下～是无底洞的秘密。它像是一个永远填不满的渴望～引诱着人们去探寻～去追寻～它让我们在追寻中领悟～在探索中成长～或许～只有真正敢于面对无底洞的人～才能找到属于自己的答案～揭开内心深处的谜团。”", link: "https://weibo.com/6574105934/OakgVh1gj", photos: ["weibo59.mp4"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-04-20", year: 2024, month: 4, text: "每一天都是新的开始(＾◡＾)っ✎让我们用积极的态度去面对生活的挑战٩(๑^o^๑)۶创造属于自己的精彩哦💪(•_•💪) ​​​", link: "https://weibo.com/6574105934/OaE8T1wvH", photos: ["weibo60.jpg","weibo61.mp4","weibo62.mp4","weibo63.mp4","weibo64.jpg","weibo65.mp4","weibo66.jpg","weibo67.mp4","weibo68.mp4"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-04-23", year: 2024, month: 4, text: "哈哈 在合宿的这三天绝对是综艺里面最好玩的 o(^▽^)o 我和橹橹捉鱼太有意思了但也是最累的。然后那里的柑橘特别好吃(ง＾▽＾)ง🍊想买但又买不到😭 ​​​", link: "https://weibo.com/6574105934/Ob5U49lMP", photos: ["weibo69.jpg","weibo70.jpg","weibo71.jpg","weibo72.mp4","weibo73.jpg","weibo74.mp4"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-04-28", year: 2024, month: 4, text: "这次考核还算顺利地结束了，不是很好也不是很差。我的piano弹得……💩。但是总结下来还是因为弹的时候有点紧张，加上钢琴键上面有点滑，所以导致这次弹的并不太好。然后唱跳我觉得自己发挥得还好，气息算比较稳，就是舞蹈力量上不是很好，发力不够。不过这次只是唱跳，接下来还有声乐和舞蹈 这也非常重要。所以，希望过几天的声乐和舞蹈考核可以进步拿个很好的成绩，实现我的目标：进前四！加油加油加油٩(๑^o^๑)۶[加油]", link: "https://weibo.com/6574105934/ObQMhpxZI", photos: ["weibo75.jpg","weibo76.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-05-07", year: 2024, month: 5, text: "嗨 五一结束了 又要上学了 必须好好上(ง•̀_•́)ง然后我的鸭子在小区里不见了 找了一圈 结果在游泳池里 还换毛了✌️(＾▽＾)✌️ ​​​", link: "https://weibo.com/6574105934/OddwrnTE6", photos: ["weibo77.mp4","weibo78.jpg","weibo79.jpg","weibo80.jpg","weibo81.mp4","weibo82.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) },
-        { time: "2024-05-16", year: 2024, month: 5, text: "夏天来了[太阳][太阳]～阳光洒满大地～热情如火～照亮我们前进的路～", link: "https://weibo.com/6574105934/OeAlr1dYr", photos: ["weibo83.jpg","weibo84.jpg","weibo85.jpg"].map(f => ({ img: WEIBO_BASE + f + (f.endsWith(".mp4") ? "" : WEIBO_THUMB), text: f })) }
+        { time: "2024-01-29", year: 2024, month: 1, text: "鍝堝柦(麓鈭€`)锞夊ぇ瀹跺ソ鍛€~(炉鈻铰瘇)~绗竴娆″拰澶у鍦ㄥ井鍗氶噷闈㈣闈⑧┉釔?喋?鈦锯伨闈炲父鐨勫紑蹇僛鍢诲樆]椹笂灏辫鏂板勾闊充箰浼氫簡侃(喙慯o^喙?鄱寰堟湡寰呭拰澶у瑙侀潰[鍢诲樆]鏂板勾涔熷揩鍒颁簡[鍢诲樆]绁濆ぇ瀹舵柊骞村揩涔愶綖澶╁ぉ寮€蹇僛鍢诲樆][鍢诲樆][鍢诲樆][鍢诲樆][鍢诲樆] 鈥嬧€嬧€?, link: "https://weibo.com/6574105934/NE81AoBHv", photos: ["weibo1.jpg","weibo2.jpg","weibo3.jpg","weibo4.jpg","weibo5.jpg","weibo6.jpg","weibo7.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-02-05", year: 2024, month: 2, text: "涓ゅぉ鐨勬紨鍑虹粨鏉熷暒锝炶繖娈垫椂闂撮兘杈涜嫤浜嗭綖鍙﹀寰堝紑蹇冭兘璺熷ぇ瀹惰闈綖甯屾湜浣犱滑鐪嬩簡婕斿嚭鍚庝篃鍚屾牱寮€蹇僛鍙埍] 鈥嬧€嬧€?, link: "https://weibo.com/6574105934/NFcEyyTyj", photos: ["weibo8.jpg","weibo9.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-02-11", year: 2024, month: 2, text: "杩欐鏂板勾闊充箰浼氬渾婊＄粨鏉熷暒鈾?/^_^)/鈾?涔熸槸闈炲父寮€蹇冨彲浠ュ洖瀹惰繃骞村悆濂藉悆鐨勪簡馃帀(>蠅<)馃帀銆備絾鏄繖娆¤垶鍙版垜鏈夊潖鏈夊ソ(喙懧蹿喙?銆備笉杩囪繕鏄劅瑙夐潪甯歌壇濂斤紝鍙槸銆婂啀娆￠噸閫㈢殑涓栫晫銆嬭繖涓垶鍙帮紝鍦ㄨ繖涔嬪墠鎴戞病鏈変俊蹇冩妸杩欐敮鑸炶烦濂?鈻八樷棥藰鈻?鈾?瑙夊緱浼氬嚭鐜板け璇€傚湪鍙颁笂杩樻槸鍑虹幇浜嗗皬澶辫喙戜箾鈼′箾喙戯紝浣嗘槸鎴戜滑涔熸槸灏藉叏鍔涗簡(喔団€⑻€_鈥⑻?喔囥€傚叾浠栬垶鍙版垜瑙夊緱閮藉畬鎴愬緱闈炲父涓嶉敊鉁з?藠蠅藡*)賵鉁с€備互鍚庢垜杩樻槸瑕佺户缁姞娌?喔団€⑻€_鈥⑻?喔囧啀鍒涜緣鐓屬?喙慯o^喙?鄱馃榿", link: "https://weibo.com/6574105934/O09lfmIrV", photos: ["weibo10.jpg","weibo11.jpg","weibo12.jpg","weibo13.jpg","weibo14.jpg","weibo15.jpg","weibo16.jpg","weibo17.jpg","weibo18.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-02-15", year: 2024, month: 2, text: "涔呯瓑浜嗗ぇ瀹?>蠅<)馃帀[瀹崇緸]浠婂ぉ鏄ぇ骞村垵鍏綖涔熸槸鎴戝Д鐖风殑鐢熸棩(硕鈺龟嚧鈺顾?馃Ж銑楋笍鎴戜翰鐖辩殑濮ョ埛鐢熸棩蹇箰馃巶闀垮懡鐧惧瞾鉁з?藠蠅藡*)賵鉁у緢楂樺叴浠婂ぉ涔熷彲浠ユ祬灏濅竴涓嬬敓鏃ヨ泲绯?鈮р垏鈮?/馃巶[鎸ょ溂] 鈥嬧€嬧€?, link: "https://weibo.com/6574105934/O0JaN1lHO", photos: ["weibo19.jpg","weibo20.jpg","weibo21.jpg","weibo22.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-02-29", year: 2024, month: 2, text: "浠婂ぉ鏄洓骞翠竴閬囩殑鏃ュ瓙侃(喙慯o^喙?鄱2鏈?9鏃(^鈻絕)o 鍥涘勾浜?鏈堢殑29杩欎釜鏁板瓧鎵嶆潵杩欎箞涓€娆★綖鎵€浠ュぇ瀹惰鐝嶆儨杩欎竴澶╋健掳(掳炉岱勨棤炉岱吢?掳锝?鏈堜唤鏄緵鑻︾殑涓€涓湀[濮斿眻]锝炰篃鏄紑蹇冪殑涓€涓湀[鑰禲锝炰篃鏄ぇ瀹舵垚闀跨殑涓€涓湀[鍔犳补]侃(喙慯o^喙?鄱甯屾湜鍥涘勾鍚庣殑浠婂ぉ侃(喙慯o^喙?鄱鎴戠槮浜哰姣旇€禲侃(喙慯o^喙?鄱闀块珮浜哰姣旇€禲(o^蟹^o)馃挒涔熸洿鎳備簨浜哰鑰禲锝炶鎴戜滑鍦ㄥ洓骞村悗鐨?9鏃ュ啀搴︾浉瑙侊綖鎴戝湪杩欓噷绛変綘浠綖[鎶辨姳][鎶辨姳][鎶辨姳]", link: "https://weibo.com/6574105934/O2SD7cbe8", photos: ["weibo23.jpg","weibo24.jpg","weibo25.jpg","weibo26.jpg","weibo27.jpg","weibo28.jpg","weibo29.jpg","weibo30.jpg","weibo31.jpg","weibo32.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-03-07", year: 2024, month: 3, text: "鍦ㄥ涔熶笉蹇樺皬灏忛敾鐐间笅馃挭('蠅'馃挭)<br>鎴戝灏忓憜涓€鐐归兘涓嶅憜锝炲畠灞炰簬鐑儏濂旀斁鍨?嗖∠夃病)涓嬪幓閬涘畠瀹屽叏鎰熻瀹冨湪閬涙垜锝炴媺涓嶄綇鏍规湰鎷変笉浣?o^蟹^o)[鍢诲樆] 鈥嬧€嬧€?, link: "https://weibo.com/6574105934/O3WIrvVur", photos: ["weibo33.jpg","weibo34.jpg","weibo35.jpg","weibo36.jpg","weibo37.jpg","weibo38.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-03-14", year: 2024, month: 3, text: "鍝堝柦鍟?鎴戝張鏉ュ暒~(炉鈻铰瘇)~浠婂ぉ鏄樊鐐规妸鑰虫満鎼炰涪鐨勪竴澶瑁傚紑]銆傜劧鍚庣浣犱滑澶╁ぉ寮€蹇冑?喙慯o^喙?鄱", link: "https://weibo.com/6574105934/O50Pcqhi8", photos: ["weibo39.jpg","weibo40.mp4","weibo41.jpg","weibo42.jpg","weibo43.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-03-24", year: 2024, month: 3, text: "鍝堝搱鍝?浠婂ぉ鍙堟槸涓紑妫殑涓€澶?鍒棶鎴戜负浠€涔堥偅涔堝紑妫?闂氨鏄紑妫畘(炉鈻铰瘇)~[鍢诲樆][缁欎綘灏忓績蹇僝", link: "https://weibo.com/6574105934/O6wDqaE8s", photos: ["weibo44.jpg","weibo45.jpg","weibo46.mp4","weibo47.jpg","weibo48.mp4","weibo49.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-03-31", year: 2024, month: 3, text: "鍝堝柦鍟?鎴戞潵鍟?鍦ㄨ繖閲屾垜浠竴璧峰拰涓夋湀璇村啀瑙佸洓鏈堜綘濂?鈹?锛?锛?鈹涗竴璧峰叡鍚屽姫鍔涘惂銉?锛锯垏锛?鍝堝搱鍝堝搱鍝堝搱鍝堝搱鍝堝搱鍝堝搱鍝堝搱鍝堝搱鍝堝搱鍝堝搱鍝堝搱鍝堝搱鍝堝搱 o(*鈮р柦鈮?銉?鈥嬧€嬧€?, link: "https://weibo.com/6574105934/O7BjKmwkF", photos: ["weibo50.jpg","weibo51.mp4","weibo52.mp4","weibo53.jpg","weibo54.mp4","weibo55.jpg","weibo56.jpg","weibo57.mp4","weibo58.mp4"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-04-18", year: 2024, month: 4, text: "鈥滄繁娓婁箣涓嬶綖鏄棤搴曟礊鐨勭瀵嗐€傚畠鍍忔槸涓€涓案杩滃～涓嶆弧鐨勬复鏈涳綖寮曡鐫€浜轰滑鍘绘帰瀵伙綖鍘昏拷瀵伙綖瀹冭鎴戜滑鍦ㄨ拷瀵讳腑棰嗘偀锝炲湪鎺㈢储涓垚闀匡綖鎴栬锝炲彧鏈夌湡姝ｆ暍浜庨潰瀵规棤搴曟礊鐨勪汉锝炴墠鑳芥壘鍒板睘浜庤嚜宸辩殑绛旀锝炴彮寮€鍐呭績娣卞鐨勮皽鍥€傗€?, link: "https://weibo.com/6574105934/OakgVh1gj", photos: ["weibo59.mp4"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-04-20", year: 2024, month: 4, text: "姣忎竴澶╅兘鏄柊鐨勫紑濮?锛锯棥锛?銇ｂ湈璁╂垜浠敤绉瀬鐨勬€佸害鍘婚潰瀵圭敓娲荤殑鎸戞垬侃(喙慯o^喙?鄱鍒涢€犲睘浜庤嚜宸辩殑绮惧僵鍝︷煉?鈥鈥煉? 鈥嬧€嬧€?, link: "https://weibo.com/6574105934/OaE8T1wvH", photos: ["weibo60.jpg","weibo61.mp4","weibo62.mp4","weibo63.mp4","weibo64.jpg","weibo65.mp4","weibo66.jpg","weibo67.mp4","weibo68.mp4"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-04-23", year: 2024, month: 4, text: "鍝堝搱 鍦ㄥ悎瀹跨殑杩欎笁澶╃粷瀵规槸缁艰壓閲岄潰鏈€濂界帺鐨?o(^鈻絕)o 鎴戝拰姗规┕鎹夐奔澶湁鎰忔€濅簡浣嗕篃鏄渶绱殑銆傜劧鍚庨偅閲岀殑鏌戞鐗瑰埆濂藉悆(喔囷季鈻斤季)喔囸煃婃兂涔颁絾鍙堜拱涓嶅埌馃槶 鈥嬧€嬧€?, link: "https://weibo.com/6574105934/Ob5U49lMP", photos: ["weibo69.jpg","weibo70.jpg","weibo71.jpg","weibo72.mp4","weibo73.jpg","weibo74.mp4"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-04-28", year: 2024, month: 4, text: "杩欐鑰冩牳杩樼畻椤哄埄鍦扮粨鏉熶簡锛屼笉鏄緢濂戒篃涓嶆槸寰堝樊銆傛垜鐨刾iano寮瑰緱鈥︹€︷煉┿€備絾鏄€荤粨涓嬫潵杩樻槸鍥犱负寮圭殑鏃跺€欐湁鐐圭揣寮狅紝鍔犱笂閽㈢惔閿笂闈㈡湁鐐规粦锛屾墍浠ュ鑷磋繖娆″脊鐨勫苟涓嶅お濂姐€傜劧鍚庡敱璺虫垜瑙夊緱鑷繁鍙戞尌寰楄繕濂斤紝姘旀伅绠楁瘮杈冪ǔ锛屽氨鏄垶韫堝姏閲忎笂涓嶆槸寰堝ソ锛屽彂鍔涗笉澶熴€備笉杩囪繖娆″彧鏄敱璺筹紝鎺ヤ笅鏉ヨ繕鏈夊０涔愬拰鑸炶箞 杩欎篃闈炲父閲嶈銆傛墍浠ワ紝甯屾湜杩囧嚑澶╃殑澹颁箰鍜岃垶韫堣€冩牳鍙互杩涙鎷夸釜寰堝ソ鐨勬垚缁╋紝瀹炵幇鎴戠殑鐩爣锛氳繘鍓嶅洓锛佸姞娌瑰姞娌瑰姞娌官?喙慯o^喙?鄱[鍔犳补]", link: "https://weibo.com/6574105934/ObQMhpxZI", photos: ["weibo75.jpg","weibo76.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-05-07", year: 2024, month: 5, text: "鍡?浜斾竴缁撴潫浜?鍙堣涓婂浜?蹇呴』濂藉ソ涓?喔団€⑻€_鈥⑻?喔囩劧鍚庢垜鐨勯腑瀛愬湪灏忓尯閲屼笉瑙佷簡 鎵句簡涓€鍦?缁撴灉鍦ㄦ父娉虫睜閲?杩樻崲姣涗簡鉁岋笍(锛锯柦锛?鉁岋笍 鈥嬧€嬧€?, link: "https://weibo.com/6574105934/OddwrnTE6", photos: ["weibo77.mp4","weibo78.jpg","weibo79.jpg","weibo80.jpg","weibo81.mp4","weibo82.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) },
+        { time: "2024-05-16", year: 2024, month: 5, text: "澶忓ぉ鏉ヤ簡[澶槼][澶槼]锝為槼鍏夋磼婊″ぇ鍦帮綖鐑儏濡傜伀锝炵収浜垜浠墠杩涚殑璺綖", link: "https://weibo.com/6574105934/OeAlr1dYr", photos: ["weibo83.jpg","weibo84.jpg","weibo85.jpg"].map(f => ({ img: WEIBO_BASE + f, text: f })) }
     ];
 
-    // 为2025、2026年添加一些模拟数据（展示筛选效果）
+    // 涓?025銆?026骞存坊鍔犱竴浜涙ā鎷熸暟鎹紙灞曠ず绛涢€夋晥鏋滐級
     const futureEntries = [
-        { time: "2025-01-15", year: 2025, month: 1, text: "2025年的第一条微博！新的一年新的开始，希望大家都能梦想成真✨", link: "#", photos: [] },
-        { time: "2025-03-20", year: 2025, month: 3, text: "春天来啦～樱花盛开的日子，和朋友们一起去野餐了🌸", link: "#", photos: [] },
-        { time: "2025-06-10", year: 2025, month: 6, text: "夏天的风暖暖吹过～新歌录制中，敬请期待！🎵", link: "#", photos: [] },
-        { time: "2026-02-08", year: 2026, month: 2, text: "2026年新年快乐！今年也要加油呀💪", link: "#", photos: [] },
-        { time: "2026-05-22", year: 2026, month: 5, text: "演唱会倒计时！正在努力排练中🔥", link: "#", photos: [] }
+        { time: "2025-01-15", year: 2025, month: 1, text: "2025骞寸殑绗竴鏉″井鍗氾紒鏂扮殑涓€骞存柊鐨勫紑濮嬶紝甯屾湜澶у閮借兘姊︽兂鎴愮湡鉁?, link: "#", photos: [] },
+        { time: "2025-03-20", year: 2025, month: 3, text: "鏄ュぉ鏉ュ暒锝炴ū鑺辩洓寮€鐨勬棩瀛愶紝鍜屾湅鍙嬩滑涓€璧峰幓閲庨浜嗮煂?, link: "#", photos: [] },
+        { time: "2025-06-10", year: 2025, month: 6, text: "澶忓ぉ鐨勯鏆栨殩鍚硅繃锝炴柊姝屽綍鍒朵腑锛屾暚璇锋湡寰咃紒馃幍", link: "#", photos: [] },
+        { time: "2026-02-08", year: 2026, month: 2, text: "2026骞存柊骞村揩涔愶紒浠婂勾涔熻鍔犳补鍛€馃挭", link: "#", photos: [] },
+        { time: "2026-05-22", year: 2026, month: 5, text: "婕斿敱浼氬€掕鏃讹紒姝ｅ湪鍔姏鎺掔粌涓煍?, link: "#", photos: [] }
     ];
     const allEntries = [...weiboEntries, ...futureEntries];
 
     let currentYear = 2024;
-    let currentMonth = null; // null 表示显示该年份全部
+    let currentMonth = null; // null 琛ㄧず鏄剧ず璇ュ勾浠藉叏閮?
     let audioCtx = null;
     let particles = [];
     let particleCtx = null;
     let animFrame = null;
     let activeFloatingBubbles = [];
 
-    // 音效: 泡泡爆破
+    // 闊虫晥: 娉℃场鐖嗙牬
     function playPopSound() {
         try {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -380,7 +379,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
         } catch(e) {}
     }
 
-    // 粒子特效
+    // 绮掑瓙鐗规晥
     function initParticleCanvas() { const c=document.getElementById('particleCanvas'); particleCtx=c.getContext('2d'); const resize=()=>{ c.width=innerWidth; c.height=innerHeight; }; window.addEventListener('resize',resize); resize(); }
     function burstParticles(x,y){
         if(!particleCtx) initParticleCanvas();
@@ -412,7 +411,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
         animFrame=requestAnimationFrame(animate);
     }
 
-    // 飘浮泡泡
+    // 椋樻诞娉℃场
     class FloatingBubble { constructor(el,x,y,size,sy,sx){ this.element=el; this.x=x; this.y=y; this.size=size; this.speedY=sy; this.speedX=sx; this.active=true; }
     update(){ if(!this.active) return; this.y-=this.speedY; this.x+=this.speedX; if(this.y+this.size<0||this.y>innerHeight+200||this.x+this.size<-100||this.x-this.size>innerWidth+100){ this.remove(); return; } this.element.style.transform=`translate(${this.x}px, ${this.y}px)`; }
     remove(){ if(this.element&&this.element.parentNode) this.element.remove(); this.active=false; const idx=activeFloatingBubbles.indexOf(this); if(idx!==-1) activeFloatingBubbles.splice(idx,1); } }
@@ -426,7 +425,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
     function updateFloatingBubbles(){ for(let b of activeFloatingBubbles) b.update(); requestAnimationFrame(updateFloatingBubbles); }
     function startBubbleGenerator(){ setInterval(()=>{ if(activeFloatingBubbles.length<28) createFloatingBubble(); },2200); }
 
-    // 灯箱
+    // 鐏
     function showMedia(src, type) {
         let lb = document.getElementById('customLightbox');
         if (!lb) {
@@ -448,7 +447,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
 
     function escapeHtml(str) { return String(str).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
 
-    // 获取筛选后的微博
+    // 鑾峰彇绛涢€夊悗鐨勫井鍗?
     function getFilteredEntries() {
         return allEntries.filter(e => {
             if (e.year !== currentYear) return false;
@@ -457,7 +456,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
         });
     }
 
-    // 渲染微博详情页
+    // 娓叉煋寰崥璇︽儏椤?
     function renderDetail(entry) {
         const container = document.getElementById('weiboContainer');
         let photosHtml = '';
@@ -466,25 +465,25 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
             entry.photos.forEach(p => {
                 const isVideo = p.img.toLowerCase().endsWith('.mp4');
                 if (isVideo) {
-                    photosHtml += `<div class="gallery-item" onclick="event.stopPropagation(); showMedia('${p.img}','video')"><video src="${p.img}" style="width:100%; aspect-ratio:1/1; object-fit:cover; pointer-events:none;"></video><div class="item-caption">🎬 视频</div></div>`;
+                    photosHtml += `<div class="gallery-item" onclick="event.stopPropagation(); showMedia('${p.img}','video')"><video src="${p.img}" style="width:100%; aspect-ratio:1/1; object-fit:cover; pointer-events:none;"></video><div class="item-caption">馃幀 瑙嗛</div></div>`;
                 } else {
-                    photosHtml += `<div class="gallery-item" onclick="event.stopPropagation(); showMedia('${p.img}','image')"><img src="${p.img}" onerror="this.src='https://picsum.photos/id/100/300/300'" loading="lazy"><div class="item-caption">📷 查看大图</div></div>`;
+                    photosHtml += `<div class="gallery-item" onclick="event.stopPropagation(); showMedia('${p.img}','image')"><img src="${p.img}" onerror="this.src='https://picsum.photos/id/100/300/300'" loading="lazy"><div class="item-caption">馃摲 鏌ョ湅澶у浘</div></div>`;
                 }
             });
             photosHtml += `</div>`;
         } else {
-            photosHtml = `<div style="text-align:center;padding:1rem;color:#B45A2C;">📷 暂无配图</div>`;
+            photosHtml = `<div style="text-align:center;padding:1rem;color:#B45A2C;">馃摲 鏆傛棤閰嶅浘</div>`;
         }
         const html = `
             <div class="weibo-detail-view">
                 <div class="weibo-detail-header">
-                    <button class="weibo-detail-back-btn" id="detailBackBtn">←</button>
-                    <div class="weibo-detail-title">📅 ${entry.time}</div>
+                    <button class="weibo-detail-back-btn" id="detailBackBtn">鈫?/button>
+                    <div class="weibo-detail-title">馃搮 ${entry.time}</div>
                 </div>
                 <div class="weibo-detail-info">
-                    <div class="weibo-detail-time">📅 ${entry.time}</div>
+                    <div class="weibo-detail-time">馃搮 ${entry.time}</div>
                     <div class="weibo-detail-text">${escapeHtml(entry.text).replace(/\n/g, '<br>')}</div>
-                    ${entry.link && entry.link !== "#" ? `<a href="${entry.link}" target="_blank" class="weibo-detail-link">🔗 查看原文</a>` : ''}
+                    ${entry.link && entry.link !== "#" ? `<a href="${entry.link}" target="_blank" class="weibo-detail-link">馃敆 鏌ョ湅鍘熸枃</a>` : ''}
                 </div>
                 ${photosHtml}
             </div>
@@ -493,7 +492,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
         document.getElementById('detailBackBtn').onclick = () => { renderList(); };
     }
 
-    // 渲染左侧筛选栏
+    // 娓叉煋宸︿晶绛涢€夋爮
     function renderFilterSidebar() {
         const sidebar = document.getElementById('filterSidebar');
         const years = [2024, 2025, 2026];
@@ -505,7 +504,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
             html += `
                 <div class="filter-section">
                     <div class="filter-year-title" data-year="${year}">
-                        <span>📅 ${year}年</span>
+                        <span>馃搮 ${year}骞?/span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="month-list" data-year-list="${year}">
@@ -515,14 +514,14 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
                 const isActive = (currentYear === year && currentMonth === month);
                 const activeClass = isActive ? 'active' : '';
                 const disabledAttr = !hasData ? 'style="opacity:0.4;cursor:not-allowed;"' : '';
-                html += `<span class="month-chip ${activeClass}" data-year="${year}" data-month="${month}" ${disabledAttr}>${month}月</span>`;
+                html += `<span class="month-chip ${activeClass}" data-year="${year}" data-month="${month}" ${disabledAttr}>${month}鏈?/span>`;
             });
             html += `</div></div>`;
         });
-        html += `<div class="filter-reset"><button class="reset-btn" id="resetFilterBtn">🔄 显示全部</button></div>`;
+        html += `<div class="filter-reset"><button class="reset-btn" id="resetFilterBtn">馃攧 鏄剧ず鍏ㄩ儴</button></div>`;
         sidebar.innerHTML = html;
         
-        // 绑定年份标题点击折叠
+        // 缁戝畾骞翠唤鏍囬鐐瑰嚮鎶樺彔
         document.querySelectorAll('.filter-year-title').forEach(title => {
             title.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -531,7 +530,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
                 if (monthList) monthList.classList.toggle('collapsed');
             });
         });
-        // 绑定月份点击
+        // 缁戝畾鏈堜唤鐐瑰嚮
         document.querySelectorAll('.month-chip').forEach(chip => {
             chip.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -540,7 +539,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
                 const hasData = allEntries.some(e => e.year === year && e.month === month);
                 if (!hasData) return;
                 if (currentYear === year && currentMonth === month) {
-                    // 如果点击已选中的月份，则清除月份筛选，显示该年份全部
+                    // 濡傛灉鐐瑰嚮宸查€変腑鐨勬湀浠斤紝鍒欐竻闄ゆ湀浠界瓫閫夛紝鏄剧ず璇ュ勾浠藉叏閮?
                     currentMonth = null;
                 } else {
                     currentYear = year;
@@ -550,7 +549,7 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
                 renderList();
             });
         });
-        // 重置按钮
+        // 閲嶇疆鎸夐挳
         const resetBtn = document.getElementById('resetFilterBtn');
         if (resetBtn) {
             resetBtn.onclick = () => {
@@ -560,15 +559,15 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
                 renderList();
             };
         }
-        // 高亮当前年份的折叠状态（默认全部展开，不做额外处理）
+        // 楂樹寒褰撳墠骞翠唤鐨勬姌鍙犵姸鎬侊紙榛樿鍏ㄩ儴灞曞紑锛屼笉鍋氶澶栧鐞嗭級
     }
 
-    // 渲染微博卡片列表
+    // 娓叉煋寰崥鍗＄墖鍒楄〃
     function renderList() {
         const container = document.getElementById('weiboContainer');
         const filtered = getFilteredEntries();
         if (filtered.length === 0) {
-            container.innerHTML = `<div class="empty-state">✨ 暂无微博记录 ✨<br><small>试试其他年份或月份吧～</small></div>`;
+            container.innerHTML = `<div class="empty-state">鉁?鏆傛棤寰崥璁板綍 鉁?br><small>璇曡瘯鍏朵粬骞翠唤鎴栨湀浠藉惂锝?/small></div>`;
             return;
         }
         let cardsHtml = `<div class="weibo-cards-list">`;
@@ -578,16 +577,16 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
             previewPhotos.forEach(photo => {
                 const isVideo = photo.img.toLowerCase().endsWith('.mp4');
                 if (isVideo) {
-                    thumbnailsHtml += `<div class="thumb-item" onclick="event.stopPropagation(); showMedia('${photo.img}','video')"><video src="${photo.img}" style="width:100%;height:100%;object-fit:cover;"></video><div class="thumb-video-icon">🎬</div></div>`;
+                    thumbnailsHtml += `<div class="thumb-item" onclick="event.stopPropagation(); showMedia('${photo.img}','video')"><video src="${photo.img}" style="width:100%;height:100%;object-fit:cover;"></video><div class="thumb-video-icon">馃幀</div></div>`;
                 } else {
                     thumbnailsHtml += `<div class="thumb-item" onclick="event.stopPropagation(); showMedia('${photo.img}','image')"><img src="${photo.img}" onerror="this.src='https://picsum.photos/id/100/80/80'" loading="lazy"></div>`;
                 }
             });
             if (entry.photos && entry.photos.length > 5) thumbnailsHtml += `<div class="thumb-item" style="background:#FFE0B2; display:flex; align-items:center; justify-content:center;">+${entry.photos.length-5}</div>`;
-            if (!entry.photos || entry.photos.length === 0) thumbnailsHtml += `<div style="font-size:0.7rem;color:#C27E4A;padding:0.2rem 0;">📷 暂无配图</div>`;
+            if (!entry.photos || entry.photos.length === 0) thumbnailsHtml += `<div style="font-size:0.7rem;color:#C27E4A;padding:0.2rem 0;">馃摲 鏆傛棤閰嶅浘</div>`;
             thumbnailsHtml += `</div>`;
             let textSummary = entry.text.replace(/<br>/g, ' ').substring(0, 80);
-            if (entry.text.length > 80) textSummary += '…';
+            if (entry.text.length > 80) textSummary += '鈥?;
             cardsHtml += `
                 <div class="weibo-card" data-time="${entry.time}">
                     <div class="weibo-card-content">
@@ -596,14 +595,14 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
                         ${thumbnailsHtml}
                     </div>
                     <div class="weibo-card-footer">
-                        <span class="view-detail-link">查看全文 <i class="fas fa-arrow-right"></i></span>
+                        <span class="view-detail-link">鏌ョ湅鍏ㄦ枃 <i class="fas fa-arrow-right"></i></span>
                     </div>
                 </div>
             `;
         });
         cardsHtml += `</div>`;
         container.innerHTML = cardsHtml;
-        // 绑定卡片点击
+        // 缁戝畾鍗＄墖鐐瑰嚮
         document.querySelectorAll('.weibo-card').forEach(card => {
             const time = card.dataset.time;
             card.addEventListener('click', (e) => {
@@ -625,10 +624,10 @@ const WEIBO_THUMB = "?x-oss-process=image/resize,w_800/quality,q_80";
     }
     init();
 </script>
-<img id="cornerPng" class="corner-png" alt="随机一条">
+<img id="cornerPng" class="corner-png" alt="闅忔満涓€鏉?>
 <script>
     (function() {
-        const pngs = ['https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_normal.png?x-oss-process=image/resize,w_300/quality,q_80', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_happy.png?x-oss-process=image/resize,w_300/quality,q_80', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/桃心猪.png?x-oss-process=image/resize,w_300/quality,q_80'];
+        const pngs = ['https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_normal.png', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_happy.png', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/妗冨績鐚?png'];
         document.getElementById('cornerPng').src = pngs[Math.floor(Math.random() * pngs.length)];
         document.getElementById('cornerPng').addEventListener('click', function() {
             const entry = allEntries[Math.floor(Math.random() * allEntries.length)];
