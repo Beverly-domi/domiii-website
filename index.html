@@ -381,6 +381,9 @@ body{font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif
 /* page fade in/out */
 body{animation:pgIn .35s ease}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* 禁止图片下载拖拽 */
+img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -397,34 +400,34 @@ body{animation:pgIn .35s ease}
 
     <!-- 前景缩放层（最终大图） -->
     <div class="section__media" id="sectionMedia">
-      <div class="section__media__front front-1"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt="背景星球"></div>
-      <div class="section__media__front front-2"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
-      <div class="section__media__front front-3"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
-      <div class="section__media__front front-4"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
-      <div class="section__media__front front-5"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
-      <div class="section__media__front front-6"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
+      <div class="section__media__front front-1"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt="背景星球"></div>
+      <div class="section__media__front front-2"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
+      <div class="section__media__front front-3"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
+      <div class="section__media__front front-4"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
+      <div class="section__media__front front-5"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
+      <div class="section__media__front front-6"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/beijing%20(2).jpg" alt=""></div>
     </div>
 
     <!-- 拍立得照片墙 —— 每张照片都包裹在拍立得相框内，图片完美适配不溢出 -->
     <div class="section__images" id="sectionImages">
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu1.jpg" alt="回忆1"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu2.jpg" alt="回忆2"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu3.jpg" alt="回忆3"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu4.jpg" alt="回忆4"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu5.jpg" alt="回忆5"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu6.jpg" alt="回忆6"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu7.jpg" alt="回忆7"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu8.jpg" alt="回忆8"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu9.jpg" alt="回忆9"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu10.jpg" alt="回忆10"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu11.jpg" alt="回忆11"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu12.jpg" alt="回忆12"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu13.jpg" alt="回忆13"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu14.jpg" alt="回忆14"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu15.jpg" alt="回忆15"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu16.jpg" alt="回忆16"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu17.jpg" alt="回忆17"></div></div>
-      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu18.jpg" alt="回忆18"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu1.jpg" alt="回忆1"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu2.jpg" alt="回忆2"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu3.jpg" alt="回忆3"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu4.jpg" alt="回忆4"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu5.jpg" alt="回忆5"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu6.jpg" alt="回忆6"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu7.jpg" alt="回忆7"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu8.jpg" alt="回忆8"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu9.jpg" alt="回忆9"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu10.jpg" alt="回忆10"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu11.jpg" alt="回忆11"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu12.jpg" alt="回忆12"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu13.jpg" alt="回忆13"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu14.jpg" alt="回忆14"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu15.jpg" alt="回忆15"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu16.jpg" alt="回忆16"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu17.jpg" alt="回忆17"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img draggable="false" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/images/xiaotu18.jpg" alt="回忆18"></div></div>
     </div>
 
     <!-- 迷雾 -->
@@ -784,5 +787,9 @@ body{animation:pgIn .35s ease}
   &copy;️ 资源来自网络，如有侵权，请联系删除
 </div>
 
+<script>
+// 禁止右键下载图片
+document.addEventListener('contextmenu',function(e){if(e.target.tagName==='IMG'){e.preventDefault()}});
+</script>
 </body>
 </html>

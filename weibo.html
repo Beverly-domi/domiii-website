@@ -311,6 +311,9 @@
 /* page fade in/out */
 body{animation:pgIn .35s ease}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* 禁止图片下载拖拽 */
+img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -471,7 +474,7 @@ body{animation:pgIn .35s ease}
                 if (isVideo) {
                     photosHtml += `<div class="gallery-item" onclick="event.stopPropagation(); showMedia('${p.img}','video')"><video src="${p.img}" style="width:100%; aspect-ratio:1/1; object-fit:cover; pointer-events:none;"></video><div class="item-caption">馃幀 瑙嗛</div></div>`;
                 } else {
-                    photosHtml += `<div class="gallery-item" onclick="event.stopPropagation(); showMedia('${p.img}','image')"><img src="${p.img}" onerror="this.src='https://picsum.photos/id/100/300/300'" loading="lazy"><div class="item-caption">馃摲 鏌ョ湅澶у浘</div></div>`;
+                    photosHtml += `<div class="gallery-item" onclick="event.stopPropagation(); showMedia('${p.img}','image')"><img draggable="false" src="${p.img}" onerror="this.src='https://picsum.photos/id/100/300/300'" loading="lazy"><div class="item-caption">馃摲 鏌ョ湅澶у浘</div></div>`;
                 }
             });
             photosHtml += `</div>`;
@@ -583,7 +586,7 @@ body{animation:pgIn .35s ease}
                 if (isVideo) {
                     thumbnailsHtml += `<div class="thumb-item" onclick="event.stopPropagation(); showMedia('${photo.img}','video')"><video src="${photo.img}" style="width:100%;height:100%;object-fit:cover;"></video><div class="thumb-video-icon">馃幀</div></div>`;
                 } else {
-                    thumbnailsHtml += `<div class="thumb-item" onclick="event.stopPropagation(); showMedia('${photo.img}','image')"><img src="${photo.img}" onerror="this.src='https://picsum.photos/id/100/80/80'" loading="lazy"></div>`;
+                    thumbnailsHtml += `<div class="thumb-item" onclick="event.stopPropagation(); showMedia('${photo.img}','image')"><img draggable="false" src="${photo.img}" onerror="this.src='https://picsum.photos/id/100/80/80'" loading="lazy"></div>`;
                 }
             });
             if (entry.photos && entry.photos.length > 5) thumbnailsHtml += `<div class="thumb-item" style="background:#FFE0B2; display:flex; align-items:center; justify-content:center;">+${entry.photos.length-5}</div>`;
@@ -628,7 +631,7 @@ body{animation:pgIn .35s ease}
     }
     init();
 </script>
-<img id="cornerPng" class="corner-png" alt="闅忔満涓€鏉?>
+<img draggable="false" id="cornerPng" class="corner-png" alt="闅忔満涓€鏉?>
 <script>
     (function() {
         const pngs = ['https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_normal.png', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/pig_happy.png', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/images/妗冨績鐚?png'];
@@ -648,5 +651,9 @@ body{animation:pgIn .35s ease}
   &copy;️ 资源来自网络，如有侵权，请联系删除
 </div>
 
+<script>
+// 禁止右键下载图片
+document.addEventListener('contextmenu',function(e){if(e.target.tagName==='IMG'){e.preventDefault()}});
+</script>
 </body>
 </html>

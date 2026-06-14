@@ -427,6 +427,9 @@
 /* page fade in/out */
 body{animation:pgIn .35s ease}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* 禁止图片下载拖拽 */
+img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -703,7 +706,7 @@ body{animation:pgIn .35s ease}
             const isImage = item.type === 'image';
             let mediaContent = '';
             if (isImage) {
-                mediaContent = `<img class="card-img" src="${item.src}" onerror="this.src='${item.fallback}'" loading="lazy">`;
+                mediaContent = `<img draggable="false" class="card-img" src="${item.src}" onerror="this.src='${item.fallback}'" loading="lazy">`;
             } else if (isVideo) {
                 mediaContent = `<video class="card-img" poster="https://placehold.co/400x400/FFE0B5/CC8444?text=🎬" onerror="this.onerror=null;this.closest('.photo-card')?.querySelector('img')?.setAttribute('src','${item.fallback}')">
                                     <source src="${item.src}" type="video/mp4"></video>`;
@@ -826,5 +829,9 @@ body{animation:pgIn .35s ease}
   &copy;️ 资源来自网络，如有侵权，请联系删除
 </div>
 
+<script>
+// 禁止右键下载图片
+document.addEventListener('contextmenu',function(e){if(e.target.tagName==='IMG'){e.preventDefault()}});
+</script>
 </body>
 </html>

@@ -479,6 +479,9 @@ body {
 /* page fade in/out */
 body{animation:pgIn .35s ease}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* 禁止图片下载拖拽 */
+img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -754,5 +757,9 @@ window.addEventListener('DOMContentLoaded', init);
   &copy;️ 资源来自网络，如有侵权，请联系删除
 </div>
 
+<script>
+// 禁止右键下载图片
+document.addEventListener('contextmenu',function(e){if(e.target.tagName==='IMG'){e.preventDefault()}});
+</script>
 </body>
 </html>

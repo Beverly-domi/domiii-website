@@ -287,6 +287,9 @@
 /* page fade in/out */
 body{animation:pgIn .35s ease}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* 禁止图片下载拖拽 */
+img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -311,11 +314,11 @@ body{animation:pgIn .35s ease}
 
 <!-- 灯箱 -->
 <div class="lightbox" id="customLightbox">
-    <img class="lightbox-img" id="lightboxImg" alt="放大">
+    <img draggable="false" class="lightbox-img" id="lightboxImg" alt="放大">
 </div>
 
 <div id="bgStarsContainer"></div>
-<img id="cornerPng" class="corner-png" alt="小惊喜">
+<img draggable="false" id="cornerPng" class="corner-png" alt="小惊喜">
 
 <script>
 // ========================== 数据 ==========================
@@ -495,7 +498,7 @@ function renderCarousel() {
         div.className = 'carousel-item';
         div.innerHTML = `
             <div class="carousel-box">
-                <img src="${photo.src}" onerror="this.src='${photo.fallback}'" alt="童年照" loading="lazy">
+                <img draggable="false" src="${photo.src}" onerror="this.src='${photo.fallback}'" alt="童年照" loading="lazy">
                 <div class="card-caption">${escapeHtml(photo.caption)}</div>
             </div>
         `;
@@ -682,5 +685,9 @@ init();
   &copy;️ 资源来自网络，如有侵权，请联系删除
 </div>
 
+<script>
+// 禁止右键下载图片
+document.addEventListener('contextmenu',function(e){if(e.target.tagName==='IMG'){e.preventDefault()}});
+</script>
 </body>
 </html>

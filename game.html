@@ -306,6 +306,9 @@ body{
 /* page fade in/out */
 body{animation:pgIn .35s ease}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* 禁止图片下载拖拽 */
+img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -472,7 +475,7 @@ function addCoins(amt) {
       bk.innerHTML='<div class="bk-dots1"></div><div class="bk-dots2"></div><div class="bk-shine"></div><div class="bk-ring"></div><div class="bk-ring2"></div><div class="bk-diamond"></div><div class="bk-inner"><div class="bk-emoji">🐷</div><div class="bk-text">✦ TA ✦</div></div>';
       // 卡面 - 纯照片
       const ft=document.createElement('div');ft.className='face ft';
-      ft.innerHTML='<div class="fw"><img src="'+d.src+'" alt="" loading="lazy"></div>';
+      ft.innerHTML='<div class="fw"><img draggable="false" src="'+d.src+'" alt="" loading="lazy"></div>';
       el.appendChild(bk);el.appendChild(ft);
       el.addEventListener('click',()=>onClick(i));
       bd.appendChild(el);cards.push(el);
@@ -579,5 +582,9 @@ function addCoins(amt) {
   &copy;️ 资源来自网络，如有侵权，请联系删除
 </div>
 
+<script>
+// 禁止右键下载图片
+document.addEventListener('contextmenu',function(e){if(e.target.tagName==='IMG'){e.preventDefault()}});
+</script>
 </body>
 </html>

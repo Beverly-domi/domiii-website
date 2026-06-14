@@ -695,6 +695,9 @@ body::after{
 /* page fade in/out */
 body{animation:pgIn .35s ease}
 @keyframes pgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* 禁止图片下载拖拽 */
+img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 </style>
 </head>
 <body>
@@ -754,7 +757,7 @@ body{animation:pgIn .35s ease}
     <div class="reveal-area" id="revealArea">
       <div class="card-slot">
         <div class="show-card" id="showCard">
-          <img class="card-img" id="cardImg" src="" alt="偶像卡片">
+          <img draggable="false" class="card-img" id="cardImg" src="" alt="偶像卡片">
           <div class="card-info">
             <div class="card-rarity" id="cardRarity">-</div>
           </div>
@@ -783,7 +786,7 @@ body{animation:pgIn .35s ease}
    <div class="card-zoom-overlay" id="cardZoomOverlay">
     <div class="card-zoom-content">
       <button class="card-zoom-close" id="cardZoomClose">✕</button>
-      <img src="" alt="" id="cardZoomImg">
+      <img draggable="false" src="" alt="" id="cardZoomImg">
     </div>
   </div>
 </div>
@@ -1376,7 +1379,7 @@ function restoreRevealArea() {
   reveal.innerHTML = `
     <div class="card-slot">
       <div class="show-card" id="showCard">
-        <img class="card-img" id="cardImg" src="" alt="偶像卡片">
+        <img draggable="false" class="card-img" id="cardImg" src="" alt="偶像卡片">
         <div class="card-info">
           <div class="card-rarity" id="cardRarity">-</div>
         </div>
@@ -1439,7 +1442,7 @@ function renderCollection() {
     div.innerHTML = `
       <div class="cc-inner">
         <div class="cc-front">
-          <img class="cc-img" src="${cardData.img}" alt="卡片" loading="lazy">
+          <img draggable="false" class="cc-img" src="${cardData.img}" alt="卡片" loading="lazy">
           <div class="cc-info">
             <div class="cc-rarity ${cardData.rarity}">${RARITY_LABELS[cardData.rarity]}</div>
             <div class="cc-time">${timeStr}</div>
@@ -1743,5 +1746,9 @@ document.addEventListener('DOMContentLoaded', init);
   &copy;️ 资源来自网络，如有侵权，请联系删除
 </div>
 
+<script>
+// 禁止右键下载图片
+document.addEventListener('contextmenu',function(e){if(e.target.tagName==='IMG'){e.preventDefault()}});
+</script>
 </body>
 </html>
