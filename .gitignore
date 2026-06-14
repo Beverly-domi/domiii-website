@@ -18,3 +18,4 @@ migrate_to_oss_v2.py
 # 备份文件
 backup/
 backup2/
+.omo/
