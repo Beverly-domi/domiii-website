@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>新年音乐会 · 舞台档案馆 | 荣耀热爱直拍</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root{
+  --primary:#FF952D;
+  --primary-light:#FFB866;
+  --primary-dark:#E67A00;
+  --pure-white:#FFFFFF;
+  --cream:#FFF9F0;
+  --dark:#3E2A1A;
+  --card-bg:rgba(255, 255, 250, 0.96);
+  --shadow-sm:0 10px 20px -8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.02);
+  --shadow-hover:0 20px 28px -12px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.06);
+}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+body{
+  font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  font-size:16px;
+  background:linear-gradient(125deg, #FFF9F2 0%, #FFEFE0 100%);
+  min-height:100vh;
+  padding:1.5rem;
+  padding-top:5.5rem;
+  padding-bottom:3rem;
+  position:relative;
+}
+/* 浮动光晕动画 */
+body::after{
+  content:'';
+  position:fixed;
+  top:-20%;
+  left:-20%;
+  width:140%;
+  height:140%;
+  background:radial-gradient(circle at 30% 40%, rgba(255,149,45,0.08), transparent 70%);
+  pointer-events:none;
+  z-index:-1;
+  animation: slowDrift 28s infinite alternate ease-in-out;
+}
+@keyframes slowDrift{
+  0%{ transform: translate(0,0) scale(1); opacity:0.4; }
+  100%{ transform: translate(3%, 2%) scale(1.05); opacity:0.7; }
+}
+.top-nav{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background:rgba(255, 248, 240, 0.94);
+  backdrop-filter:blur(24px);
+  border-bottom:2px solid rgba(255,149,45,0.25);
+  padding:.6rem 1.5rem;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:0.6rem;
+  box-shadow:0 4px 12px rgba(0,0,0,0.03);
+  transition: all 0.2s;
+}
+.nav-logo{
+  font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  font-size:1.2rem;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:-0.2px;
+  white-space:nowrap;
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.nav-logo::before{
+  content:'🎵';
+  font-size:1.1rem;
+  background:none;
+  -webkit-text-fill-color:initial;
+  color:var(--primary);
+}
+.back-home{
+  background:var(--primary);
+  border:1px solid var(--primary-dark);
+  color:white;
+  padding:.35rem 1rem;
+  border-radius:40px;
+  font-size:.7rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.25s;
+  text-decoration:none;
+  box-shadow:0 2px 8px rgba(255,149,45,0.3);
+}
+.back-home:hover{
+  background:var(--primary-dark);
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(255,149,45,0.4);
+}
+.stage-container{
+  max-width:1400px;
+  margin:0 auto;
+}
+/* 主内容区域：左侧筛选栏 + 右侧卡片网格 */
+.main-layout{
+  display:flex;
+  gap:1.8rem;
+  margin-top:0.5rem;
+}
+/* 左侧筛选栏 */
+.filter-sidebar{
+  width:200px;
+  flex-shrink:0;
+  background:rgba(255,248,240,0.7);
+  backdrop-filter:blur(8px);
+  border-radius:24px;
+  padding:1rem 0.8rem;
+  border:1px solid rgba(255,149,45,0.2);
+  height:fit-content;
+  position:sticky;
+  top:5.5rem;
+}
+.filter-sidebar-title{
+  font-size:0.85rem;
+  font-weight:700;
+  color:var(--dark);
+  padding-bottom:0.6rem;
+  border-bottom:2px solid var(--primary);
+  margin-bottom:0.8rem;
+  display:flex;
+  align-items:center;
+  gap:0.4rem;
+}
+.filter-sidebar-title i{
+  color:var(--primary);
+  font-size:0.9rem;
+}
+.filter-list{
+  display:flex;
+  flex-direction:column;
+  gap:0.4rem;
+}
+.filter-option{
+  background:transparent;
+  border:none;
+  text-align:left;
+  padding:0.5rem 0.7rem;
+  border-radius:40px;
+  font-size:0.75rem;
+  font-weight:500;
+  color:#8B5A2B;
+  cursor:pointer;
+  transition:all 0.2s;
+  font-family:inherit;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+}
+.filter-option i{
+  width:1.2rem;
+  font-size:0.75rem;
+  color:#C08652;
+}
+.filter-option:hover{
+  background:rgba(255,149,45,0.12);
+  color:var(--primary-dark);
+  transform:translateX(3px);
+}
+.filter-option.active{
+  background:rgba(255,149,45,0.2);
+  color:var(--primary-dark);
+  font-weight:600;
+  border-left:3px solid var(--primary);
+}
+.filter-option.active i{
+  color:var(--primary);
+}
+/* 右侧内容区 */
+.right-content{
+  flex:1;
+  min-width:0;
+}
+.section-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  margin:0 0 1.2rem 0;
+  gap:0.8rem;
+}
+.section-title{
+  font-size:1.4rem;
+  font-weight:800;
+  color:var(--dark);
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  border-left:5px solid var(--primary);
+  padding-left:1rem;
+}
+.section-title i{
+  color:var(--primary);
+  font-size:1.2rem;
+  animation: gentleShake 3s infinite ease;
+}
+@keyframes gentleShake{
+  0%,100%{ transform: rotate(0deg);}
+  25%{ transform: rotate(3deg);}
+  75%{ transform: rotate(-3deg);}
+}
+/* 搜索框放在右上角与标题齐平 */
+.search-wrapper{
+  display:flex;
+  align-items:center;
+  background:rgba(255,149,45,0.08);
+  border-radius:48px;
+  padding:0.15rem 0.15rem 0.15rem 0.8rem;
+  border:1px solid rgba(255,149,45,0.25);
+  transition:0.25s ease;
+  box-shadow:0 1px 2px rgba(0,0,0,0.02);
+}
+.search-wrapper:focus-within{
+  border-color:rgba(255,149,45,0.8);
+  background:rgba(255,149,45,0.05);
+  box-shadow:0 0 0 2px rgba(255,149,45,0.2);
+  transform:scale(1.01);
+}
+.search-input{
+  background:transparent;
+  border:none;
+  padding:0.35rem 0.2rem;
+  font-size:0.8rem;
+  width:160px;
+  font-family:inherit;
+  outline:none;
+  color:#3E2A1A;
+}
+.search-input::placeholder{
+  color:#C08652;
+  font-weight:300;
+  font-size:0.75rem;
+}
+.search-btn{
+  background:var(--primary);
+  border:none;
+  color:white;
+  padding:0.35rem 0.8rem;
+  border-radius:40px;
+  font-size:0.7rem;
+  cursor:pointer;
+  transition:0.2s;
+  font-weight:500;
+  box-shadow:0 1px 2px rgba(0,0,0,0.05);
+}
+.search-btn:hover{
+  background:var(--primary-dark);
+  transform:scale(0.96);
+  box-shadow:0 2px 6px rgba(230,122,0,0.3);
+}
+.stats-info{
+  font-size:0.7rem;
+  background:#FFF1E0;
+  display:inline-block;
+  padding:0.15rem 0.6rem;
+  border-radius:30px;
+  color:#B45F2B;
+  margin-left:0.5rem;
+  font-weight:500;
+}
+/* 卡片网格 - 更小的卡片 */
+.video-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+  gap:1.2rem;
+  align-items: start;
+  margin-bottom:2rem;
+}
+/* 卡片尺寸缩小 */
+.video-card{
+  background:var(--card-bg);
+  backdrop-filter:blur(4px);
+  border-radius:1.2rem;
+  transition:all 0.35s cubic-bezier(0.2, 0.85, 0.4, 1.05);
+  border:1px solid rgba(255,149,45,0.2);
+  cursor:pointer;
+  box-shadow:var(--shadow-sm);
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+  min-height:190px;
+  width:100%;
+  transform-origin: center;
+}
+.video-card:nth-child(odd){
+  transform:translateY(-3px);
+}
+.video-card:nth-child(3n){
+  transform:translateY(4px);
+}
+.video-card:nth-child(5n+2){
+  transform:translateY(6px);
+}
+.video-card:nth-child(7n+4){
+  transform:translateY(-5px);
+}
+.video-card:hover{
+  transform:translateY(-8px) scale(1.01);
+  box-shadow:var(--shadow-hover);
+  border-color:rgba(255,149,45,0.5);
+  background:#ffffff;
+}
+/* 卡片入场渐进动画 */
+.video-card{
+  animation: cardFloatUp 0.4s cubic-bezier(0.2,0.9,0.3,1.1) backwards;
+}
+@keyframes cardFloatUp{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+.random-stage-area{
+  width:100%;
+  background:linear-gradient(115deg, #FFE5C4, #FFD6AE);
+  padding:0.5rem 0.7rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid rgba(255,149,45,0.3);
+  transition:0.2s;
+}
+.stage-icon-set{
+  display:flex;
+  align-items:center;
+  gap:0.4rem;
+  font-size:1rem;
+}
+.stage-icon-set i, .stage-icon-set span{
+  transition: transform 0.2s ease;
+}
+.video-card:hover .stage-icon-set i{
+  transform: scale(1.1) rotate(3deg);
+}
+.card-content{
+  padding: 0.7rem 0.9rem 0.9rem;
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  gap:0.4rem;
+}
+.video-title{
+  font-weight:800;
+  font-size:0.82rem;
+  line-height:1.35;
+  color:var(--dark);
+  display:flex;
+  align-items:center;
+  gap:0.3rem;
+  transition:color 0.2s;
+}
+.video-card:hover .video-title{
+  color:#D45C1E;
+}
+.video-title i{
+  color:var(--primary);
+  font-size:0.7rem;
+}
+.badge-mini{
+  background:rgba(255,149,45,0.12);
+  border-radius:30px;
+  padding:0.15rem 0.5rem;
+  font-size:0.55rem;
+  color:var(--primary-dark);
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  width:fit-content;
+  transition:0.2s;
+}
+.video-card:hover .badge-mini{
+  background:rgba(255,149,45,0.22);
+  transform:translateX(2px);
+}
+.card-accent{
+  width: 35px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), #FFC48A);
+  border-radius:4px;
+  transition: width 0.25s ease;
+}
+.video-card:hover .card-accent{
+  width: 55px;
+  background: linear-gradient(90deg, var(--primary-dark), #FFB347);
+}
+.video-stats{
+  font-size:0.55rem;
+  display:flex;
+  align-items:center;
+  gap:0.4rem;
+  margin-top:0.15rem;
+  border-top:1px dashed rgba(255,149,45,0.25);
+  padding-top:0.4rem;
+}
+.video-stats i{
+  transition: all 0.2s;
+}
+.video-card:hover .video-stats i{
+  transform: scale(1.1);
+  color:#E67A00;
+}
+/* 右下角装饰符号微调 */
+.video-card::after{
+  content:"✨";
+  position:absolute;
+  bottom:8px;
+  right:12px;
+  font-size:0.8rem;
+  color:rgba(255,149,45,0.25);
+  pointer-events:none;
+  transition:0.2s;
+}
+.video-card:hover::after{
+  color:rgba(255,149,45,0.8);
+  transform:rotate(6deg) scale(1.1);
+}
+.video-card:nth-child(2n)::after{ content:"🎤"; }
+.video-card:nth-child(3n)::after{ content:"🎧"; }
+.empty-message{
+  text-align:center;
+  padding:2rem;
+  background:rgba(255,245,235,0.7);
+  border-radius:1.5rem;
+  color:#B8733E;
+  font-size:0.85rem;
+}
+.toast{
+  position:fixed;
+  top:70px;
+  left:50%;
+  transform:translateX(-50%) translateY(-20px);
+  background:rgba(30,20,15,0.92);
+  backdrop-filter:blur(16px);
+  color:#FFE2BB;
+  padding:0.4rem 1.2rem;
+  border-radius:50px;
+  font-size:0.75rem;
+  z-index:200;
+  opacity:0;
+  transition:0.25s;
+  pointer-events:none;
+  white-space:nowrap;
+  border-left:3px solid var(--primary);
+  font-weight:500;
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+/* 右下角随机舞台按钮 PNG 图片样式 */
+.random-stage-btn{
+  position:fixed;
+  bottom:25px;
+  right:25px;
+  z-index:99;
+  cursor:pointer;
+  width:60px;
+  height:60px;
+  background:linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 16px rgba(0,0,0,0.2);
+  transition:all 0.3s ease;
+  border:2px solid rgba(255,255,255,0.3);
+}
+.random-stage-btn:hover{
+  transform:scale(1.08);
+  box-shadow:0 10px 24px rgba(0,0,0,0.25);
+}
+.random-stage-btn:active{
+  transform:scale(0.96);
+}
+.random-stage-btn img{
+  width:38px;
+  height:38px;
+  object-fit:contain;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+@media (max-width: 780px) {
+  body{padding:1rem; padding-top:5rem;}
+  .main-layout{flex-direction:column;}
+  .filter-sidebar{
+    width:100%;
+    position:static;
+    margin-bottom:1rem;
+    padding:0.8rem;
+  }
+  .filter-list{
+    flex-direction:row;
+    flex-wrap:wrap;
+    gap:0.4rem;
+  }
+  .filter-option{
+    padding:0.3rem 0.8rem;
+    font-size:0.7rem;
+  }
+  .video-grid{grid-template-columns:1fr; gap:1rem;}
+  .video-card:nth-child(odd),.video-card:nth-child(3n){transform:translateY(0);}
+  .top-nav{flex-direction:column; align-items:stretch; padding:0.6rem;}
+  .nav-logo{text-align:center;}
+  .section-title{font-size:1.2rem;}
+  .random-stage-btn{
+    width:50px;
+    height:50px;
+    bottom:20px;
+    right:20px;
+  }
+  .random-stage-btn img{
+    width:30px;
+    height:30px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+  <a href="wenjianjia.html" class="back-home" id="backToHomeBtn" style="margin-right:auto">🏠 返回主页</a>
+</div>
+
+<div class="stage-container">
+  <div class="main-layout">
+    <!-- 左侧筛选栏 -->
+    <div class="filter-sidebar">
+      <div class="filter-sidebar-title">
+        <i class="fas fa-sliders-h"></i> 系列分类
+      </div>
+      <div class="filter-list" id="filterList">
+        <button class="filter-option active" data-category="all">
+          <i class="fas fa-layer-group"></i> 全部舞台
+        </button>
+        <button class="filter-option" data-category="2026新年音乐会">
+          <i class="fas fa-calendar-alt"></i> 2026新年音乐会
+        </button>
+        <button class="filter-option" data-category="2025新年音乐会">
+          <i class="fas fa-calendar-alt"></i> 2025新年音乐会
+        </button>
+        <button class="filter-option" data-category="多巴胺快乐图鉴">
+          <i class="fas fa-smile"></i> 多巴胺快乐图鉴
+        </button>
+        <button class="filter-option" data-category="肆意生长">
+          <i class="fas fa-seedling"></i> 肆意生长
+        </button>
+        <button class="filter-option" data-category="肆意少年-舞台篇">
+          <i class="fas fa-users"></i> 肆意少年
+        </button>
+        <button class="filter-option" data-category="2024新春音乐会">
+          <i class="fas fa-fireworks"></i> 2024新春音乐会
+        </button>
+        <button class="filter-option" data-category="fun肆.p2k">
+          <i class="fas fa-music"></i> FUN肆·P2K
+        </button>
+        <button class="filter-option" data-category="轨迹的声音-调频04.2">
+          <i class="fas fa-headphones"></i> 轨迹·调频
+        </button>
+        <button class="filter-option" data-category="TF梦工厂-立夏">
+          <i class="fas fa-sun"></i> TF梦工厂-立夏
+        </button>
+        <button class="filter-option" data-category="COVER">
+          <i class="fas fa-microphone-alt"></i> COVER合集
+        </button>
+        <button class="filter-option" data-category="随肆记">
+          <i class="fas fa-video"></i> 随肆记
+        </button>
+      </div>
+    </div>
+
+    <!-- 右侧内容区 -->
+    <div class="right-content">
+      <div class="section-header">
+        <div class="section-title">
+          <i class="fas fa-dice-d6"></i>  
+          <span id="totalCountBadge" class="stats-info"></span>
+        </div>
+        <!-- 搜索框移至右上角与标题齐平 -->
+        <div class="search-wrapper">
+          <input type="text" id="searchInput" class="search-input" placeholder="🔍 搜索舞台名称..." autocomplete="off">
+          <button id="searchBtn" class="search-btn">搜索</button>
+        </div>
+      </div>
+      <div class="video-grid" id="videoGrid"></div>
+    </div>
+  </div>
+</div>
+<div id="toastMsg" class="toast"></div>
+
+<!-- 右下角 PNG 图片按钮 -->
+<div class="random-stage-btn" id="randomStageBtn">
+  <img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/桃心猪.png" alt="随机舞台" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1040/1040248.png'">
+</div>
+
+<script>
+// ======================== 全部舞台数据 (基于完整表格导入) ========================
+const stageDataRaw = [
+  // ==================== 2026新年音乐会 (荣耀) 共23条 ====================
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」练习室合集", link: "https://www.bilibili.com/video/BV1CXivBhEpZ/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会《荣耀》舞台篇DAY1(上半场)", link: "https://www.bilibili.com/video/BV1HLrwBLECL/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会《荣耀》舞台篇DAY1(下半场)", link: "https://www.bilibili.com/video/BV1HLrwBLECL?p=2" },
+  { category: "2026新年音乐会", title: "2026新年音乐会《荣耀》舞台篇DAY2（上半场）", link: "https://www.bilibili.com/video/BV1ChkTBYES1/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会《荣耀》舞台篇DAY2（下半场）", link: "https://www.bilibili.com/video/BV1ChkTBYES1?p=2" },
+  { category: "2026新年音乐会", title: "2026新年音乐会《荣耀》舞台篇DAY3（上半场）", link: "https://www.bilibili.com/video/BV1VZzwBfEFg/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会《荣耀》舞台篇DAY3（下半场）", link: "https://www.bilibili.com/video/BV1VZzwBfEFg?p=2" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」:《好运来》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV14QrPBbEht/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」:《好运来》纯享版（DAY3）", link: "https://www.bilibili.com/video/BV14QrPBbEht/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」:《Ba Ba Ba》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV19RrABqEkh/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」:《Ba Ba Ba》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1EgkwBkEaf/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」:《我有我的YOUNG》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1wPkwBmEyn/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」:《心动》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1tYkwBoEwu/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」:《街舞少年》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1bPrPBhEzM/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」:《街舞少年》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1YrkcBaEgA/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」:《街舞少年》纯享版（DAY3）", link: "https://www.bilibili.com/video/BV1uAzcBmEwe/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」: 纪录片·预告", link: "https://www.bilibili.com/video/BV1PgFbzuEDT/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」: 纪录片·【1】荣耀序章", link: "https://www.bilibili.com/video/BV1uxcLzyETw/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」: 纪录片·【2】并肩之后", link: "https://www.bilibili.com/video/BV1vmZLBUEdG/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」: 纪录片·【3】灯亮之前", link: "https://www.bilibili.com/video/BV1vBZnBcEjW/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会「荣耀」: 纪录片·【终】光的回响", link: "https://www.bilibili.com/video/BV1yxZwBxELx/" },
+  { category: "2026新年音乐会", title: "2026新年音乐会《荣耀》VCR拍摄花絮", link: "https://www.bilibili.com/video/BV1Kp6mB5EjA/" },
+  { category: "2026新年音乐会", title: "TF家族练习生2026台历拍摄花絮——《Game of Life》", link: "https://www.bilibili.com/video/BV1BasGzjEiB/" },
+
+  // ==================== 2025新年音乐会 (热爱) 共24条 ====================
+  { category: "2025新年音乐会", title: "《关于我的if线》2025年台历拍摄花絮", link: "https://www.bilibili.com/video/BV1mBmBY7EWT/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《超人诞生日记》练习室", link: "https://www.bilibili.com/video/BV1rdwheXEY7/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《超人诞生日记》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1s5F3eAEYd/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《超人诞生日记》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1aLFJeeEEi/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《彩虹的微笑》练习室", link: "https://www.bilibili.com/video/BV1TowtexEQ1/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《彩虹的微笑》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1ymFEeXEfU/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《芭啦芭啦樱之花》练习室", link: "https://www.bilibili.com/video/BV1w5wheQEwi/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《芭啦芭啦樱之花》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV195FgeVEZm/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《你被写在我的歌里》练习室", link: "https://www.bilibili.com/video/BV121whe8Eio/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《你被写在我的歌里》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1U4FgeNECB/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《像我一样》练习室", link: "https://www.bilibili.com/video/BV1fJwhe7EJR/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《像我一样》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1hVFSe7EGx/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《像我一样》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1W7F3ecE4w/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」练习室联排记录", link: "https://www.bilibili.com/video/BV1SAfZYAEwJ/" },
+  { category: "2025新年音乐会", title: "《十二生肖》2025拜年MV", link: "https://www.bilibili.com/video/BV1w3FtegErJ/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会《热爱》舞台篇DAY1（上半场）", link: "https://www.bilibili.com/video/BV1Q5FMevEvg/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会《热爱》舞台篇DAY1（下半场）", link: "https://www.bilibili.com/video/BV1Q5FMevEvg?p=2" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《恭喜发财+等你的回答》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1d7F5eoE9E/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《恭喜发财+等你的回答》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV18HFJe8Egd/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《街舞少年》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1YTFSeHEaP/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会「热爱」:《街舞少年》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1ecFVeSEGf/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会纪录片「星火」（上）", link: "https://www.bilibili.com/video/BV1wAN3euEN6/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会纪录片「星火」（中）", link: "https://www.bilibili.com/video/BV1TwNSeWEw5/" },
+  { category: "2025新年音乐会", title: "2025新年音乐会纪录片「星火」（下）", link: "https://www.bilibili.com/video/BV1BKNaeoER2/" },
+
+  // ==================== 多巴胺快乐图鉴 共11条 ====================
+  { category: "多巴胺快乐图鉴", title: "《TF少年梦工厂-多巴胺快乐图鉴》先导片", link: "https://www.bilibili.com/video/BV1gm4y1s7bg/" },
+  { category: "多巴胺快乐图鉴", title: "「TF少年梦工厂-多巴胺快乐图鉴」舞台篇", link: "https://www.bilibili.com/video/BV1Yj411r77p/" },
+  { category: "多巴胺快乐图鉴", title: "「TF少年梦工厂-多巴胺快乐图鉴」制作篇", link: "https://www.bilibili.com/video/BV1tG411d7Jq" },
+  { category: "多巴胺快乐图鉴", title: "「TF少年梦工厂-多巴胺快乐图鉴」练习室联排记录", link: "https://www.bilibili.com/video/BV1KX4y1x7Pz" },
+  { category: "多巴胺快乐图鉴", title: "「TF少年梦工厂-多巴胺快乐图鉴」《魔法城堡》纯享版", link: "https://www.bilibili.com/video/BV16X4y1L7Bq/" },
+  { category: "多巴胺快乐图鉴", title: "「TF少年梦工厂-多巴胺快乐图鉴」《姐姐真漂亮》纯享版", link: "https://www.bilibili.com/video/BV1cm4y1s7Mj/" },
+  { category: "多巴胺快乐图鉴", title: "「TF少年梦工厂-多巴胺快乐图鉴」《小半》纯享版", link: "https://www.bilibili.com/video/BV1hu4y1R7SU/" },
+  { category: "多巴胺快乐图鉴", title: "「TF少年梦工厂-多巴胺快乐图鉴」《第一天》纯享版", link: "https://www.bilibili.com/video/BV1ah4y1F7rj/" },
+  { category: "多巴胺快乐图鉴", title: "「TF少年梦工厂-多巴胺快乐图鉴」舞蹈串烧纯享版", link: "https://www.bilibili.com/video/BV1ah4y1F7rj/" },
+  { category: "多巴胺快乐图鉴", title: "「TF少年梦工厂-多巴胺快乐图鉴」《剩下的盛夏》纯享版", link: "https://www.bilibili.com/video/BV1h94y1C7S7/" },
+
+  // ==================== 肆意生长见面会 共33条 ====================
+  { category: "肆意生长", title: "《肆意生长》见面会：《Be What You Wanna Be》练习室", link: "https://www.bilibili.com/video/BV1jM4m117gX/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《Be What You Wanna Be》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1wb421J7a4/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《Be What You Wanna Be》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1Em42137yB/" },
+  { category: "肆意生长", title: "《肆意生长》见面会：《喜欢你》练习室", link: "https://www.bilibili.com/video/BV1wZ421K7gM/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《喜欢你》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1FE421A7z4/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《喜欢你》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1FU411S7TN/" },
+  { category: "肆意生长", title: "《肆意生长》见面会：《没有如果》练习室", link: "https://www.bilibili.com/video/BV1Wi421h7mv/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《没有如果》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1eU411U7gB/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《没有如果》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1Zx4y1x7Qz/" },
+  { category: "肆意生长", title: "《肆意生长》见面会：《被驯服的象》练习室", link: "https://www.bilibili.com/video/BV1fU411U7Kw/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《被驯服的象》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1xM4m1y7uL/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《This Is Me》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1yf421v7GD/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《This Is Me》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1rz421i7GL/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《plot twist》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1rz421i7kk/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《plot twist》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1Kf421i7qA/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《少年美》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1cW421976C/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《少年美》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1eZ421N7FY/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《好春光》练习室", link: "https://www.bilibili.com/video/BV1bE4m197o6/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《好春光》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1T1421t7Lm/" },
+  { category: "肆意生长", title: "《肆意生长》见面会：《曹操》练习室", link: "https://www.bilibili.com/video/BV162421Z758/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《曹操》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1V4421f7Eu/" },
+  { category: "肆意生长", title: "《肆意生长》见面会舞台篇——游戏环节", link: "https://www.bilibili.com/video/BV1WT42167tv/" },
+  { category: "肆意生长", title: "《肆意生长》见面会舞台篇DAY1（上半场）", link: "https://www.bilibili.com/video/BV1K1421t7wC/" },
+  { category: "肆意生长", title: "《肆意生长》见面会舞台篇DAY1（下半场）", link: "https://www.bilibili.com/video/BV1K1421t7wC?p=2" },
+  { category: "肆意生长", title: "《肆意生长》见面会舞台篇DAY2（上半场）", link: "https://www.bilibili.com/video/BV1Qw4m1k7Tq/" },
+  { category: "肆意生长", title: "《肆意生长》见面会舞台篇DAY2（下半场）", link: "https://www.bilibili.com/video/BV1Qw4m1k7Tq?p=2" },
+  { category: "肆意生长", title: "《肆意生长》见面会纪录片——「荆棘篇」上", link: "https://www.bilibili.com/video/BV1sE421c76p/" },
+  { category: "肆意生长", title: "《肆意生长》见面会纪录片——「荆棘篇」下", link: "https://www.bilibili.com/video/BV1sE421c76p?p=2" },
+  { category: "肆意生长", title: "《肆意生长》见面会纪录片——「满天星篇」上", link: "https://www.bilibili.com/video/BV1PhpjeTEbu/" },
+  { category: "肆意生长", title: "《肆意生长》见面会纪录片——「满天星篇」下", link: "https://www.bilibili.com/video/BV1PhpjeTEbu?p=2" },
+  { category: "肆意生长", title: "《肆意生长》见面会纪录片——「暑假日常篇」", link: "https://www.bilibili.com/video/BV14h4oeAEsk/" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《We Are》纯享版（重庆场DAY1）", link: "https://www.bilibili.com/video/BV1tXeizpEcx" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《落日只会道别》纯享版（重庆场DAY1）", link: "https://www.bilibili.com/video/BV1TXeizpEBd" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《We Are》纯享版（重庆场DAY2）", link: "https://www.bilibili.com/video/BV1k2ejzREkF" },
+  { category: "肆意生长", title: "《肆意生长》见面会:《落日只会道别》纯享版（重庆场DAY2）", link: "https://www.bilibili.com/video/BV1nSejzXECQ" },
+  { category: "肆意生长", title: "「肆意少年」见面会:《We Are》纯享版（重庆场DAY1）", link: "https://www.bilibili.com/video/BV1tXeizpEcx" },
+
+  // ==================== 肆意少年舞台篇 共25条 ====================
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会VCR花絮", link: "https://www.bilibili.com/video/BV1p8eMzeESb/" },
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会——重庆场DAY1（上半场）", link: "https://www.bilibili.com/video/BV1YZeYzHEA3/" },
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会——重庆场DAY1（下半场）", link: "https://www.bilibili.com/video/BV1YZeYzHEA3?p=2" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《心动》纯享版（重庆场DAY1）", link: "https://www.bilibili.com/video/BV1wDe8z8EZ9/" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《随心奔跑难道不酷吗》纯享版（重庆场DAY1）", link: "https://www.bilibili.com/video/BV1npeezNEkd" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《路灯下的小姑娘》纯享版（重庆场DAY1）", link: "https://www.bilibili.com/video/BV1PjeezgEYr" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《Lucifer》纯享版（重庆场DAY1）", link: "https://www.bilibili.com/video/BV1WFeqzmEeu" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《第一次爱的人》纯享版（重庆场DAY1）", link: "https://www.bilibili.com/video/BV1t9eizQEwh" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《成为你想成为的大人》纯享版（重庆场DAY1）", link: "https://www.bilibili.com/video/BV1T9eizQEii" },
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会——重庆场DAY2（上半场）", link: "https://www.bilibili.com/video/BV1eEe5zKESt/" },
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会——重庆场DAY2（下半场）", link: "https://www.bilibili.com/video/BV1eEe5zKESt?p=2" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《心动》纯享版（重庆场DAY2）", link: "https://www.bilibili.com/video/BV1PKezzHEAj" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《随心奔跑难道不酷吗》纯享版（重庆场DAY2）", link: "https://www.bilibili.com/video/BV1PPezzXE1g" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《Lucifer》纯享版（重庆场DAY2）", link: "https://www.bilibili.com/video/BV18be5zbEpq" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《成为你想成为的大人》纯享版（重庆场DAY2）", link: "https://www.bilibili.com/video/BV1p2ejzREQG" },
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会——青岛场DAY1（上半场）", link: "https://www.bilibili.com/video/BV1sgh1zwEnx" },
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会——青岛场DAY1（下半场）", link: "https://www.bilibili.com/video/BV1sgh1zwEnx?p=2" },
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会——青岛场DAY2（上半场）", link: "https://www.bilibili.com/video/BV1QLh2z2Emk" },
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会——青岛场DAY2（下半场）", link: "https://www.bilibili.com/video/BV1QLh2z2Emk?p=2" },
+  { category: "肆意少年-舞台篇", title: "《肆意少年》见面会练习室联排记录", link: "https://www.bilibili.com/video/BV16chZzdENm" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《Supernatural》纯享版（青岛场DAY1）", link: "https://www.bilibili.com/video/BV1wdh1zhEEj" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《暮色回响》纯享版（青岛场DAY1）", link: "https://www.bilibili.com/video/BV1i4h1znEiv" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《Centuries》纯享版（青岛场DAY1）", link: "https://www.bilibili.com/video/BV1RShyz1ENf" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《Supernatural》纯享版（青岛场DAY2）", link: "https://www.bilibili.com/video/BV1pahdzoEVB" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《暮色回响》纯享版（青岛场DAY2）", link: "https://www.bilibili.com/video/BV1KChRzhE93" },
+  { category: "肆意少年-舞台篇", title: "「肆意少年」见面会:《Centuries》纯享版（青岛场DAY2）", link: "https://www.bilibili.com/video/BV1r9hRzXEWx" },
+
+  // ==================== 2024新春音乐会《盛放》 共22条 ====================
+  { category: "2024新春音乐会", title: "《最小的事》2024年台历拍摄花絮", link: "https://www.bilibili.com/video/BV1m34y1w724/" },
+  { category: "2024新春音乐会", title: "2024新春音乐会《盛放》舞台篇DAY1（上半场）", link: "https://www.bilibili.com/video/BV1Nv42127Uv/" },
+  { category: "2024新春音乐会", title: "2024新春音乐会《盛放》舞台篇DAY1（下半场）", link: "https://www.bilibili.com/video/BV1zA4m1577B/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《发财发福中国年》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1pB421r7WH/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《时光机》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV14U421d7Gz/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《新贵妃醉酒》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1fv42117yt/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《This is me》马戏之王 纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1Jy421h7nT/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《半兽人》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1cU421o7Lh/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《绝配》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1VC41147LK/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《街舞少年》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1uy421Y79c/" },
+  { category: "2024新春音乐会", title: "2024新春音乐会《盛放》舞台篇DAY2（上半场）", link: "https://www.bilibili.com/video/BV1wt421a7yM/" },
+  { category: "2024新春音乐会", title: "2024新春音乐会《盛放》舞台篇DAY2（下半场）", link: "https://www.bilibili.com/video/BV1h6421u7kH/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《发财发福中国年》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1rH4y1Y7w1/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《新贵妃醉酒》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1yJ4m1s7qi/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《半兽人》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1r2421c774/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《再次重逢的世界》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV142421c7aD/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」《街舞少年》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1fp421o75C/" },
+  { category: "2024新春音乐会", title: "【TF家族练习生】「2024新春音乐会——盛放」练习室联排记录", link: "https://www.bilibili.com/video/BV1yx4y1C7iE/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」先导片", link: "https://www.bilibili.com/video/BV1RW421A7Ge/" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」制作篇（上）", link: "https://www.bilibili.com/video/BV1ky421B7F7" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」制作篇（中）", link: "https://www.bilibili.com/video/BV1Bx42127F3" },
+  { category: "2024新春音乐会", title: "「2024新春音乐会——盛放」制作篇（下）", link: "https://www.bilibili.com/video/BV11x4y1Q73x" },
+
+  // ==================== FUN肆·P2K 共26条 ====================
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会练习室联排记录", link: "https://www.bilibili.com/video/BV1oeo5ByE6W/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会舞台篇DAY1（上半场）", link: "https://www.bilibili.com/video/BV1CoRuBqE3g/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会舞台篇DAY1（下半场）", link: "https://www.bilibili.com/video/BV1CoRuBqE3g?p=2" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会舞台篇DAY2（上半场）", link: "https://www.bilibili.com/video/BV1JLRjBUEsp/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会舞台篇DAY2（下半场）", link: "https://www.bilibili.com/video/BV1JLRjBUEsp?p=2" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《Yes Sir!》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1pRRTBcE3P/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《Get High》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1kdRTB8EPz/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《OVERDRIVE》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1iWRTBHEyM/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《612星球》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1qsRTBDEKA/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《爱的城堡》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV16nRuBwEu7/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《末日留守者》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1rERuBYEyu/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《街头霸王》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1VjRgB9Ezg/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《串烧》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1quRgBbErG/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《一样的月光》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1MxRgBmE1S/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《无乐不作》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1y9RuBzE1c/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《少年》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1byRuB1E8S/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《我们之间》纯享版（DAY1）", link: "https://www.bilibili.com/video/BV1SCRuBjExF/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《Yes Sir!》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1QdR7BgEut/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《Get High》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1k3RjBHENK/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《612星球》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1CMRjBWEVv/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《History》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1JeRLBmEfT/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《串烧》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1AKRjBdE1p/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《一样的月光》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1pMRjBWEo6/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《第五乐园》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV11ARjBoEL2/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《少年》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV14NREBPELT/" },
+  { category: "fun肆.p2k", title: "《FUN肆·P2K》见面会：《我们之间》纯享版（DAY2）", link: "https://www.bilibili.com/video/BV1chRLBSEX5/" },
+
+  // ==================== 轨迹的声音-调频04.2 共3条 ====================
+  { category: "轨迹的声音-调频04.2", title: "《轨迹的声音-调频04.2》苔痕篇1", link: "https://www.bilibili.com/video/BV1XrGE6gET7/" },
+  { category: "轨迹的声音-调频04.2", title: "《轨迹的声音-调频04.2》苔痕篇2", link: "https://www.bilibili.com/video/BV1XrGE6gET7?p=2" },
+  { category: "轨迹的声音-调频04.2", title: "《轨迹的声音-调频04.2》苔痕篇3", link: "https://www.bilibili.com/video/BV1XrGE6gET7?p=3" },
+
+  // ==================== TF梦工厂-立夏 共5条 ====================
+  { category: "TF梦工厂-立夏", title: "「TF少年梦工厂-立夏」舞台篇", link: "https://www.bilibili.com/video/BV1Bg4y1G7Y1/" },
+  { category: "TF梦工厂-立夏", title: "「TF少年梦工厂-立夏」制作篇（上）", link: "https://www.bilibili.com/video/BV1ga4y1g7TT" },
+  { category: "TF梦工厂-立夏", title: "「TF少年梦工厂-立夏」制作篇（下）", link: "https://www.bilibili.com/video/BV15N41117Pa" },
+  { category: "TF梦工厂-立夏", title: "「TF少年梦工厂-立夏」练习室联排记录", link: "https://www.bilibili.com/video/BV1ah411w7Cn" },
+  { category: "TF梦工厂-立夏", title: "「TF少年梦工厂-立夏」《不完美小孩》纯享版", link: "https://www.bilibili.com/video/BV12X4y1y7pH" },
+
+  // ==================== COVER合集 共7条 ====================
+  { category: "COVER", title: "《逆光》——2024新年COVER", link: "https://www.bilibili.com/video/BV1Tg4y1r7km/" },
+  { category: "COVER", title: "《恭喜恭喜》——2024春节COVER", link: "https://www.bilibili.com/video/BV1fp421o7SD/" },
+  { category: "COVER", title: "张奕然《LOVE, MONEY, FAME》舞蹈COVER", link: "https://www.bilibili.com/video/BV15LMbz5EkC/" },
+  { category: "COVER", title: "《Steady》舞蹈COVER", link: "https://www.bilibili.com/video/BV1Lij4zhEf9/" },
+  { category: "COVER", title: "张奕然《岁月神偷》声乐COVER", link: "https://www.bilibili.com/video/BV1ZYcheyE9y/" },
+  { category: "COVER", title: "《非我不可》520特别COVER拍摄花絮", link: "https://www.bilibili.com/video/BV1As42137Lo/" },
+  { category: "COVER", title: "《非我不可》——520特别COVER", link: "https://www.bilibili.com/video/BV1Sn4y1d7Gc/" },
+
+  // ==================== 随肆记纪录片 共10条 ====================
+  { category: "随肆记", title: "《随肆记 · 一日》纪录片", link: "https://www.bilibili.com/video/BV1h4qLYcEWa/" },
+  { category: "随肆记", title: "《随肆记 · 伊始》纪录片（上）1", link: "https://www.bilibili.com/video/BV1DvPueyEPN/" },
+  { category: "随肆记", title: "《随肆记 · 伊始》纪录片（上）2", link: "https://www.bilibili.com/video/BV1DvPueyEPN?p=2" },
+  { category: "随肆记", title: "《随肆记 · 伊始》纪录片（中）1", link: "https://www.bilibili.com/video/BV11MADenEXh/" },
+  { category: "随肆记", title: "《随肆记 · 伊始》纪录片（中）2", link: "https://www.bilibili.com/video/BV11MADenEXh?p=2" },
+  { category: "随肆记", title: "《随肆记 · 伊始》纪录片（下）1", link: "https://www.bilibili.com/video/BV1t2PsepErL/" },
+  { category: "随肆记", title: "《随肆记 · 伊始》纪录片（下）2", link: "https://www.bilibili.com/video/BV1t2PsepErL?p=2" },
+  { category: "随肆记", title: "《随肆记 · 以梦为名》纪录片", link: "https://www.bilibili.com/video/BV1xXpEzuEhW/" },
+  { category: "随肆记", title: "《随肆记 · 踏风日记》纪录片（上）", link: "https://www.bilibili.com/video/BV1uXpFz4E3Q?p=1" },
+  { category: "随肆记", title: "《随肆记 · 踏风日记》纪录片（下）", link: "https://www.bilibili.com/video/BV1uXpFz4E3Q?p=2" }
+];
+
+const randomStageLibrary = [
+  { mainIcon: "fa-fire", bgClass: "linear-gradient(135deg, #FFE0B5, #FFCE96)", emoji: "🔥" },
+  { mainIcon: "fa-star", bgClass: "linear-gradient(135deg, #FFEFD0, #FFE2BE)", emoji: "⭐" },
+  { mainIcon: "fa-drumstick-bite", bgClass: "linear-gradient(135deg, #FEE3C0, #FFD5A4)", emoji: "🥁" },
+  { mainIcon: "fa-gem", bgClass: "linear-gradient(135deg, #FFE8CB, #FFDCAD)", emoji: "💎" },
+  { mainIcon: "fa-feather-alt", bgClass: "linear-gradient(135deg, #FFE1BC, #FFCF97)", emoji: "🕊️" },
+  { mainIcon: "fa-crown", bgClass: "linear-gradient(135deg, #FFEAD2, #FFDCB0)", emoji: "👑" },
+  { mainIcon: "fa-moon", bgClass: "linear-gradient(135deg, #FDECCF, #FFDEB3)", emoji: "🌙" },
+  { mainIcon: "fa-bolt", bgClass: "linear-gradient(135deg, #FFE9CD, #FFD9AD)", emoji: "⚡" }
+];
+
+function getRandomStage() { return randomStageLibrary[Math.floor(Math.random() * randomStageLibrary.length)]; }
+
+let currentCategory = "all", currentSearchKeyword = "";
+function getFilteredData() {
+  let filtered = currentCategory === "all" ? [...stageDataRaw] : stageDataRaw.filter(item => item.category === currentCategory);
+  if (currentSearchKeyword.trim() !== "") {
+    const kw = currentSearchKeyword.trim().toLowerCase();
+    filtered = filtered.filter(item => item.title.toLowerCase().includes(kw));
+  }
+  return filtered;
+}
+
+function renderCards() {
+  const container = document.getElementById('videoGrid');
+  if (!container) return;
+  const filtered = getFilteredData();
+  const totalSpan = document.getElementById('totalCountBadge');
+  if(totalSpan) totalSpan.innerText = `✨ ${filtered.length} 个舞台`;
+  if(filtered.length === 0){
+    container.innerHTML = `<div class="empty-message"><i class="fas fa-music"></i> 没有找到相关舞台，试试其他关键词或分类～</div>`;
+    return;
+  }
+  container.innerHTML = '';
+  filtered.forEach((video, idx) => {
+    const stageTheme = getRandomStage();
+    const bgGradient = stageTheme.bgClass;
+    const randomIcon = stageTheme.mainIcon;
+    const randomEmoji = stageTheme.emoji;
+    let catLabel = "";
+    if(video.category === "2026新年音乐会") catLabel = "🎆 荣耀·2026";
+    else if(video.category === "2025新年音乐会") catLabel = "🎇 热爱·2025";
+    else if(video.category === "多巴胺快乐图鉴") catLabel = "🌈 多巴胺";
+    else if(video.category === "肆意生长") catLabel = "🌱 肆意生长";
+    else if(video.category === "肆意少年-舞台篇") catLabel = "🎭 肆意少年";
+    else if(video.category === "2024新春音乐会") catLabel = "🎉 盛放·2024";
+    else if(video.category === "fun肆.p2k") catLabel = "🎸 FUN肆·P2K";
+    else if(video.category === "轨迹的声音-调频04.2") catLabel = "📻 轨迹·调频";
+    else if(video.category === "TF梦工厂-立夏") catLabel = "🌸 立夏";
+    else if(video.category === "COVER") catLabel = "🎤 COVER";
+    else if(video.category === "随肆记") catLabel = "📝 随肆记";
+    else catLabel = "🎭 舞台精选";
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.style.animationDelay = `${(idx % 12) * 0.02}s`;
+    card.innerHTML = `
+      <div class="random-stage-area" style="background: ${bgGradient};">
+        <div class="stage-icon-set">
+          <i class="fas ${randomIcon}" style="color:#D9641E; font-size:1.1rem;"></i>
+          <span style="font-size:0.85rem;">${randomEmoji}</span>
+        </div>
+        <i class="fas fa-dice-d6" style="color:#B95F2A; font-size:0.65rem;"></i>
+      </div>
+      <div class="card-content">
+        <div class="video-title"><i class="fas fa-play-circle"></i> ${escapeHtml(video.title.length > 48 ? video.title.slice(0,45)+'...' : video.title)}</div>
+        <div class="badge-mini"><i class="fas fa-tag"></i> ${catLabel}</div>
+        <div class="card-accent"></div>
+        <div class="video-stats"><i class="fab fa-bilibili" style="font-size:0.7rem; color:#00A1D6;"></i></div>
+      </div>
+    `;
+    card.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (video.link) { window.open(video.link, '_blank'); showToast(`🎭 跃入「${video.title.length>22 ? video.title.slice(0,20)+'…' : video.title}」`); } 
+      else showToast('✨ 直拍即将解锁');
+    });
+    container.appendChild(card);
+  });
+}
+
+// 随机跳转舞台
+function randomJumpToStage() {
+  if (stageDataRaw.length === 0) return;
+  const randomIndex = Math.floor(Math.random() * stageDataRaw.length);
+  const randomVideo = stageDataRaw[randomIndex];
+  if (randomVideo && randomVideo.link) {
+    window.open(randomVideo.link, '_blank');
+    showToast(`🎲 随机舞台「${randomVideo.title.length > 20 ? randomVideo.title.slice(0, 18) + '…' : randomVideo.title}」`);
+  } else {
+    showToast('✨ 暂无可跳转舞台');
+  }
+}
+
+function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
+function showToast(msg, duration=1400){
+  const toast = document.getElementById('toastMsg');
+  if(!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), duration);
+}
+function bindEvents(){
+  // 左侧筛选按钮事件
+  const filterBtns = document.querySelectorAll('.filter-option');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.dataset.category;
+      renderCards();
+      const catName = btn.querySelector('i')?.nextSibling?.nodeValue?.trim() || btn.textContent.trim();
+      showToast(`🍊 已筛选: ${catName}`, 800);
+    });
+  });
+  const searchInput = document.getElementById('searchInput'), searchBtn = document.getElementById('searchBtn');
+  const performSearch = () => { currentSearchKeyword = searchInput ? searchInput.value : ""; renderCards(); if(currentSearchKeyword) showToast(`🔍 搜索到 ${getFilteredData().length} 个相关舞台`, 1000); };
+  if(searchBtn) searchBtn.addEventListener('click', performSearch);
+  if(searchInput) searchInput.addEventListener('keypress', e => { if(e.key === 'Enter') performSearch(); });
+  
+  // 右下角随机舞台按钮
+  const randomBtn = document.getElementById('randomStageBtn');
+  if(randomBtn) randomBtn.addEventListener('click', randomJumpToStage);
+}
+function addTexture(){
+  const style = document.createElement('style');
+  style.textContent = `body::before{content:"";position:fixed;top:0;left:0;width:100%;height:100%;background-image:radial-gradient(#FFD8B0 1px,transparent 1px);background-size:32px 32px;opacity:0.2;pointer-events:none;z-index:-1;}`;
+  document.head.appendChild(style);
+}
+function init(){ renderCards(); bindEvents(); addTexture(); }
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

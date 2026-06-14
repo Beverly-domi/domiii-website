@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>主相册 | 橙白镭射 · 气泡文件夹</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+            font-size: 16px;
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #FFF7E8, #FFEFD6, #FFE4C4, #FFD9B5);
+            background-size: 200% 200%;
+            animation: softLaserShift 12s ease infinite alternate;
+            overflow-x: hidden;
+            position: relative;
+        }
+        @keyframes softLaserShift {
+            0% { background-position: 0% 0%; background: radial-gradient(circle at 20% 30%, #FFF7E8, #FFEFD6, #FFE4C4, #FFD9B5); }
+            100% { background-position: 100% 50%; background: radial-gradient(circle at 80% 70%, #FFFBF0, #FFEFDB, #FFE6CE, #FFDCB9); }
+        }
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(45deg, rgba(255,200,150,0.12) 0px, rgba(255,200,150,0.12) 2px, transparent 2px, transparent 10px);
+            pointer-events: none; z-index: 1;
+        }
+        .bubble-world { position: relative; z-index: 30; min-height: 100vh; padding: 2rem 1.5rem 5rem; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2rem; }
+        .folder-bubble {
+            position: relative; width: 150px; height: 150px; border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, rgba(255,255,245,0.4), rgba(255,248,235,0.25), rgba(255,240,220,0.18));
+            backdrop-filter: blur(3px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.08), 0 0 0 2.5px rgba(255,255,250,0.8) inset, 0 0 0 5px rgba(255,210,140,0.35) inset;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: transform 0.25s; animation: floatGlow 4s infinite alternate; z-index: 35;
+        }
+        .folder-bubble::after { content: ''; position: absolute; top: 8%; left: 10%; width: 35%; height: 22%; background: radial-gradient(circle, rgba(255,255,250,0.9), rgba(255,250,220,0.4)); border-radius: 50%; filter: blur(6px); pointer-events: none; }
+        @keyframes floatGlow {
+            0% { transform: translateY(0px); box-shadow: 0 15px 30px rgba(0,0,0,0.08), 0 0 0 2.5px rgba(255,250,235,0.9) inset; }
+            100% { transform: translateY(-10px); box-shadow: 0 25px 40px rgba(0,0,0,0.12), 0 0 0 3.5px rgba(255,245,220,1) inset; }
+        }
+        .folder-bubble-icon { font-size: 3rem; margin-bottom: 6px; }
+        .folder-bubble-title { font-weight: 800; font-size: 1rem; background: linear-gradient(135deg, #C95F1A, #E67E22); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .folder-bubble-count { background: rgba(230,120,40,0.6); backdrop-filter: blur(8px); padding: 2px 10px; border-radius: 40px; font-size: 0.65rem; color: #FFF2E0; }
+        .bubble-wrapper { transition: transform 0.08s linear; display: inline-block; }
+        .top-nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: flex-start;
+            padding: 12px 20px;
+            background: rgba(255,245,230,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #FFD9AE;
+        }
+        .back-home{
+            background:#FF952D;
+            border:1px solid #E67A00;
+            color:white;
+            padding:.35rem 1rem;
+            border-radius:40px;
+            font-size:.7rem;
+            font-weight:600;
+            cursor:pointer;
+            transition:all 0.25s;
+            text-decoration:none;
+            box-shadow:0 2px 8px rgba(255,149,45,0.3);
+            display:flex;
+            align-items:center;
+            gap:6px;
+        }
+        .back-home:hover{
+            background:#E67A00;
+            transform:translateY(-1px);
+            box-shadow:0 4px 12px rgba(255,149,45,0.4);
+        }
+        .floating-bubble {
+            position: fixed; border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, rgba(255,250,235,0.6), rgba(255,240,215,0.4), rgba(255,230,190,0.3));
+            backdrop-filter: blur(3px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.04), 0 0 0 1.5px rgba(255,255,240,0.8) inset;
+            cursor: pointer; z-index: 20; pointer-events: auto;
+            transition: transform 0.1s;
+        }
+        .floating-bubble:hover { transform: scale(1.05); }
+        .particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
+        .tip-hint { position: fixed; bottom: 18px; left: 0; right: 0; text-align: center; font-size: 0.7rem; color: #B45A2C; background: rgba(255,245,230,0.8); backdrop-filter: blur(12px); width: fit-content; margin: 0 auto; padding: 5px 20px; border-radius: 60px; pointer-events: none; z-index: 45; }
+    </style>
+</head>
+<body>
+<div class="top-nav">
+    <a href="wenjianjia.html" class="back-home"><i class="fas fa-home"></i> 返回主页</a>
+</div>
+<div class="bubble-world" id="bubbleWorld"></div>
+<canvas id="particleCanvas" class="particle-canvas"></canvas>
+<div class="tip-hint">✨ 点击气泡进入专属相册 ✨</div>
+
+<script>
+    // 相册入口配置
+    const albums = [
+        { id: "childhood", title: "🐷 童年照", icon: "🍼🐣", desc: "34个珍藏瞬间", page: "childhood.html" },
+        { id: "shiny", title: "✨ 神图", icon: "🌟🎤", desc: "8张舞台闪耀", page: "shiny.html" },
+        { id: "weibo", title: "📱 日常碎片", icon: "🌈📸", desc: "微博日常记录", page: "weibo.html" },
+        { id: "gaohui", title: "🔒 高会限定", icon: "💎✨", desc: "6张专属珍藏", page: "gaohui.html" }
+    ];
+
+    // 飘浮泡泡系统
+    let activeFloatingBubbles = [];
+    let particleCtx = null, particles = [];
+    let audioCtx = null;
+    let animFrame = null;
+
+    function playPopSound() {
+        try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.value = 960; gain.gain.value = 0.28;
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.26);
+            const noise = audioCtx.createScriptProcessor(512,1,1);
+            noise.onaudioprocess = (e) => { for(let i=0;i<512;i++) e.outputBuffer.getChannelData(0)[i] = (Math.random()-0.5)*0.2; noise.disconnect(); };
+            noise.connect(audioCtx.destination);
+            setTimeout(()=> noise.disconnect(), 120);
+        } catch(e) {}
+    }
+
+    function initParticleCanvas() { const c=document.getElementById('particleCanvas'); particleCtx=c.getContext('2d'); const resize=()=>{ c.width=innerWidth; c.height=innerHeight; }; window.addEventListener('resize',resize); resize(); }
+    function burstParticles(x,y){
+        if(!particleCtx) initParticleCanvas();
+        const canvas=document.getElementById('particleCanvas'); if(!canvas) return;
+        for(let i=0;i<38;i++){
+            const angle=Math.random()*Math.PI*2, speed=1.8+Math.random()*6;
+            const vx=Math.cos(angle)*speed, vy=Math.sin(angle)*speed;
+            const life=0.7+Math.random();
+            const colors=['#FFB347','#FFAA66','#FFC48A','#FFE0B0','#FFB074'];
+            particles.push({ x,y,vx,vy,life,maxLife:life,size:3+Math.random()*8,color:colors[Math.floor(Math.random()*colors.length)] });
+        }
+        if(animFrame) cancelAnimationFrame(animFrame);
+        function animate(){
+            if(!particleCtx) return;
+            particleCtx.clearRect(0,0,canvas.width,canvas.height);
+            let alive=false;
+            for(let i=particles.length-1;i>=0;i--){
+                const p=particles[i];
+                p.x+=p.vx; p.y+=p.vy; p.life-=0.018;
+                if(p.life<=0){ particles.splice(i,1); continue; }
+                alive=true;
+                particleCtx.globalAlpha=Math.min(0.8, (p.life/p.maxLife)*0.8);
+                particleCtx.fillStyle=p.color;
+                particleCtx.beginPath(); particleCtx.arc(p.x,p.y,p.size*(p.life/p.maxLife),0,Math.PI*2); particleCtx.fill();
+            }
+            if(alive) animFrame=requestAnimationFrame(animate);
+            else { cancelAnimationFrame(animFrame); animFrame=null; particleCtx.clearRect(0,0,canvas.width,canvas.height); }
+        }
+        animFrame=requestAnimationFrame(animate);
+    }
+
+    class FloatingBubble { constructor(el,x,y,size,sy,sx){ this.element=el; this.x=x; this.y=y; this.size=size; this.speedY=sy; this.speedX=sx; this.active=true; }
+    update(){ if(!this.active) return; this.y-=this.speedY; this.x+=this.speedX; if(this.y+this.size<0||this.y>innerHeight+200||this.x+this.size<-100||this.x-this.size>innerWidth+100){ this.remove(); return; } this.element.style.transform=`translate(${this.x}px, ${this.y}px)`; }
+    remove(){ if(this.element&&this.element.parentNode) this.element.remove(); this.active=false; const idx=activeFloatingBubbles.indexOf(this); if(idx!==-1) activeFloatingBubbles.splice(idx,1); } }
+    function createFloatingBubble(){
+        const size=22+Math.random()*48; const startX=Math.random()*(innerWidth-size); const startY=innerHeight+15+Math.random()*40;
+        const speedY=0.25+Math.random()*0.45; const speedX=(Math.random()-0.5)*0.3;
+        const div=document.createElement('div'); div.className='floating-bubble'; div.style.width=`${size}px`; div.style.height=`${size}px`; div.style.left='0px'; div.style.top='0px'; div.style.position='fixed'; div.style.transform=`translate(${startX}px, ${startY}px)`;
+        div.addEventListener('click',(e)=>{ e.stopPropagation(); const r=div.getBoundingClientRect(); burstParticles(r.left+r.width/2, r.top+r.height/2); playPopSound(); div.style.transition='transform 0.1s, opacity 0.12s'; div.style.transform=`translate(${r.left}px, ${r.top}px) scale(0.1)`; div.style.opacity='0'; setTimeout(()=>{ if(div.parentNode) div.remove(); const idx=activeFloatingBubbles.findIndex(b=>b.element===div); if(idx!==-1) activeFloatingBubbles.splice(idx,1); },130); });
+        document.body.appendChild(div); const obj=new FloatingBubble(div,startX,startY,size,speedY,speedX); activeFloatingBubbles.push(obj); return obj;
+    }
+    function updateFloatingBubbles(){ for(let b of activeFloatingBubbles) b.update(); requestAnimationFrame(updateFloatingBubbles); }
+    function startBubbleGenerator(){ setInterval(()=>{ if(activeFloatingBubbles.length<35) createFloatingBubble(); },2000); }
+
+    // 鼠标跟随
+    let mouseX=0,mouseY=0;
+    function applyFollow(){ document.querySelectorAll('.bubble-wrapper').forEach(wrap=>{ const rect=wrap.getBoundingClientRect(); const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2; const dx=(mouseX-cx)*0.04, dy=(mouseY-cy)*0.04; const limit=20; wrap.style.transform=`translate(${Math.min(limit,Math.max(-limit,dx))}px, ${Math.min(limit,Math.max(-limit,dy))}px)`; }); }
+    document.addEventListener('mousemove',(e)=>{ mouseX=e.clientX; mouseY=e.clientY; applyFollow(); });
+    document.addEventListener('touchmove',(e)=>{ if(e.touches.length){ mouseX=e.touches[0].clientX; mouseY=e.touches[0].clientY; applyFollow(); } });
+
+    function buildBubbles(){
+        const container=document.getElementById('bubbleWorld'); container.innerHTML='';
+        albums.forEach(album=>{
+            const wrapper=document.createElement('div'); wrapper.className='bubble-wrapper';
+            const bubble=document.createElement('div'); bubble.className='folder-bubble';
+            bubble.innerHTML=`<div class="folder-bubble-icon">${album.icon}</div><div class="folder-bubble-title">${album.title}</div><div class="folder-bubble-count">${album.desc}</div>`;
+            bubble.addEventListener('click',(e)=>{ e.stopPropagation(); const rect=bubble.getBoundingClientRect(); burstParticles(rect.left+rect.width/2, rect.top+rect.height/2); playPopSound(); setTimeout(()=>{ window.location.href=album.page; },100); });
+            wrapper.appendChild(bubble); container.appendChild(wrapper);
+        });
+    }
+
+    function init(){
+        buildBubbles();
+        initParticleCanvas();
+        startBubbleGenerator();
+        updateFloatingBubbles();
+        const actAudio=()=>{ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); document.removeEventListener('click',actAudio); };
+        document.addEventListener('click',actAudio);
+    }
+    init();
+</script>
+</body>
+</html>

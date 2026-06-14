@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>✨ 多米抽抽乐 · 限时召唤 ✨</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root {
+  --primary: #FF952D;
+  --primary-light: #FFB866;
+  --primary-dark: #E67A00;
+  --bg-cream: #FFFCEE;
+  --bg-card: #ffffff;
+  --text-dark: #3E2A1A;
+  --text-muted: #8A6E4E;
+  --n-color: #9e9e9e;
+  --r-color: #42a5f5;
+  --sr-color: #ab47bc;
+  --ssr-color: #ffd700;
+  --sp-color-1: #ff6b6b;
+  --sp-color-2: #ffd93d;
+  --sp-color-3: #6bcbff;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  background:linear-gradient(125deg, #FFF9F2 0%, #FFEFE0 100%);
+  min-height:100vh;color:var(--text-dark);overflow-x:hidden;
+  position:relative;
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:rgba(255,149,45,0.08)}
+::-webkit-scrollbar-thumb{background:var(--primary);border-radius:10px}
+
+/* ===== BG Canvas ===== */
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+/* ===== Toast ===== */
+#toast{
+  position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:rgba(255,255,255,0.95);backdrop-filter:blur(16px);
+  border:1px solid rgba(255,149,45,0.3);padding:12px 28px;border-radius:40px;
+  color:var(--text-dark);font-weight:600;font-size:15px;z-index:99999;
+  opacity:0;transition:all 0.45s cubic-bezier(0.22,1,0.36,1);pointer-events:none;
+  box-shadow:0 4px 20px rgba(255,149,45,0.15);white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ===== Body decorative effects (like stage.html) ===== */
+body::after{
+  content:'';
+  position:fixed;
+  top:-20%;
+  left:-20%;
+  width:140%;
+  height:140%;
+  background:radial-gradient(circle at 30% 40%, rgba(255,149,45,0.08), transparent 70%);
+  pointer-events:none;
+  z-index:-1;
+  animation: slowDrift 28s infinite alternate ease-in-out;
+}
+@keyframes slowDrift{
+  0%{ transform: translate(0,0) scale(1); opacity:0.4; }
+  100%{ transform: translate(3%, 2%) scale(1.05); opacity:0.7; }
+}
+
+/* ===== App Container ===== */
+.app{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:5rem 16px 40px}
+
+/* ===== Top Nav (like stage.html) ===== */
+.top-nav{
+  position:fixed;top:0;left:0;width:100%;
+  background:rgba(255,248,240,0.94);
+  backdrop-filter:blur(24px);
+  border-bottom:2px solid rgba(255,149,45,0.25);
+  padding:0.6rem 1.2rem;
+  z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:0.6rem;
+  box-shadow:0 4px 12px rgba(0,0,0,0.03);
+}
+.nav-logo{
+  font-size:1rem;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  letter-spacing:-0.2px;
+  white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+.nav-logo i{
+  font-size:1rem;
+  -webkit-text-fill-color:initial;
+  color:var(--primary);
+}
+.back-home{
+  background:var(--primary);
+  border:1px solid var(--primary-dark);
+  color:white;
+  padding:0.35rem 1rem;
+  border-radius:40px;
+  font-size:0.7rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.25s;
+  text-decoration:none;
+  box-shadow:0 2px 8px rgba(255,149,45,0.3);
+  font-family:inherit;
+  white-space:nowrap;
+}
+.back-home:hover{
+  background:var(--primary-dark);
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(255,149,45,0.4);
+}
+.nav-right{
+  display:flex;align-items:center;gap:8px;
+}
+.coin-display{
+  display:flex;align-items:center;gap:4px;
+  background:rgba(255,149,45,0.12);padding:4px 10px;border-radius:60px;
+  font-size:13px;font-weight:700;color:var(--primary-dark);
+  border:1px solid rgba(255,149,45,0.2);
+  white-space:nowrap;
+}
+.coin-display .coin-icon{font-size:15px}
+.nav-btn{
+  background:rgba(255,255,255,0.6);border:1px solid rgba(255,149,45,0.15);
+  color:var(--text-dark);padding:4px 10px;border-radius:60px;
+  font-size:12px;font-weight:600;cursor:pointer;transition:0.25s;
+  font-family:inherit;display:flex;align-items:center;gap:4px;
+  white-space:nowrap;
+}
+.nav-btn:hover{background:rgba(255,149,45,0.2);border-color:var(--primary);transform:translateY(-1px)}
+.nav-btn:active{transform:scale(0.96)}
+.nav-btn.daily-btn{color:var(--primary-dark);border-color:rgba(255,149,45,0.3)}
+.nav-btn.daily-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+/* ===== Gacha Machine ===== */
+.gacha-area{
+  display:flex;flex-direction:column;align-items:center;
+  margin:20px 0 28px;position:relative;
+}
+/* ===== Card Deck Shape ===== */
+.card-pack{
+  width:170px;height:240px;position:relative;cursor:pointer;
+  background:linear-gradient(145deg,#fff,#FFF5E8);
+  border-radius:14px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 8px 24px rgba(255,149,45,0.15), 2px 4px 12px rgba(0,0,0,0.06);
+  transition:all 0.25s ease;user-select:none;
+  border:2px solid rgba(255,149,45,0.15);
+}
+/* Stack effect - underlying cards */
+.card-pack::before{
+  content:'';position:absolute;top:4px;left:4px;right:-4px;bottom:-4px;
+  background:linear-gradient(145deg,#FFF0E0,#FFE0C0);
+  border-radius:14px;z-index:-1;
+  border:2px solid rgba(255,149,45,0.1);
+}
+.card-pack::after{
+  content:'';position:absolute;top:8px;left:8px;right:-8px;bottom:-8px;
+  background:linear-gradient(145deg,#FFE8D0,#FFD5B0);
+  border-radius:14px;z-index:-2;
+  border:2px solid rgba(255,149,45,0.06);
+}
+.card-pack:hover{transform:translateY(-4px) rotate(-1deg);box-shadow:0 12px 32px rgba(255,149,45,0.2), 2px 6px 16px rgba(0,0,0,0.08)}
+.card-pack:active{transform:scale(0.96)}
+.card-pack .pack-label{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  font-size:15px;font-weight:700;color:var(--text-dark);
+}
+.card-pack .pack-label i{font-size:32px;color:var(--primary)}
+.card-pack .pack-sub{font-size:11px;font-weight:500;color:var(--text-muted)}
+/* Slide-deal card (animates from right) */
+.slide-card{
+  position:fixed;z-index:9998;pointer-events:none;
+  width:220px;height:310px;border-radius:16px;
+  background:#fff;box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  overflow:hidden;opacity:0;
+  transform:translate(100vw,-50%) rotate(12deg);
+}
+.slide-card img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.slide-card.dealing{
+  animation:slideDeal 1s cubic-bezier(0.22,0.85,0.35,1) forwards;
+}
+@keyframes slideDeal{
+  0%{transform:translate(calc(100vw + 100px),-50%) rotate(15deg);opacity:1}
+  40%{transform:translate(-50%,-55%) rotate(-2deg);opacity:1}
+  70%{transform:translate(-50%,-48%) rotate(1deg);opacity:1}
+  100%{transform:translate(-50%,-50%) scale(0.01);opacity:0}
+}
+.card-pack.hidden{display:none}
+
+/* Loading text */
+.loading-text{
+  margin-top:16px;font-size:20px;font-weight:700;
+  color:var(--primary-dark);opacity:0;
+  transition:opacity 0.4s ease;height:30px;
+  display:flex;align-items:center;gap:6px;
+}
+.loading-text.show{opacity:1}
+.loading-text .dot{animation:dotPulse 1.2s ease infinite}
+.loading-text .dot:nth-child(2){animation-delay:0.2s}
+.loading-text .dot:nth-child(3){animation-delay:0.4s}
+@keyframes dotPulse{
+  0%,60%,100%{opacity:0.3;transform:translateY(0)}
+  30%{opacity:1;transform:translateY(-4px)}
+}
+
+/* ===== Reveal Area ===== */
+.reveal-area{
+  display:none;flex-direction:column;align-items:center;
+  margin:12px 0;position:relative;min-height:380px;
+  perspective:1200px;
+}
+.reveal-area.show{display:flex}
+.reveal-area .card-slot{
+  width:260px;height:360px;position:relative;
+}
+/* Show Card — direct display, no flip */
+.show-card{
+  width:100%;height:100%;
+  background:#fff;
+  border:2px solid transparent;
+  display:flex;flex-direction:column;
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 12px 40px rgba(0,0,0,0.4);
+  animation:cardPopIn 0.4s cubic-bezier(0.22,0.85,0.35,1) forwards;
+}
+@keyframes cardPopIn{
+  0%{transform:scale(0.7);opacity:0}
+  60%{transform:scale(1.04)}
+  100%{transform:scale(1);opacity:1}
+}
+.show-card .card-img{
+  width:100%;height:calc(100% - 48px);object-fit:cover;
+  display:block;background:#FFF0E0;
+}
+.show-card .card-info{
+  height:48px;padding:6px 14px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,149,45,0.04);
+  border-top:1px solid rgba(255,149,45,0.1);
+}
+.show-card .card-rarity{font-size:13px;font-weight:700;margin-top:0}
+/* Rarity borders */
+.show-card.rarity-N{border-color:var(--n-color)}
+.show-card.rarity-R{border-color:var(--r-color)}
+.show-card.rarity-SR{border-color:var(--sr-color)}
+.show-card.rarity-SSR{border-color:var(--ssr-color)}
+.show-card.rarity-SP{border-color:transparent;background-image:linear-gradient(#fff,#fff),linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff,#ff6b6b);background-origin:padding-box,border-box;background-clip:padding-box,border-box}
+.show-card .rarity-N{color:var(--n-color)}
+.show-card .rarity-R{color:var(--r-color)}
+.show-card .rarity-SR{color:var(--sr-color)}
+.show-card .rarity-SSR{color:var(--ssr-color)}
+.show-card .rarity-SP{background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff);background-clip:text;-webkit-background-clip:text;color:transparent;font-weight:800}
+
+/* SP watermark */
+.sp-watermark{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);
+  font-size:48px;font-weight:900;color:rgba(255,215,0,0.12);
+  pointer-events:none;letter-spacing:6px;white-space:nowrap;
+  text-shadow:0 0 20px rgba(255,215,0,0.1);
+}
+
+/* ===== Rarity Effects ===== */
+.rarity-effects{position:absolute;inset:-30px;pointer-events:none;z-index:5}
+/* N: white flash + bounce */
+.effect-N .flash-overlay{
+  position:absolute;inset:0;background:rgba(255,149,45,0.3);
+  animation:flashPulse 0.5s ease forwards;border-radius:16px;
+}
+@keyframes flashPulse{
+  0%{opacity:0}
+  30%{opacity:1}
+  100%{opacity:0}
+}
+/* R: blue glow */
+.effect-R .glow-ring{
+  position:absolute;inset:-8px;border-radius:24px;
+  box-shadow:0 0 40px var(--r-color),inset 0 0 40px rgba(66,165,245,0.2);
+  animation:glowPulse 1.2s ease 2;
+}
+/* SR: purple ring + stars */
+.effect-SR .glow-ring{
+  position:absolute;inset:-12px;border-radius:28px;
+  box-shadow:0 0 60px var(--sr-color),inset 0 0 60px rgba(171,71,188,0.2);
+  animation:glowPulse 1.5s ease 2;
+}
+.effect-SR .star-particle{
+  position:absolute;font-size:20px;
+  animation:starBurst 1.2s ease forwards;
+}
+@keyframes starBurst{
+  0%{opacity:1;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}
+}
+/* SSR: gold glow + falling gold particles */
+.effect-SSR .glow-ring{
+  position:absolute;inset:-16px;border-radius:32px;
+  box-shadow:0 0 80px var(--ssr-color),0 0 120px rgba(255,215,0,0.3);
+  animation:glowPulse 1.8s ease infinite;
+}
+.effect-SSR .gold-particle{
+  position:absolute;width:4px;height:4px;border-radius:50%;
+  background:var(--ssr-color);
+  animation:goldFall 2s ease-in forwards;
+}
+@keyframes glowPulse{
+  0%,100%{opacity:0.6}
+  50%{opacity:1}
+}
+@keyframes goldFall{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(300px) scale(0.3)}
+}
+/* SP: rainbow + screen shake + rainbow ring */
+.effect-SP .glow-ring{
+  position:absolute;inset:-20px;border-radius:36px;
+  box-shadow:0 0 100px rgba(255,107,107,0.5),0 0 150px rgba(255,217,61,0.3),0 0 200px rgba(107,203,255,0.2);
+  animation:spGlow 2s ease infinite;
+}
+@keyframes spGlow{
+  0%,100%{opacity:0.5;filter:hue-rotate(0deg)}
+  50%{opacity:1;filter:hue-rotate(180deg)}
+}
+.effect-SP .rainbow-sweep{
+  position:absolute;inset:-4px;border-radius:20px;
+  background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff,#ff6b6b,#ffd93d,#6bcbff);
+  background-size:400% 400%;
+  animation:rainbowSweep 1.5s linear infinite;z-index:-1;opacity:0.5;
+}
+@keyframes rainbowSweep{
+  0%{background-position:0% 50%}
+  100%{background-position:400% 50%}
+}
+.effect-SP .sp-text{
+  position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+  font-size:28px;font-weight:900;
+  background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff,#ff6b6b);
+  background-size:200% auto;background-clip:text;-webkit-background-clip:text;color:transparent;
+  animation:rainbowSweep 1s linear infinite;white-space:nowrap;
+  text-shadow:none;filter:drop-shadow(0 0 12px rgba(255,215,0,0.4));
+}
+.screen-shake{
+  animation:screenShake 0.6s ease;
+}
+@keyframes screenShake{
+  0%,100%{transform:translate(0,0)}
+  10%{transform:translate(-6px,3px)}
+  20%{transform:translate(4px,-6px)}
+  30%{transform:translate(-4px,5px)}
+  40%{transform:translate(6px,-3px)}
+  50%{transform:translate(-6px,-4px)}
+  60%{transform:translate(4px,6px)}
+  70%{transform:translate(-3px,-5px)}
+  80%{transform:translate(5px,3px)}
+  90%{transform:translate(-5px,-2px)}
+}
+.effect-SP .rainbow-ring{
+  position:absolute;inset:-30px;border-radius:50%;
+  border:4px solid transparent;
+  border-image:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff,#ff6b6b) 1;
+  animation:ringExpand 1.5s ease forwards;
+}
+@keyframes ringExpand{
+  0%{opacity:0.8;transform:scale(0.8)}
+  100%{opacity:0;transform:scale(1.3)}
+}
+
+/* ===== Draw Buttons ===== */
+.draw-buttons{
+  display:flex;gap:12px;margin:20px 0;flex-wrap:wrap;justify-content:center;
+}
+.btn-draw{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;border:none;padding:14px 32px;border-radius:60px;
+  font-size:17px;font-weight:700;cursor:pointer;transition:all 0.25s;
+  box-shadow:0 6px 24px rgba(255,149,45,0.35);font-family:inherit;
+  display:flex;align-items:center;gap:8px;
+}
+.btn-draw:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(255,149,45,0.45)}
+.btn-draw:active{transform:scale(0.96)}
+.btn-draw:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn-draw.secondary{
+  background:rgba(255,255,255,0.6);box-shadow:none;
+  border:1px solid rgba(255,149,45,0.2);color:var(--text-dark);
+}
+.btn-draw.secondary:hover{
+  background:rgba(255,255,255,0.9);box-shadow:none;
+}
+
+/* ===== Lucky Time Badge ===== */
+.lucky-badge{
+  display:none;align-items:center;gap:6px;
+  background:linear-gradient(135deg,rgba(255,107,107,0.2),rgba(255,217,61,0.2));
+  border:1px solid rgba(255,217,61,0.3);border-radius:60px;
+  padding:6px 16px;margin-bottom:12px;font-size:14px;font-weight:600;
+  color:var(--primary-dark);animation:luckyGlow 1.5s ease infinite;
+}
+.lucky-badge.show{display:inline-flex}
+@keyframes luckyGlow{
+  0%,100%{box-shadow:0 0 10px rgba(255,217,61,0.2)}
+  50%{box-shadow:0 0 25px rgba(255,217,61,0.4)}
+}
+
+/* ===== Cross-page Navigation FAB ===== */
+.nav-fab{
+  position:fixed;bottom:24px;right:24px;z-index:50;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:#fff;border:none;cursor:pointer;
+  box-shadow:0 4px 16px rgba(255,149,45,0.35);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;transition:all 0.3s ease;
+  text-decoration:none;
+}
+.nav-fab:hover{transform:scale(1.1) translateY(-2px);box-shadow:0 8px 24px rgba(255,149,45,0.45)}
+.nav-fab:active{transform:scale(0.95)}
+.nav-fab .fab-tip{
+  position:absolute;right:60px;background:rgba(62,42,26,0.9);
+  color:#fff;font-size:12px;font-weight:600;padding:4px 10px;
+  border-radius:8px;white-space:nowrap;opacity:0;
+  pointer-events:none;transition:opacity 0.3s ease;
+}
+.nav-fab:hover .fab-tip{opacity:1}
+
+/* ===== Hidden Star ===== */
+.hidden-star{
+  position:fixed;bottom:90px;right:30px;font-size:10px;
+  color:rgba(255,215,0,0.08);cursor:pointer;z-index:5;
+  transition:all 0.4s ease;user-select:none;
+}
+.hidden-star:hover,.hidden-star.glowing{
+  color:rgba(255,215,0,0.6);transform:scale(1.5);
+  text-shadow:0 0 12px rgba(255,215,0,0.3);
+}
+.hidden-star.activated{
+  color:#ffd700;animation:starActivated 1s ease forwards;
+}
+@keyframes starActivated{
+  0%,100%{transform:scale(1.5);text-shadow:0 0 20px rgba(255,215,0,0.5)}
+  50%{transform:scale(2);text-shadow:0 0 40px rgba(255,215,0,0.8)}
+}
+
+/* ===== Collection Area ===== */
+.collection-area{
+  margin-top:30px;
+}
+.section-title{
+  font-size:18px;font-weight:700;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;color:var(--text-dark);
+  padding:0 4px;
+}
+.cards-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+  gap:16px;
+}
+.collection-card{
+  background:transparent;border-radius:14px;
+  border:1px solid rgba(255,149,45,0.12);
+  animation:cardAppear 0.4s ease forwards;
+  perspective:1200px;
+  cursor:pointer;
+}
+.cc-inner{
+  display:grid;
+  grid-template:1fr / 1fr;
+  transform-style:preserve-3d;
+  transition:transform 0.5s cubic-bezier(0.22,0.85,0.35,1), box-shadow 0.3s ease;
+  border-radius:14px;
+}
+.collection-card:hover .cc-inner{
+  transform:rotateY(180deg) translateY(-6px);
+}
+.collection-card:hover{box-shadow:0 16px 40px rgba(255,149,45,0.2)}
+.cc-front, .cc-back{
+  grid-area:1/1;
+  backface-visibility:hidden;
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+}
+.cc-back{
+  transform:rotateY(180deg);
+  background:linear-gradient(145deg,#FFE6CC,#FFF2E0);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;padding:20px;
+  border:2px solid rgba(255,149,45,0.2);
+}
+.cc-back i{font-size:40px;color:var(--primary);opacity:0.5}
+.cc-back .cc-back-text{
+  font-size:13px;font-weight:700;color:var(--text-muted);
+  letter-spacing:2px;
+}
+.cc-back .cc-back-sub{
+  font-size:10px;color:var(--text-muted);opacity:0.5;
+}
+.collection-card{transition:box-shadow 0.3s ease;}
+@keyframes cardAppear{
+  from{opacity:0;transform:translateY(16px) scale(0.95)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.collection-card .cc-img{
+  width:100%;aspect-ratio:3/4;object-fit:cover;display:block;
+  background:#FFF0E0;
+}
+.collection-card .cc-info{
+  padding:8px 10px;text-align:center;
+}
+.collection-card .cc-rarity{font-size:11px;font-weight:600;margin-top:2px}
+.collection-card .cc-time{
+  font-size:10px;color:var(--text-muted);margin-top:4px;
+}
+.collection-card .cc-rarity.N{color:var(--n-color)}
+.collection-card .cc-rarity.R{color:var(--r-color)}
+.collection-card .cc-rarity.SR{color:var(--sr-color)}
+.collection-card .cc-rarity.SSR{color:var(--ssr-color)}
+.collection-card .cc-rarity.SP{background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff);background-clip:text;-webkit-background-clip:text;color:transparent}
+.collection-card.rarity-N{border-color:rgba(158,158,158,0.2)}
+.collection-card.rarity-R{border-color:rgba(66,165,245,0.2)}
+.collection-card.rarity-SR{border-color:rgba(171,71,188,0.2)}
+.collection-card.rarity-SSR{border-color:rgba(255,215,0,0.2)}
+.collection-card.rarity-SP{border-color:rgba(255,107,107,0.3)}
+.empty-collection{
+  grid-column:1/-1;text-align:center;padding:40px 20px;
+  color:var(--text-muted);font-size:15px;
+}
+
+/* ===== Gallery Drawer ===== */
+.gallery-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,0.6);opacity:0;pointer-events:none;
+  transition:opacity 0.35s ease;
+}
+.gallery-overlay.open{opacity:1;pointer-events:auto}
+.gallery-panel{
+  position:fixed;top:0;right:0;width:90%;max-width:420px;height:100vh;
+  background:linear-gradient(180deg,#FFF9F0,#FFE8D0);
+  border-left:1px solid rgba(255,149,45,0.2);
+  transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.22,1,0.36,1);
+  overflow-y:auto;z-index:10000;
+  padding:20px;
+}
+.gallery-overlay.open .gallery-panel{transform:translateX(0)}
+.gallery-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;padding-bottom:16px;
+  border-bottom:1px solid rgba(255,149,45,0.12);
+}
+.gallery-header h2{font-size:20px;font-weight:700;color:var(--text-dark);display:flex;align-items:center;gap:8px}
+.gallery-close{
+  width:36px;height:36px;border-radius:50%;border:none;
+  background:rgba(255,149,45,0.1);color:var(--text-muted);font-size:18px;
+  cursor:pointer;transition:0.25s;display:flex;align-items:center;justify-content:center;
+  font-family:inherit;
+}
+.gallery-close:hover{background:rgba(255,107,107,0.15);color:#e74c3c;transform:rotate(90deg)}
+/* Progress */
+.gallery-progress{
+  margin-bottom:24px;
+}
+.gallery-progress .gp-text{
+  font-size:13px;color:var(--text-muted);margin-bottom:8px;
+}
+.gallery-progress .gp-bar{
+  height:6px;border-radius:6px;background:rgba(255,149,45,0.12);overflow:hidden;
+}
+.gallery-progress .gp-fill{
+  height:100%;border-radius:6px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-light));
+  transition:width 0.5s ease;width:0%;
+}
+/* Rarity sections */
+.gallery-section{margin-bottom:20px}
+.gallery-section h3{
+  font-size:14px;font-weight:700;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;color:var(--text-dark);
+}
+.gallery-section h3 .badge{
+  font-size:10px;background:rgba(255,149,45,0.1);padding:2px 8px;
+  border-radius:30px;color:var(--text-muted);
+}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.gallery-card{
+  border-radius:10px;overflow:hidden;aspect-ratio:3/4;
+  position:relative;background:#fff;
+  border:1px solid rgba(255,149,45,0.1);
+  transition:transform 0.2s;
+}
+.gallery-card:hover{transform:translateY(-2px)}
+.gallery-card img{width:100%;height:100%;object-fit:cover;display:block}
+.gallery-card .gc-silhouette{
+  width:100%;height:100%;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:rgba(255,149,45,0.03);
+}
+.gallery-card .gc-silhouette .q-mark{
+  font-size:32px;color:rgba(62,42,26,0.12);font-weight:700;
+}
+.gallery-card .gc-silhouette .q-label{
+  font-size:10px;color:rgba(62,42,26,0.2);margin-top:4px;
+}
+.gallery-card .gc-rarity-tag{
+  position:absolute;bottom:4px;left:4px;right:4px;
+  text-align:center;font-size:9px;font-weight:700;padding:2px 6px;
+  border-radius:6px;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);
+}
+
+/* ===== Responsive ===== */
+@media(max-width:600px){
+  .app{padding:5rem 12px 40px}
+  .top-nav{padding:0.5rem 0.8rem;flex-wrap:wrap;gap:4px}
+  .nav-logo{font-size:0.85rem}
+  .nav-right{gap:5px}
+  .nav-btn{padding:5px 8px;font-size:11px}
+  .coin-display{font-size:13px;padding:5px 10px}
+  .card-pack{width:150px;height:195px}
+  .card-pack .pack-label{padding-top:44px;font-size:13px}
+  .card-pack .pack-label i{font-size:20px}
+  .card-pack .bag-rim{height:16px;top:-6px}
+  .card-pack .bag-bow{font-size:20px;top:-12px}
+  .card-pack .bag-cord{top:0}
+  .card-pack .bag-star{font-size:10px}
+  .reveal-area .card-slot{width:210px;height:290px}
+  .btn-draw{padding:12px 20px;font-size:15px}
+  .btn-draw.secondary{font-size:13px;padding:10px 16px}
+  .cards-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+  .gallery-panel{width:100%;max-width:100%;padding:16px}
+  .gallery-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .hidden-star{right:16px;bottom:40px}
+  .nav-fab{width:44px;height:44px;font-size:16px;bottom:16px;left:16px}
+  .effect-SP .sp-text{font-size:20px;top:-32px}
+}
+@media(max-width:400px){
+  .cards-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card-pack{width:130px;height:170px}
+  .card-pack .pack-label{padding-top:38px;font-size:12px}
+  .card-pack .bag-rim{height:12px;top:-4px}
+  .card-pack .bag-bow{font-size:16px;top:-10px}
+  .card-pack .bag-cord{top:1px}
+  .reveal-area .card-slot{width:180px;height:250px}
+  .nav-logo{font-size:0.75rem}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<div id="toast"></div>
+
+<!-- ===== Navigation to 翻翻乐 ===== -->
+<a class="nav-fab" href="game.html" title="去翻翻乐">
+  🎮
+  <span class="fab-tip">🎮 翻翻乐</span>
+</a>
+
+<!-- ===== Hidden Star Easter Egg ===== -->
+<div class="hidden-star" id="hiddenStar" title="✨ 点击有惊喜 ✨">⭐</div>
+
+<!-- ===== Main App ===== -->
+<div class="app" id="app">
+
+  <!-- Top Nav (like stage.html) -->
+  <div class="top-nav">
+    <a href="wenjianjia.html" class="back-home">🏠 返回主页</a>
+    <div class="nav-logo"><i class="fas fa-gem"></i> 多米抽抽乐</div>
+    <div class="nav-right">
+      <div class="coin-display">
+        <span class="coin-icon">🪙</span>
+        <span id="coinCount">100</span>
+      </div>
+      <button class="nav-btn daily-btn" id="dailyBtn">🎁 每日</button>
+      <button class="nav-btn" id="galleryBtn">📖 图鉴</button>
+    </div>
+  </div>
+
+  <!-- Lucky Time Badge -->
+  <div style="display:flex;justify-content:center">
+    <div class="lucky-badge" id="luckyBadge">✨ 幸运时刻 ✨ SP概率翻倍！</div>
+  </div>
+
+  <!-- Gacha Area -->
+  <div class="gacha-area">
+    <!-- Bag (replaces old card pack) -->
+    <div class="card-pack" id="cardPack">
+      <div class="pack-label">
+        <i class="fas fa-star"></i>
+        <span>点我抽卡</span>
+        <span class="pack-sub">滑动翻开</span>
+      </div>
+    </div>
+    <!-- Sliding deal card (created dynamically) -->
+
+    <!-- Loading Text -->
+    <div class="loading-text" id="loadingText">
+      ✨ 正在召唤 <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+    </div>
+
+    <!-- Reveal Area — direct card display, no flip -->
+    <div class="reveal-area" id="revealArea">
+      <div class="card-slot">
+        <div class="show-card" id="showCard">
+          <img class="card-img" id="cardImg" src="" alt="偶像卡片">
+          <div class="card-info">
+            <div class="card-rarity" id="cardRarity">-</div>
+          </div>
+          <div class="sp-watermark" id="spWatermark" style="display:none">LIMITED</div>
+        </div>
+        <div class="rarity-effects" id="rarityEffects"></div>
+      </div>
+    </div>
+
+    <!-- Draw Buttons -->
+    <div class="draw-buttons">
+      <button class="btn-draw" id="drawBtn"><i class="fas fa-gem"></i> 抽卡 <span id="drawCost">(10🪙)</span></button>
+      <button class="btn-draw secondary" id="drawTenBtn"><i class="fas fa-layer-group"></i> 十连抽 <span id="drawTenCost">(100🪙)</span></button>
+    </div>
+  </div>
+
+  <!-- Collection Area -->
+  <div class="collection-area">
+    <div class="section-title"><i class="fas fa-folder-open"></i> 我的收藏 <span id="collectionCount" style="font-size:13px;color:var(--text-muted);font-weight:400"></span></div>
+    <div class="cards-grid" id="collectionGrid">
+      <div class="empty-collection">🎴 还没有抽到卡片，试试手气吧！</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Gallery Drawer ===== -->
+<div class="gallery-overlay" id="galleryOverlay">
+  <div class="gallery-panel" id="galleryPanel">
+    <div class="gallery-header">
+      <h2>📖 卡片图鉴</h2>
+      <button class="gallery-close" id="galleryClose">✕</button>
+    </div>
+    <div class="gallery-progress">
+      <div class="gp-text" id="progressText">已收集 0 / 42</div>
+      <div class="gp-bar"><div class="gp-fill" id="progressFill"></div></div>
+    </div>
+    <div id="galleryContent"></div>
+  </div>
+</div>
+
+<script>
+// ======================================================================
+// DATA
+// ======================================================================
+const ALL_CARDS = [
+  // N (10 cards, uses R1-R10) - 45%
+  { id:'n1', name:'清新日常 · 晨光', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R1.jpg', series:'daily' },
+  { id:'n2', name:'暖阳微笑 · 午后', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R2.jpg', series:'daily' },
+  { id:'n3', name:'微风轻拂 · 春日', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R3.jpg', series:'daily' },
+  { id:'n4', name:'漫步校园 · 青春', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R4.jpg', series:'daily' },
+  { id:'n5', name:'甜品时光 · 甜蜜', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R5.jpg', series:'daily' },
+  { id:'n6', name:'街角偶遇 · 邂逅', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R6.jpg', series:'daily' },
+  { id:'n7', name:'书页飘香 · 文艺', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R7.jpg', series:'daily' },
+  { id:'n8', name:'悠闲周末 · 惬意', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R8.jpg', series:'daily' },
+  { id:'n9', name:'城市漫游 · 探索', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R9.jpg', series:'daily' },
+  { id:'n10', name:'落日余晖 · 温柔', rarity:'N', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R10.jpg', series:'daily' },
+  // R (9 cards, uses R11-R19) - 30%
+  { id:'r1', name:'舞台聚焦 · 闪耀', rarity:'R', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R11.jpg', series:'stage' },
+  { id:'r2', name:'霓虹灯下 · 迷离', rarity:'R', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R12.jpg', series:'stage' },
+  { id:'r3', name:'星光漫步 · 梦幻', rarity:'R', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R13.jpg', series:'stage' },
+  { id:'r4', name:'咖啡香气 · 慵懒', rarity:'R', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R14.jpg', series:'daily' },
+  { id:'r5', name:'秘密花园 · 邂逅', rarity:'R', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R15.jpg', series:'daily' },
+  { id:'r6', name:'雨中漫步 · 诗意', rarity:'R', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R16.jpg', series:'daily' },
+  { id:'r7', name:'镜中幻境 · 倒影', rarity:'R', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R17.jpg', series:'stage' },
+  { id:'r8', name:'黄昏剪影 · 唯美', rarity:'R', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R18.jpg', series:'daily' },
+  { id:'r9', name:'月光奏鸣 · 宁静', rarity:'R', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/R19.jpg', series:'stage' },
+  // SR (13 cards, uses SR1-SR13) - 15%
+  { id:'sr1', name:'银河漫游 · 星辰', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR1.jpg', series:'stage' },
+  { id:'sr2', name:'梦境舞者 · 幻光', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR2.jpg', series:'stage' },
+  { id:'sr3', name:'烈焰之翼 · 炽热', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR3.jpg', series:'stage' },
+  { id:'sr4', name:'水晶宫殿 · 冰雪', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR4.jpg', series:'fantasy' },
+  { id:'sr5', name:'暗夜蔷薇 · 魅影', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR5.jpg', series:'stage' },
+  { id:'sr6', name:'天空之城 · 云端', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR6.jpg', series:'fantasy' },
+  { id:'sr7', name:'深海人鱼 · 琉璃', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR7.jpg', series:'fantasy' },
+  { id:'sr8', name:'极光之巅 · 绚烂', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR8.jpg', series:'fantasy' },
+  { id:'sr9', name:'幻彩蝶翼 · 翩跹', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR9.jpg', series:'fantasy' },
+  { id:'sr10', name:'时光旅人 · 穿梭', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR10.jpg', series:'stage' },
+  { id:'sr11', name:'星际信使 · 信号', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR11.jpg', series:'fantasy' },
+  { id:'sr12', name:'花之精灵 · 绽放', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR12.jpg', series:'fantasy' },
+  { id:'sr13', name:'月下独角 · 神话', rarity:'SR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SR13.jpg', series:'fantasy' },
+  // SSR (8 cards, uses SSR1-SSR8) - 8%
+  { id:'ssr1', name:'闪耀皇冠 · 女王', rarity:'SSR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SSR1.jpg', series:'stage' },
+  { id:'ssr2', name:'月下独舞 · 绝美', rarity:'SSR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SSR2.jpg', series:'stage' },
+  { id:'ssr3', name:'永恒之诗 · 不朽', rarity:'SSR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SSR3.jpg', series:'fantasy' },
+  { id:'ssr4', name:'凤凰涅槃 · 重生', rarity:'SSR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SSR4.jpg', series:'fantasy' },
+  { id:'ssr5', name:'天使降临 · 圣洁', rarity:'SSR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SSR5.jpg', series:'fantasy' },
+  { id:'ssr6', name:'命运之轮 · 轮回', rarity:'SSR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SSR6.jpg', series:'fantasy' },
+  { id:'ssr7', name:'暗影女王 · 气场', rarity:'SSR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SSR7.jpg', series:'stage' },
+  { id:'ssr8', name:'创世之光 · 起源', rarity:'SSR', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SSR8.jpg', series:'fantasy' },
+  // SP (2 cards, uses SP1-SP2) - 2%
+  { id:'sp1', name:'宇宙奇迹 · 瑟琪', rarity:'SP', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SP1.jpg', series:'limited' },
+  { id:'sp2', name:'无限可能 · 未来', rarity:'SP', img:'https://domiii.oss-cn-hangzhou.aliyuncs.com/card/SP2.jpg', series:'limited' },
+];
+
+const RARITY_ORDER = ['N','R','SR','SSR','SP'];
+const RARITY_COLORS = { N:'#9e9e9e', R:'#42a5f5', SR:'#ab47bc', SSR:'#ffd700', SP:'linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff)' };
+const RARITY_LABELS = { N:'N·Normal', R:'R·Rare', SR:'SR·Super Rare', SSR:'SSR·Super Super Rare', SP:'SP·Special' };
+const COST_PER_DRAW = 10;
+const COST_PER_TEN = 100;
+const DAILY_REWARD = 20;
+
+// ======================================================================
+// STATE
+// ======================================================================
+let state = {
+  coins: 100,
+  ownedCards: [], // [{cardId, timestamp}]
+  lastDaily: null, // 'YYYY-MM-DD'
+  totalDraws: 0,
+  consecutiveNoSSR: 0,
+  hiddenStarBoost: false,
+  totalCards: 0,
+  spDuplicateCount: 0,
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('idol_gacha_state');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      Object.assign(state, parsed);
+    }
+  } catch(e) { /* ignore */ }
+}
+function saveState() {
+  try {
+    localStorage.setItem('idol_gacha_state', JSON.stringify(state));
+  } catch(e) { /* ignore */ }
+}
+
+// ======================================================================
+// GACHA LOGIC
+// ======================================================================
+function rollRarity() {
+  let spChance = 0.002; // base 0.2%
+
+  // Pity: 10 consecutive draws without SSR/SP
+  if (state.consecutiveNoSSR >= 10) {
+    spChance = 0.02;
+  }
+
+  // Hidden star boost
+  if (state.hiddenStarBoost) {
+    spChance += 0.01;
+    state.hiddenStarBoost = false;
+  }
+
+  // Lucky time: on the hour
+  const now = new Date();
+  if (now.getMinutes() === 0 && now.getSeconds() < 60) {
+    spChance *= 2;
+  }
+
+  const roll = Math.random();
+  let cum = 0;
+
+  cum += spChance;
+  if (roll < cum) return 'SP';
+
+  cum += 0.02; // SSR 2%
+  if (roll < cum) return 'SSR';
+
+  cum += 0.15; // SR 15%
+  if (roll < cum) return 'SR';
+
+  cum += 0.30; // R 30%
+  if (roll < cum) return 'R';
+
+  return 'N'; // N = remainder ~52.8%
+}
+
+function pickCard(rarity) {
+  const pool = ALL_CARDS.filter(c => c.rarity === rarity);
+  if (pool.length === 0) return ALL_CARDS[Math.floor(Math.random() * ALL_CARDS.length)];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function drawSingle(noAnimation) {
+  if (state.coins < COST_PER_DRAW) {
+    showToast('🪙 应援币不足！领取每日奖励或攒攒再来吧');
+    return null;
+  }
+
+  state.coins -= COST_PER_DRAW;
+  state.totalDraws++;
+
+  const rarity = rollRarity();
+  const card = pickCard(rarity);
+
+  // Track consecutive no SSR/SP
+  if (rarity === 'SSR' || rarity === 'SP') {
+    state.consecutiveNoSSR = 0;
+  } else {
+    state.consecutiveNoSSR++;
+  }
+
+  // Check duplicate SP
+  const isDuplicateSP = (rarity === 'SP') && state.ownedCards.some(oc => oc.cardId === card.id);
+  if (isDuplicateSP) {
+    state.coins += 50;
+    state.spDuplicateCount++;
+    showToast('🌟 重复SP自动分解！获得50🪙 + 称号「欧皇降临」');
+  }
+
+  state.ownedCards.push({ cardId: card.id, timestamp: Date.now() });
+  saveState();
+  updateCoinDisplay();
+
+  if (!noAnimation) {
+    startDrawAnimation(card);
+  }
+
+  return card;
+}
+
+function drawTen() {
+  if (state.coins < COST_PER_TEN) {
+    showToast('🪙 应援币不足！需要100🪙进行十连抽');
+    return;
+  }
+
+  state.coins -= COST_PER_TEN;
+  saveState();
+  updateCoinDisplay();
+
+  // Draw 10 cards
+  const results = [];
+  let hasSRPlus = false;
+
+  for (let i = 0; i < 10; i++) {
+    state.totalDraws++;
+    const rarity = rollRarity();
+    const card = pickCard(rarity);
+
+    if (rarity === 'SR' || rarity === 'SSR' || rarity === 'SP') hasSRPlus = true;
+
+    if (rarity === 'SSR' || rarity === 'SP') {
+      state.consecutiveNoSSR = 0;
+    } else {
+      state.consecutiveNoSSR++;
+    }
+
+    // Check duplicate SP
+    const isDuplicateSP = (rarity === 'SP') && state.ownedCards.some(oc => oc.cardId === card.id);
+    if (isDuplicateSP) {
+      state.coins += 50;
+      state.spDuplicateCount++;
+      showToast('🌟 重复SP自动分解！获得50🪙 + 称号「欧皇降临」');
+    }
+
+    state.ownedCards.push({ cardId: card.id, timestamp: Date.now() });
+    results.push(card);
+  }
+
+  // Guarantee: if no SR+ in 10 pulls, force 10th card to SR
+  if (!hasSRPlus) {
+    // Remove last card, replace with SR
+    state.ownedCards.pop();
+    const forcedCard = pickCard('SR');
+    state.ownedCards.push({ cardId: forcedCard.id, timestamp: Date.now() });
+    results[results.length - 1] = forcedCard;
+    // Re-check duplicate for the forced card
+    const isDup = state.ownedCards.filter(oc => oc.cardId === forcedCard.id).length > 1;
+    if (isDup) { /* ignore duplicate handling for guaranteed SR */ }
+    // Reset pity since we forced an SR
+    state.consecutiveNoSSR = 0;
+  }
+
+  saveState();
+  updateCoinDisplay();
+
+  // Show ten-pull results as quick grid
+  showTenResults(results);
+}
+
+// ======================================================================
+// ANIMATIONS
+// ======================================================================
+function startDrawAnimation(card) {
+  const pack = document.getElementById('cardPack');
+  const loading = document.getElementById('loadingText');
+  const reveal = document.getElementById('revealArea');
+  const showCard = document.getElementById('showCard');
+  const drawBtn = document.getElementById('drawBtn');
+  const drawTenBtn = document.getElementById('drawTenBtn');
+
+  // Disable buttons
+  drawBtn.disabled = true;
+  drawTenBtn.disabled = true;
+  pack.style.pointerEvents = 'none';
+
+  // Reset states
+  reveal.classList.remove('show');
+  showCard.classList.remove('rarity-N','rarity-R','rarity-SR','rarity-SSR','rarity-SP');
+  loading.classList.remove('show');
+  clearEffects();
+  pack.classList.remove('hidden');
+  pack.style.display = 'flex';
+
+  // Remove any existing slide card
+  const oldSlide = document.querySelector('.slide-card');
+  if (oldSlide) oldSlide.remove();
+
+  // Create sliding card element
+  const slideCard = document.createElement('div');
+  slideCard.className = 'slide-card';
+  const slideImg = document.createElement('img');
+  slideImg.src = card.img;
+  slideCard.appendChild(slideImg);
+
+  // Position: fixed, centered vertically, starts off-screen right
+  slideCard.style.position = 'fixed';
+  slideCard.style.top = '50%';
+  slideCard.style.left = '50%';
+  slideCard.style.zIndex = '9998';
+  slideCard.style.pointerEvents = 'none';
+  slideCard.style.width = '220px';
+  slideCard.style.height = '310px';
+  slideCard.style.borderRadius = '16px';
+  slideCard.style.background = '#fff';
+  slideCard.style.boxShadow = '0 20px 60px rgba(0,0,0,0.3)';
+  slideCard.style.overflow = 'hidden';
+  slideCard.style.opacity = '0';
+  slideCard.style.transform = 'translate(calc(100vw + 100px),-50%) rotate(15deg)';
+  document.body.appendChild(slideCard);
+
+  // Loading text
+  loading.classList.add('show');
+
+  // Trigger slide animation after a tiny delay
+  void slideCard.offsetWidth;
+  slideCard.style.transition = 'none';
+  slideCard.style.opacity = '1';
+
+  // Use requestAnimationFrame for smooth start
+  requestAnimationFrame(() => {
+    slideCard.style.transition = 'transform 1s cubic-bezier(0.22,0.85,0.35,1), opacity 0.5s ease';
+    slideCard.style.transform = 'translate(-50%,-50%) scale(0.01)';
+    slideCard.style.opacity = '0';
+  });
+
+  // Wait for slide animation to land
+  setTimeout(() => {
+    if (slideCard.parentNode) slideCard.remove();
+    loading.classList.remove('show');
+    pack.classList.add('hidden');
+
+    // Show reveal area with card photo directly
+    reveal.classList.add('show');
+    setupCardFront(card);
+
+    // Effects start immediately
+    showRarityEffects(card.rarity);
+
+    // Re-enable buttons almost instantly (0.02s feel)
+    drawBtn.disabled = false;
+    drawTenBtn.disabled = false;
+    pack.style.pointerEvents = 'auto';
+
+  }, 1200);
+}
+
+function setupCardFront(card) {
+  const img = document.getElementById('cardImg');
+  const rarity = document.getElementById('cardRarity');
+  const showCard = document.getElementById('showCard');
+  const watermark = document.getElementById('spWatermark');
+
+  // Remove all rarity classes
+  RARITY_ORDER.forEach(r => showCard.classList.remove('rarity-' + r));
+
+  img.src = card.img;
+  rarity.textContent = RARITY_LABELS[card.rarity] || card.rarity;
+  rarity.className = 'card-rarity ' + card.rarity;
+  showCard.classList.add('rarity-' + card.rarity);
+
+  // SP watermark
+  watermark.style.display = (card.rarity === 'SP') ? 'block' : 'none';
+}
+
+function showRarityEffects(rarity) {
+  const container = document.getElementById('rarityEffects');
+  container.innerHTML = '';
+  container.className = 'rarity-effects';
+
+  if (rarity === 'N') {
+    container.classList.add('effect-N');
+    const flash = document.createElement('div');
+    flash.className = 'flash-overlay';
+    container.appendChild(flash);
+  }
+  else if (rarity === 'R') {
+    container.classList.add('effect-R');
+    const ring = document.createElement('div');
+    ring.className = 'glow-ring';
+    container.appendChild(ring);
+  }
+  else if (rarity === 'SR') {
+    container.classList.add('effect-SR');
+    const ring = document.createElement('div');
+    ring.className = 'glow-ring';
+    container.appendChild(ring);
+    // Star particles
+    for (let i = 0; i < 8; i++) {
+      const star = document.createElement('div');
+      star.className = 'star-particle';
+      star.textContent = '✨';
+      const angle = (i / 8) * Math.PI * 2;
+      const dist = 80 + Math.random() * 60;
+      star.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+      star.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+      star.style.left = '50%'; star.style.top = '50%';
+      star.style.marginLeft = '-10px'; star.style.marginTop = '-10px';
+      star.style.animationDelay = (i * 0.08) + 's';
+      container.appendChild(star);
+    }
+  }
+  else if (rarity === 'SSR') {
+    container.classList.add('effect-SSR');
+    const ring = document.createElement('div');
+    ring.className = 'glow-ring';
+    container.appendChild(ring);
+    // Gold falling particles
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'gold-particle';
+      p.style.left = (Math.random() * 100) + '%';
+      p.style.top = '-10px';
+      p.style.animationDelay = (Math.random() * 1.2) + 's';
+      p.style.animationDuration = (1.5 + Math.random() * 1.0) + 's';
+      p.style.width = (3 + Math.random() * 4) + 'px';
+      p.style.height = p.style.width;
+      container.appendChild(p);
+    }
+  }
+  else if (rarity === 'SP') {
+    container.classList.add('effect-SP');
+    // Rainbow ring
+    const ring = document.createElement('div');
+    ring.className = 'rainbow-ring';
+    container.appendChild(ring);
+    // Rainbow sweep
+    const sweep = document.createElement('div');
+    sweep.className = 'rainbow-sweep';
+    container.appendChild(sweep);
+    // Glow ring
+    const glow = document.createElement('div');
+    glow.className = 'glow-ring';
+    container.appendChild(glow);
+    // SP text
+    const text = document.createElement('div');
+    text.className = 'sp-text';
+    text.textContent = '✨ LIMITED ✨';
+    container.appendChild(text);
+
+    // Screen shake
+    document.getElementById('app').classList.add('screen-shake');
+    setTimeout(() => {
+      document.getElementById('app').classList.remove('screen-shake');
+    }, 600);
+  }
+}
+
+function clearEffects() {
+  const container = document.getElementById('rarityEffects');
+  container.innerHTML = '';
+  container.className = 'rarity-effects';
+}
+
+// ======================================================================
+// TEN-PULL RESULTS — cards appear one by one
+// ======================================================================
+function showTenResults(cards) {
+  const pack = document.getElementById('cardPack');
+  const loading = document.getElementById('loadingText');
+  const reveal = document.getElementById('revealArea');
+  const drawBtn = document.getElementById('drawBtn');
+  const drawTenBtn = document.getElementById('drawTenBtn');
+
+  drawBtn.disabled = true;
+  drawTenBtn.disabled = true;
+  pack.style.pointerEvents = 'none';
+
+  // Reset
+  reveal.classList.remove('show');
+  loading.classList.remove('show');
+  clearEffects();
+  pack.classList.remove('hidden');
+  pack.style.display = 'flex';
+
+  // Hide pack, show loading + reveal area
+  pack.classList.add('hidden');
+  loading.textContent = '✨ 十连召唤中 ✨';
+  loading.classList.add('show');
+  reveal.classList.add('show');
+
+  // Sequential slide-in for each card
+  let idx = 0;
+  let slideTimer = null;
+
+  function createSlideCard(cardSrc) {
+    const oldSlide = document.querySelector('.slide-card');
+    if (oldSlide) oldSlide.remove();
+
+    const sc = document.createElement('div');
+    sc.className = 'slide-card';
+    const si = document.createElement('img');
+    si.src = cardSrc;
+    sc.appendChild(si);
+    sc.style.cssText = 'position:fixed;top:50%;left:50%;z-index:9998;pointer-events:none;width:220px;height:310px;border-radius:16px;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;opacity:1;transform:translate(calc(100vw + 100px),-50%) rotate(15deg)';
+    document.body.appendChild(sc);
+    void sc.offsetWidth;
+    sc.style.transition = 'transform 0.6s cubic-bezier(0.22,0.85,0.35,1), opacity 0.3s ease';
+    sc.style.transform = 'translate(-50%,-50%) scale(0.01)';
+    sc.style.opacity = '0';
+    return sc;
+  }
+
+  function showNext() {
+    if (idx >= cards.length) {
+      loading.innerHTML = '✨ 正在召唤 <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
+      loading.classList.remove('show');
+      showTenSummary(cards);
+      return;
+    }
+
+    const card = cards[idx];
+
+    // Slide card in
+    const sc = createSlideCard(card.img);
+
+    // Update reveal card behind the slide
+    const oldCard = document.getElementById('showCard');
+    if (oldCard) {
+      const parent = oldCard.parentNode;
+      const newCard = oldCard.cloneNode(true);
+      newCard.id = 'showCard';
+      newCard.style.animation = 'none';
+      parent.replaceChild(newCard, oldCard);
+      void newCard.offsetWidth;
+      newCard.style.animation = 'cardPopIn 0.3s cubic-bezier(0.22,0.85,0.35,1) forwards';
+    }
+    setupCardFront(card);
+    showRarityEffects(card.rarity);
+
+    if (card.rarity === 'SSR') showToast('✨ SSR 闪耀登场！', 800);
+    else if (card.rarity === 'SP') showToast('🌟 SP 限定出现！', 1000);
+
+    idx++;
+
+    // Clean up slide card after animation
+    setTimeout(() => { if (sc.parentNode) sc.remove(); }, 700);
+
+    // Next card after delay
+    slideTimer = setTimeout(showNext, 850);
+  }
+
+  // Start sequence
+  slideTimer = setTimeout(showNext, 300);
+}
+
+// Summary grid after all 10 cards shown
+function showTenSummary(cards) {
+  const reveal = document.getElementById('revealArea');
+  const drawBtn = document.getElementById('drawBtn');
+  const drawTenBtn = document.getElementById('drawTenBtn');
+
+  // Replace content with grid
+  reveal.innerHTML = '';
+  const title = document.createElement('div');
+  title.style.cssText = 'text-align:center;font-size:14px;font-weight:700;color:var(--text-dark);margin-bottom:12px;';
+  title.textContent = '✨ 十连结果 ✨';
+  reveal.appendChild(title);
+
+  const grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%;max-width:440px;';
+
+  cards.forEach((card, idx) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'aspect-ratio:3/4;border-radius:8px;overflow:hidden;position:relative;border:1px solid rgba(255,149,45,0.15);animation:cardAppear 0.3s ease forwards;animation-delay:' + (idx * 0.05) + 's;opacity:0;background:#fff;';
+    const img = document.createElement('img');
+    img.src = card.img;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    div.appendChild(img);
+    const tag = document.createElement('div');
+    tag.style.cssText = 'position:absolute;bottom:2px;left:2px;right:2px;text-align:center;font-size:8px;font-weight:700;padding:2px;border-radius:4px;background:rgba(0,0,0,0.6);color:#fff;';
+    tag.textContent = card.rarity;
+    if (card.rarity === 'SSR') tag.style.color = '#ffd700';
+    if (card.rarity === 'SP') tag.style.background = 'linear-gradient(135deg,#ff6b6b,#ffd93d)';
+    div.appendChild(tag);
+    grid.appendChild(div);
+  });
+
+  reveal.appendChild(grid);
+
+  // Re-enable after delay
+  setTimeout(() => {
+    drawBtn.disabled = false;
+    drawTenBtn.disabled = false;
+    const pk = document.getElementById('cardPack');
+    if (pk) pk.style.pointerEvents = 'auto';
+
+    setTimeout(() => {
+      restoreRevealArea();
+    }, 4000);
+  }, 600);
+}
+
+function restoreRevealArea() {
+  const reveal = document.getElementById('revealArea');
+  reveal.innerHTML = `
+    <div class="card-slot">
+      <div class="show-card" id="showCard">
+        <img class="card-img" id="cardImg" src="" alt="偶像卡片">
+        <div class="card-info">
+          <div class="card-rarity" id="cardRarity">-</div>
+        </div>
+        <div class="sp-watermark" id="spWatermark" style="display:none">LIMITED</div>
+      </div>
+      <div class="rarity-effects" id="rarityEffects"></div>
+    </div>
+  `;
+  reveal.classList.remove('show');
+  const pack = document.getElementById('cardPack');
+  pack.classList.remove('hidden');
+  pack.style.display = 'flex';
+  renderCollection();
+}
+
+// ======================================================================
+// UI UPDATES
+// ======================================================================
+function updateCoinDisplay() {
+  document.getElementById('coinCount').textContent = state.coins;
+}
+
+function renderCollection() {
+  const grid = document.getElementById('collectionGrid');
+  const count = document.getElementById('collectionCount');
+
+  if (state.ownedCards.length === 0) {
+    grid.innerHTML = '<div class="empty-collection">🎴 还没有抽到卡片，试试手气吧！</div>';
+    count.textContent = '';
+    return;
+  }
+
+  // Show latest first, deduplicate by showing only most recent per card ID
+  const seen = new Set();
+  const uniqueCards = [];
+  // Iterate in reverse to get latest first
+  for (let i = state.ownedCards.length - 1; i >= 0; i--) {
+    const oc = state.ownedCards[i];
+    if (!seen.has(oc.cardId)) {
+      seen.add(oc.cardId);
+      uniqueCards.push(oc);
+    }
+  }
+
+  count.textContent = `(${uniqueCards.length} 种)`;
+
+  grid.innerHTML = '';
+  uniqueCards.forEach((oc, idx) => {
+    const cardData = ALL_CARDS.find(c => c.id === oc.cardId);
+    if (!cardData) return;
+
+    const div = document.createElement('div');
+    div.className = 'collection-card rarity-' + cardData.rarity;
+    div.style.animationDelay = (idx * 0.04) + 's';
+
+    const time = new Date(oc.timestamp);
+    const timeStr = time.toLocaleString('zh-CN', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+
+    div.innerHTML = `
+      <div class="cc-inner">
+        <div class="cc-front">
+          <img class="cc-img" src="${cardData.img}" alt="卡片" loading="lazy">
+          <div class="cc-info">
+            <div class="cc-rarity ${cardData.rarity}">${RARITY_LABELS[cardData.rarity]}</div>
+            <div class="cc-time">${timeStr}</div>
+          </div>
+        </div>
+        <div class="cc-back">
+          <i class="fas fa-star"></i>
+          <div class="cc-back-text">★ 多米抽抽乐 ★</div>
+          <div class="cc-back-sub">${cardData.rarity}</div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+// ======================================================================
+// GALLERY
+// ======================================================================
+function renderGallery() {
+  const content = document.getElementById('galleryContent');
+  const total = ALL_CARDS.length;
+  const ownedIds = new Set(state.ownedCards.map(oc => oc.cardId));
+  const collected = ownedIds.size;
+
+  // Update progress
+  document.getElementById('progressText').textContent = `已收集 ${collected} / 共 ${total} 张`;
+  document.getElementById('progressFill').style.width = (collected / total * 100) + '%';
+
+  content.innerHTML = '';
+  RARITY_ORDER.forEach(rarity => {
+    const cardsInRarity = ALL_CARDS.filter(c => c.rarity === rarity);
+    if (cardsInRarity.length === 0) return;
+
+    const section = document.createElement('div');
+    section.className = 'gallery-section';
+
+    const ownedInRarity = cardsInRarity.filter(c => ownedIds.has(c.id)).length;
+    const h3 = document.createElement('h3');
+    h3.innerHTML = `${rarity} <span class="badge">${ownedInRarity}/${cardsInRarity.length}</span>`;
+    section.appendChild(h3);
+
+    const grid = document.createElement('div');
+    grid.className = 'gallery-grid';
+
+    cardsInRarity.forEach(card => {
+      const div = document.createElement('div');
+      div.className = 'gallery-card';
+
+      if (ownedIds.has(card.id)) {
+        const img = document.createElement('img');
+        img.src = card.img;
+        img.alt = card.name;
+        img.loading = 'lazy';
+        div.appendChild(img);
+      } else {
+        // Silhouette
+        const sil = document.createElement('div');
+        sil.className = 'gc-silhouette';
+        sil.innerHTML = '<div class="q-mark">?</div><div class="q-label">尚未获得</div>';
+        div.appendChild(sil);
+      }
+
+      const tag = document.createElement('div');
+      tag.className = 'gc-rarity-tag';
+      tag.textContent = RARITY_LABELS[card.rarity] || card.rarity;
+      if (!ownedIds.has(card.id)) {
+        tag.style.color = 'rgba(62,42,26,0.3)';
+      }
+      div.appendChild(tag);
+      grid.appendChild(div);
+    });
+
+    section.appendChild(grid);
+    content.appendChild(section);
+  });
+}
+
+function openGallery() {
+  renderGallery();
+  document.getElementById('galleryOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGallery() {
+  document.getElementById('galleryOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ======================================================================
+// DAILY REWARD
+// ======================================================================
+function claimDaily() {
+  const today = new Date().toISOString().split('T')[0];
+  if (state.lastDaily === today) {
+    showToast('🎁 今天已经领过啦，明天再来吧！');
+    return;
+  }
+  state.coins += DAILY_REWARD;
+  state.lastDaily = today;
+  saveState();
+  updateCoinDisplay();
+  updateDailyBtn();
+  showToast('🎉 领取成功！获得 20 🪙 应援币');
+}
+
+function updateDailyBtn() {
+  const btn = document.getElementById('dailyBtn');
+  const today = new Date().toISOString().split('T')[0];
+  if (state.lastDaily === today) {
+    btn.disabled = true;
+    btn.textContent = '✅ 已领取';
+  } else {
+    btn.disabled = false;
+    btn.textContent = '🎁 每日奖励';
+  }
+}
+
+// ======================================================================
+// LUCKY TIME CHECK
+// ======================================================================
+function checkLuckyTime() {
+  const badge = document.getElementById('luckyBadge');
+  const now = new Date();
+  if (now.getMinutes() === 0 && now.getSeconds() < 60) {
+    badge.classList.add('show');
+  } else {
+    badge.classList.remove('show');
+  }
+}
+
+// ======================================================================
+// HIDDEN STAR EASTER EGG
+// ======================================================================
+function initHiddenStar() {
+  const star = document.getElementById('hiddenStar');
+  star.addEventListener('click', () => {
+    state.hiddenStarBoost = true;
+    saveState();
+    star.classList.add('activated');
+    showToast('⭐ 幸运之星被点亮！下次抽卡 SP 概率 +5%');
+    setTimeout(() => {
+      star.classList.remove('activated');
+      star.classList.add('glowing');
+    }, 1000);
+  });
+}
+
+// ======================================================================
+// BACKGROUND STARS (Canvas)
+// ======================================================================
+function initBgStars() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, stars = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Create stars
+  for (let i = 0; i < 60; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0.5 + Math.random() * 1.5,
+      alpha: 0.2 + Math.random() * 0.6,
+      speed: 0.005 + Math.random() * 0.015,
+      phase: Math.random() * Math.PI * 2,
+      driftX: (Math.random() - 0.5) * 0.3,
+      driftY: (Math.random() - 0.5) * 0.3,
+    });
+  }
+
+  function draw(time) {
+    ctx.clearRect(0, 0, W, H);
+    const t = time * 0.001;
+
+    stars.forEach(s => {
+      const pulse = s.alpha * (0.6 + 0.4 * Math.sin(t * s.speed * 10 + s.phase));
+      const ox = Math.sin(t * 0.3 + s.phase) * 30;
+      const oy = Math.cos(t * 0.25 + s.phase * 1.3) * 20;
+
+      ctx.beginPath();
+      ctx.arc(s.x + ox, s.y + oy, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${pulse})`;
+      ctx.fill();
+
+      // Occasional glow
+      if (pulse > s.alpha * 0.8) {
+        ctx.beginPath();
+        ctx.arc(s.x + ox, s.y + oy, s.r * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,200,150,${pulse * 0.15})`;
+        ctx.fill();
+      }
+    });
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+}
+
+// ======================================================================
+// TOAST
+// ======================================================================
+let toastTimer;
+
+function showToast(msg, duration) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), duration || 2200);
+}
+
+// ======================================================================
+// INIT
+// ======================================================================
+function init() {
+  loadState();
+  updateCoinDisplay();
+  updateDailyBtn();
+  renderCollection();
+  checkLuckyTime();
+  initHiddenStar();
+  initBgStars();
+
+  // Check lucky time every 10 seconds
+  setInterval(checkLuckyTime, 10000);
+
+  // Event listeners
+  document.getElementById('drawBtn').addEventListener('click', () => drawSingle(false));
+  document.getElementById('drawTenBtn').addEventListener('click', drawTen);
+  document.getElementById('dailyBtn').addEventListener('click', claimDaily);
+  document.getElementById('galleryBtn').addEventListener('click', openGallery);
+  document.getElementById('galleryClose').addEventListener('click', closeGallery);
+  document.getElementById('galleryOverlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeGallery();
+  });
+
+  // Click on card pack to draw
+  document.getElementById('cardPack').addEventListener('click', () => drawSingle(false));
+
+  // Update cost labels
+  document.getElementById('drawCost').textContent = `(${COST_PER_DRAW}🪙)`;
+  document.getElementById('drawTenCost').textContent = `(${COST_PER_TEN}🪙)`;
+
+  // Dot texture background (like stage.html)
+  const textureStyle = document.createElement('style');
+  textureStyle.textContent = `body::before{content:"";position:fixed;top:0;left:0;width:100%;height:100%;background-image:radial-gradient(#FFD8B0 1px,transparent 1px);background-size:32px 32px;opacity:0.2;pointer-events:none;z-index:-1;}`;
+  document.head.appendChild(textureStyle);
+
+  console.log('✨ 多米抽抽乐已启动！');
+  console.log('💡 小提示：整点抽卡有幸运加成！点击角落星星有惊喜！');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

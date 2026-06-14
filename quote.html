@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✦ 语录日历 - 翻页日历</title>
+<style>
+/* ===== Reset & Base ===== */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:
+    radial-gradient(ellipse at 50% 0%, #fff6f0 0%, transparent 60%),
+    linear-gradient(145deg, #fdf6ef 0%, #f8e8e0 40%, #f0d9d0 100%);
+  font-family:'PingFang SC','Microsoft YaHei',-apple-system,system-ui,sans-serif;
+  padding:24px;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* Paper texture overlay */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    repeating-linear-gradient(
+      0deg, transparent, transparent 1px,
+      rgba(139,109,84,0.018) 1px, rgba(139,109,84,0.018) 2px
+    ),
+    repeating-linear-gradient(
+      90deg, transparent, transparent 2px,
+      rgba(139,109,84,0.01) 2px, rgba(139,109,84,0.01) 3px
+    );
+  pointer-events:none;
+  z-index:0;
+}
+
+/* Subtle floating particles */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,200,180,0.15) 50%, transparent 50%),
+    radial-gradient(1px 1px at 50% 20%, rgba(255,200,180,0.1) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 80% 40%, rgba(255,200,180,0.12) 50%, transparent 50%),
+    radial-gradient(1px 1px at 10% 70%, rgba(255,200,180,0.08) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 70% 80%, rgba(255,200,180,0.1) 50%, transparent 50%),
+    radial-gradient(1px 1px at 90% 15%, rgba(255,200,180,0.08) 50%, transparent 50%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ===== Calendar Container ===== */
+.calendar{
+  position:relative;
+  width:420px;
+  min-height:540px;
+  background:linear-gradient(170deg, #fffefc 0%, #fffcf9 40%, #fdf8f4 100%);
+  border-radius:14px;
+  box-shadow:
+    0 14px 48px rgba(100,60,40,0.13),
+    0 4px 14px rgba(100,60,40,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  transition:box-shadow 0.3s;
+}
+
+/* ===== Metal Ring Binding ===== */
+.calendar::before{
+  content:'';
+  position:absolute;
+  top:-8px;
+  left:30px;
+  width:11px;
+  height:20px;
+  border:2.5px solid #c8c2ba;
+  border-radius:50%;
+  background:linear-gradient(145deg, #e8e4de 40%, #c8c2ba 70%, #a8a49e 100%);
+  box-shadow:
+    0 2px 5px rgba(0,0,0,0.12),
+    inset 0 1.5px 2px rgba(255,255,255,0.5),
+    60px 0 0 -0.5px #e8e4de,
+    60px 0 0 1.5px #c8c2ba,
+    60px 2px 5px -0.5px rgba(0,0,0,0.12),
+    120px 0 0 -0.5px #e8e4de,
+    120px 0 0 1.5px #c8c2ba,
+    120px 2px 5px -0.5px rgba(0,0,0,0.12),
+    180px 0 0 -0.5px #e8e4de,
+    180px 0 0 1.5px #c8c2ba,
+    180px 2px 5px -0.5px rgba(0,0,0,0.12);
+  z-index:10;
+  pointer-events:none;
+}
+.calendar::after{
+  content:'';
+  position:absolute;
+  top:-8px;
+  right:30px;
+  width:11px;
+  height:20px;
+  border:2.5px solid #c8c2ba;
+  border-radius:50%;
+  background:linear-gradient(145deg, #e8e4de 40%, #c8c2ba 70%, #a8a49e 100%);
+  box-shadow:
+    0 2px 5px rgba(0,0,0,0.12),
+    inset 0 1.5px 2px rgba(255,255,255,0.5),
+    -60px 0 0 -0.5px #e8e4de,
+    -60px 0 0 1.5px #c8c2ba,
+    -60px 2px 5px -0.5px rgba(0,0,0,0.12),
+    -120px 0 0 -0.5px #e8e4de,
+    -120px 0 0 1.5px #c8c2ba,
+    -120px 2px 5px -0.5px rgba(0,0,0,0.12);
+  z-index:10;
+  pointer-events:none;
+}
+
+/* Hole punch shadows */
+.calendar .hole-shadows{
+  position:absolute;
+  top:2px;
+  left:30px;
+  right:30px;
+  height:4px;
+  display:flex;
+  justify-content:space-around;
+  z-index:1;
+  pointer-events:none;
+  opacity:0.4;
+}
+.calendar .hole-shadows span{
+  display:block;
+  width:16px;
+  height:100%;
+  background:radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.06) 0%, transparent 70%);
+  border-radius:0 0 50% 50%;
+}
+
+/* ===== Top Ornamental Band ===== */
+.calendar .top-band{
+  position:relative;
+  height:10px;
+  flex-shrink:0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 14px,
+      rgba(191,138,122,0.10) 14px, rgba(191,138,122,0.10) 16px,
+      transparent 16px, transparent 30px,
+      rgba(191,138,122,0.06) 30px, rgba(191,138,122,0.06) 31px,
+      transparent 31px, transparent 44px,
+      rgba(191,138,122,0.08) 44px, rgba(191,138,122,0.08) 46px,
+      transparent 46px, transparent 60px
+    ),
+    linear-gradient(to bottom, transparent 0px, rgba(191,138,122,0.04) 1px, transparent 4px, rgba(191,138,122,0.03) 7px, transparent 10px);
+  overflow:hidden;
+}
+
+/* Tiny decorative diamonds in the band */
+.top-band .band-diamond{
+  position:absolute;
+  top:2px;
+  width:5px;
+  height:5px;
+  opacity:0.25;
+  color:#bf8a7a;
+  font-size:4px;
+  line-height:5px;
+  text-align:center;
+}
+.top-band .band-diamond:nth-child(1){left:8%;}
+.top-band .band-diamond:nth-child(2){left:28%;}
+.top-band .band-diamond:nth-child(3){left:48%;transform:translateX(-50%);}
+.top-band .band-diamond:nth-child(4){left:68%;}
+.top-band .band-diamond:nth-child(5){left:88%;}
+
+/* ===== Calendar Header ===== */
+.calendar-header{
+  padding:18px 28px 10px;
+  text-align:center;
+  border-bottom:1px dashed #e8ddd5;
+  position:relative;
+  flex-shrink:0;
+}
+
+/* Corner ornaments */
+.calendar-header .corner-ornament{
+  position:absolute;
+  top:14px;
+  width:44px;
+  height:28px;
+  opacity:0.35;
+  pointer-events:none;
+}
+.calendar-header .corner-ornament.left{
+  left:12px;
+  border-left:1.5px solid #dccfc7;
+  border-top:1.5px solid #dccfc7;
+  border-radius:6px 0 0 0;
+}
+.calendar-header .corner-ornament.right{
+  right:12px;
+  border-right:1.5px solid #dccfc7;
+  border-top:1.5px solid #dccfc7;
+  border-radius:0 6px 0 0;
+}
+/* Small dot inside corner */
+.calendar-header .corner-ornament::before{
+  content:'';
+  position:absolute;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:#dccfc7;
+}
+.calendar-header .corner-ornament.left::before{
+  top:-2px;
+  right:-2px;
+}
+.calendar-header .corner-ornament.right::before{
+  top:-2px;
+  left:-2px;
+}
+
+/* Title with decorative flourishes */
+.calendar-title-wrapper{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:2px;
+}
+
+.calendar-title{
+  font-size:17px;
+  color:#8b6d54;
+  font-weight:600;
+  letter-spacing:5px;
+  position:relative;
+}
+
+/* Decorative lines on each side of title */
+.title-flourish{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  color:#dccfc7;
+  font-size:9px;
+  letter-spacing:2px;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.title-flourish .line{
+  display:block;
+  width:20px;
+  height:1px;
+  background:linear-gradient(90deg, transparent, #dccfc7);
+}
+.title-flourish.right .line{
+  background:linear-gradient(90deg, #dccfc7, transparent);
+}
+
+/* Sparkles around title */
+.title-sparkle{
+  position:absolute;
+  font-size:10px;
+  opacity:0.5;
+  pointer-events:none;
+  user-select:none;
+  -webkit-user-select:none;
+  animation:sparkleFloat 2s ease-in-out infinite alternate;
+}
+.title-sparkle:nth-child(1){top:-10px;left:-18px;animation-delay:0s;}
+.title-sparkle:nth-child(2){top:-12px;right:-18px;animation-delay:0.7s;}
+.title-sparkle:nth-child(3){bottom:-10px;left:-14px;animation-delay:1.4s;}
+.title-sparkle:nth-child(4){bottom:-12px;right:-14px;animation-delay:0.3s;}
+
+@keyframes sparkleFloat{
+  0%{opacity:0.3;transform:translateY(0) scale(0.8);}
+  100%{opacity:0.7;transform:translateY(-3px) scale(1.1);}
+}
+
+/* Progress in header */
+.progress-display{
+  margin-top:7px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:12px;
+  color:#b09888;
+  font-weight:500;
+}
+.progress-display .progress-track{
+  width:110px;
+  height:5px;
+  background:#f0e6de;
+  border-radius:10px;
+  overflow:hidden;
+}
+.progress-display .progress-fill{
+  height:100%;
+  border-radius:10px;
+  background:linear-gradient(90deg, #d4a89a, #bf8a7a);
+  transition:width 0.5s ease;
+  width:0%;
+}
+.progress-display .progress-text{
+  letter-spacing:0.3px;
+}
+
+/* Easter egg celebration badge */
+.easter-badge{
+  display:none;
+  margin-top:5px;
+  font-size:11px;
+  color:#e87860;
+  font-weight:600;
+  letter-spacing:1px;
+  animation:easterGlow 1.5s ease-in-out infinite alternate;
+}
+.easter-badge.show{display:block;}
+@keyframes easterGlow{
+  0%{opacity:0.5;transform:scale(1);}
+  100%{opacity:1;transform:scale(1.05);}
+}
+
+/* ===== Page Container ===== */
+.page-container{
+  position:relative;
+  flex:1;
+  min-height:280px;
+  padding:24px 28px 16px;
+  perspective:1200px;
+  perspective-origin:50% 50%;
+}
+
+/* ===== Page Layers ===== */
+.page-layer{
+  position:absolute;
+  top:24px;
+  left:28px;
+  right:28px;
+  bottom:16px;
+  background:#fffcf9;
+  border-radius:8px;
+  padding:28px 20px 22px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  overflow:hidden;
+  will-change:transform, opacity;
+}
+
+.page-current{
+  z-index:2;
+  box-shadow:
+    0 1px 5px rgba(0,0,0,0.04),
+    inset 0 0 0 1px rgba(0,0,0,0.02);
+  overflow:visible;
+}
+
+.page-back{
+  z-index:1;
+  visibility:hidden;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,0.02);
+}
+
+/* ===== Quote Content ===== */
+.quote-emoji{
+  font-size:40px;
+  margin-bottom:14px;
+  line-height:1;
+}
+
+.quote-text{
+  font-size:21px;
+  line-height:1.75;
+  color:#3d2a1e;
+  text-align:center;
+  font-weight:500;
+  letter-spacing:0.5px;
+  padding:0 6px;
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:80px;
+}
+
+.quote-meta{
+  text-align:center;
+  margin-top:16px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+}
+
+.quote-source{
+  font-size:14px;
+  color:#b09888;
+  font-style:italic;
+  font-weight:400;
+}
+
+.quote-category{
+  display:inline-block;
+  font-size:12px;
+  color:#bf8a7a;
+  background:rgba(191,138,122,0.1);
+  padding:3px 16px;
+  border-radius:20px;
+  letter-spacing:1.5px;
+  font-weight:500;
+}
+
+/* ===== Flip animation classes ===== */
+.page-layer.flipping-next{
+  transition:transform 0.4s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.4s ease;
+  transform-origin:left center;
+  transform:rotateY(-18deg);
+  opacity:0;
+}
+
+.page-layer.flipping-prev{
+  transition:transform 0.4s cubic-bezier(0.4,0,0.2,1),
+              opacity 0.4s ease;
+  transform-origin:right center;
+  transform:rotateY(18deg);
+  opacity:0;
+}
+
+/* ===== Slide-in animations ===== */
+@keyframes slideInRight{
+  from{opacity:0;transform:translateX(24px);}
+  to{opacity:1;transform:translateX(0);}
+}
+@keyframes slideInLeft{
+  from{opacity:0;transform:translateX(-24px);}
+  to{opacity:1;transform:translateX(0);}
+}
+
+.page-layer.slide-in-right{
+  animation:slideInRight 0.35s ease-out forwards;
+}
+.page-layer.slide-in-left{
+  animation:slideInLeft 0.35s ease-out forwards;
+}
+
+/* ===== Controls ===== */
+.controls{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 20px 20px;
+  border-top:1px dashed #e8ddd5;
+  flex-shrink:0;
+  gap:8px;
+}
+
+.nav-btn{
+  background:none;
+  border:1px solid #dccfc7;
+  color:#8b6d54;
+  padding:8px 16px;
+  border-radius:22px;
+  font-size:13px;
+  cursor:pointer;
+  transition:all 0.2s;
+  font-family:inherit;
+  letter-spacing:0.5px;
+  font-weight:500;
+  user-select:none;
+  -webkit-user-select:none;
+  white-space:nowrap;
+}
+
+.nav-btn:hover:not(:disabled){
+  background:#f0e6de;
+  border-color:#bfa89a;
+  transform:translateY(-1px);
+  box-shadow:0 2px 8px rgba(80,40,30,0.08);
+}
+.nav-btn:active:not(:disabled){
+  transform:translateY(0);
+  box-shadow:none;
+}
+.nav-btn:disabled{
+  opacity:0.3;
+  cursor:not-allowed;
+  border-color:#e0d8d0;
+  color:#c0b0a5;
+}
+
+/* Random button — floating on quote page top-right */
+.random-btn-page{
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:5;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  border:1px solid #e0d0c5;
+  background:rgba(255,252,249,0.85);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  color:#bf8a7a;
+  font-size:15px;
+  cursor:pointer;
+  transition:all 0.25s;
+  font-family:inherit;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  user-select:none;
+  -webkit-user-select:none;
+  box-shadow:0 2px 6px rgba(100,60,40,0.08);
+}
+.random-btn-page:hover{
+  background:#fffcf9;
+  border-color:#bfa89a;
+  transform:translateY(-1px) scale(1.05);
+  box-shadow:0 3px 10px rgba(100,60,40,0.12);
+}
+.random-btn-page:active{
+  transform:translateY(0) scale(0.95);
+}
+.random-btn-page .icon{line-height:1;}
+
+/* ===== Back Home Button ===== */
+.back-home{
+  position:fixed;
+  top:18px;
+  left:20px;
+  z-index:100;
+  background:linear-gradient(135deg, #e8c8b8, #d4a89a);
+  border:1px solid #c49a8a;
+  color:#fff;
+  padding:7px 16px;
+  border-radius:30px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.25s;
+  font-family:inherit;
+  text-decoration:none;
+  box-shadow:0 3px 10px rgba(180,120,100,0.2);
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  letter-spacing:0.3px;
+}
+.back-home:hover{
+  background:linear-gradient(135deg, #ddb8a5, #c99a8a);
+  transform:translateY(-1px);
+  box-shadow:0 5px 14px rgba(180,120,100,0.3);
+}
+.back-home:active{
+  transform:translateY(0);
+}
+.back-home .icon{font-size:13px;}
+
+/* ===== Background Decorations ===== */
+/* Polka dot pattern */
+.bg-decoration{
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  pointer-events:none;
+  z-index:0;
+  background-image:radial-gradient(rgba(200,170,155,0.15) 1px, transparent 1px);
+  background-size:36px 36px;
+}
+/* Small floating shapes */
+.bg-float{
+  position:fixed;
+  pointer-events:none;
+  z-index:0;
+  font-size:18px;
+  opacity:0.08;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.bg-float:nth-child(2){top:8%;left:6%;animation:bgFloat1 8s ease-in-out infinite alternate;}
+.bg-float:nth-child(3){top:20%;right:5%;animation:bgFloat2 10s ease-in-out infinite alternate;}
+.bg-float:nth-child(4){bottom:25%;left:4%;animation:bgFloat3 9s ease-in-out infinite alternate;}
+.bg-float:nth-child(5){bottom:10%;right:7%;animation:bgFloat1 7s ease-in-out infinite alternate;}
+.bg-float:nth-child(6){top:50%;left:2%;animation:bgFloat2 11s ease-in-out infinite alternate;}
+
+@keyframes bgFloat1{
+  0%{transform:translateY(0) rotate(0deg);}
+  100%{transform:translateY(-20px) rotate(15deg);}
+}
+@keyframes bgFloat2{
+  0%{transform:translateY(0) rotate(0deg);}
+  100%{transform:translateY(-15px) rotate(-10deg);}
+}
+@keyframes bgFloat3{
+  0%{transform:translateY(0) rotate(0deg);}
+  100%{transform:translateY(-25px) rotate(8deg);}
+}
+
+.page-indicator{
+  font-size:12px;
+  color:#b09888;
+  font-weight:500;
+  letter-spacing:0.5px;
+  white-space:nowrap;
+  margin:0 4px;
+}
+
+/* ===== CONFETTI — Easter Egg ===== */
+.confetti-container{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:1000;
+  overflow:hidden;
+}
+.confetti-piece{
+  position:absolute;
+  width:10px;
+  height:10px;
+  opacity:0;
+  animation:confettiFall 2.5s ease-out forwards;
+}
+@keyframes confettiFall{
+  0%{opacity:1;transform:translateY(-20px) rotate(0deg) scale(1);}
+  100%{opacity:0;transform:translateY(100vh) rotate(720deg) scale(0.3);}
+}
+
+/* Easter egg overlay */
+.easter-overlay{
+  display:none;
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  z-index:999;
+  background:rgba(0,0,0,0.25);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  justify-content:center;
+  align-items:center;
+}
+.easter-overlay.show{display:flex;}
+
+.easter-modal{
+  background:#fffcf9;
+  border-radius:20px;
+  padding:36px 32px 28px;
+  text-align:center;
+  max-width:340px;
+  width:85%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.2);
+  animation:easterBounce 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  position:relative;
+}
+@keyframes easterBounce{
+  0%{transform:scale(0.5);opacity:0;}
+  70%{transform:scale(1.08);}
+  100%{transform:scale(1);opacity:1;}
+}
+
+.easter-modal .big-emoji{font-size:56px;display:block;margin-bottom:10px;}
+.easter-modal h2{font-size:22px;color:#5c3a28;font-weight:700;letter-spacing:1px;margin-bottom:8px;}
+.easter-modal p{font-size:14px;color:#b09888;line-height:1.6;margin-bottom:18px;}
+
+.easter-modal .easter-close-btn{
+  background:linear-gradient(135deg, #d4a89a, #bf8a7a);
+  border:none;
+  color:#fff;
+  padding:10px 32px;
+  border-radius:30px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:inherit;
+  transition:all 0.2s;
+  letter-spacing:0.5px;
+}
+.easter-modal .easter-close-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(191,138,122,0.3);
+}
+.easter-modal .easter-close-btn:active{transform:translateY(0);}
+.easter-modal .sparkles{font-size:26px;letter-spacing:6px;margin-bottom:4px;display:block;}
+
+::selection{background:rgba(191,138,122,0.2);}
+
+/* ===== Mobile Responsive ===== */
+@media(max-width:480px){
+  body{padding:12px;}
+  .calendar{width:94vw;min-height:auto;}
+  .calendar-header{padding:14px 16px 8px;}
+  .page-container{min-height:220px;padding:14px 16px 10px;}
+  .page-layer{top:14px;left:16px;right:16px;bottom:10px;padding:18px 14px 16px;}
+  .quote-text{font-size:18px;min-height:65px;}
+  .quote-emoji{font-size:32px;margin-bottom:10px;}
+  .quote-source{font-size:12px;}
+  .quote-category{font-size:11px;}
+  .controls{padding:10px 12px 14px;gap:4px;}
+  .nav-btn{padding:6px 10px;font-size:11px;}
+  .random-btn-page{width:28px;height:28px;font-size:13px;top:8px;right:8px;}
+  .page-indicator{font-size:10px;}
+
+  .calendar::before{display:none;}
+  .calendar::after{display:none;}
+  .hole-shadows{display:none !important;}
+  .top-band .band-diamond{display:none;}
+  .calendar-header .corner-ornament{display:none;}
+  .title-flourish{display:none !important;}
+  .title-sparkle{display:none !important;}
+
+  .back-home{top:10px;left:10px;padding:5px 12px;font-size:12px;}
+  .bg-float{display:none;}
+  .easter-modal{padding:24px 20px 20px;}
+  .easter-modal .big-emoji{font-size:40px;}
+  .progress-display .progress-track{width:70px;}
+}
+
+@media(max-width:380px){
+  .calendar{width:96vw;}
+  .quote-text{font-size:16px;line-height:1.6;min-height:55px;}
+  .page-container{min-height:180px;}
+  .quote-emoji{font-size:26px;}
+  .nav-btn{padding:5px 8px;font-size:10px;}
+  .random-btn-page{width:24px;height:24px;font-size:11px;top:6px;right:6px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Background decorations -->
+<div class="bg-decoration"></div>
+<span class="bg-float">✿</span>
+<span class="bg-float">♡</span>
+<span class="bg-float">✦</span>
+<span class="bg-float">✧</span>
+<span class="bg-float">☆</span>
+
+<!-- Back button -->
+<a href="wenjianjia.html" class="back-home"><span class="icon">🏠</span> 返回</a>
+
+<div class="calendar" id="calendar">
+  <!-- Hole shadows -->
+  <div class="hole-shadows" id="holeShadows"></div>
+
+  <!-- Top ornamental band -->
+  <div class="top-band">
+    <span class="band-diamond">◇</span>
+    <span class="band-diamond">◇</span>
+    <span class="band-diamond">◆</span>
+    <span class="band-diamond">◇</span>
+    <span class="band-diamond">◇</span>
+  </div>
+
+  <!-- Header -->
+  <div class="calendar-header">
+    <!-- Corner ornaments -->
+    <div class="corner-ornament left"></div>
+    <div class="corner-ornament right"></div>
+
+    <!-- Title with flourishes -->
+    <div class="calendar-title-wrapper">
+      <span class="title-flourish left">
+        <span class="line"></span> ✦
+      </span>
+      <span class="calendar-title">
+        <span class="title-sparkle">✧</span>
+        语 录
+        <span class="title-sparkle">✧</span>
+      </span>
+      <span class="title-flourish right">
+        ✦ <span class="line"></span>
+      </span>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-display" id="progressDisplay">
+      <span class="progress-text" id="progressText">已看 0 / 27</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <!-- Easter badge -->
+    <div class="easter-badge" id="easterBadge">🎊 全部收集！太棒啦 ✨</div>
+  </div>
+
+  <!-- Page Container -->
+  <div class="page-container" id="pageContainer">
+
+    <!-- Back page layer -->
+    <div class="page-layer page-back" id="backPage">
+      <div class="quote-emoji" id="backEmoji"></div>
+      <div class="quote-text" id="backText"></div>
+      <div class="quote-meta">
+        <div class="quote-source" id="backSource"></div>
+        <div class="quote-category" id="backCategory"></div>
+      </div>
+    </div>
+
+    <!-- Current page layer -->
+    <div class="page-layer page-current" id="currentPage">
+      <button class="random-btn-page" id="randomBtn" title="随机一句"><span class="icon">🎲</span></button>
+      <div class="quote-emoji" id="curEmoji"></div>
+      <div class="quote-text" id="curText"></div>
+      <div class="quote-meta">
+        <div class="quote-source" id="curSource"></div>
+        <div class="quote-category" id="curCategory"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="nav-btn" id="prevBtn">← 上一句</button>
+    <span class="page-indicator" id="pageIndicator">第 1 句 / 共 14 句</span>
+    <button class="nav-btn" id="nextBtn">下一句 →</button>
+  </div>
+</div>
+
+<!-- Easter egg overlay -->
+<div class="easter-overlay" id="easterOverlay">
+  <div class="easter-modal">
+    <span class="sparkles">✨ 🎊 ✨</span>
+    <span class="big-emoji">🎉</span>
+    <h2>全部收集完成！</h2>
+    <p>你已经看完了全部 27 条语录<br>每一次感动都值得被记住 ✨</p>
+    <button class="easter-close-btn" id="easterCloseBtn">太棒了！</button>
+  </div>
+</div>
+
+<!-- Confetti container -->
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+// ========================
+// QUOTES DATA
+// ========================
+const quotes = [
+  { id: 1,  text: "萌萌的小猪出现",                         source: "张奕然", category: "可爱", emoji: "🐷" },
+  { id: 2,  text: "诶，我好像只是萌了一点，没有做错什么吧", source: "张奕然", category: "可爱", emoji: "😳" },
+  { id: 3,  text: "妈咪说我是猪，我是猪就是猪，那我也是我妈咪养的可爱猪", source: "张奕然", category: "可爱", emoji: "🐽" },
+  { id: 4,  text: "勇敢小猪，不怕困难",                     source: "张奕然", category: "励志", emoji: "💪" },
+  { id: 5,  text: "你的喜欢比阳光还要明媚",                  source: "张奕然", category: "暖心", emoji: "☀️" },
+  { id: 6,  text: "萌萌的小小猪猪大王出现",                  source: "张奕然", category: "可爱", emoji: "👑" },
+  { id: 7,  text: "别担心，一切都会更好的",                  source: "张奕然", category: "暖心", emoji: "🤗" },
+  { id: 8,  text: "亲爱的网友泥嚎~茫茫人海相识也是缘分",    source: "张奕然", category: "可爱", emoji: "👋" },
+  { id: 9,  text: "我们下次见",                              source: "张奕然", category: "暖心", emoji: "💫" },
+  { id: 10, text: "让我们一起做最快乐的小孩吧",              source: "张奕然", category: "暖心", emoji: "🧒" },
+  { id: 11, text: "要快乐先要吃饱饭",                        source: "张奕然", category: "治愈", emoji: "🍚" },
+  { id: 12, text: "每一天都要幸福地度过呀！",                source: "张奕然", category: "治愈", emoji: "🌈" },
+  { id: 13, text: "要养~要养~",                             source: "张奕然", category: "可爱", emoji: "🐱" },
+  { id: 14, text: "请你看冬日里的第一场雪",                  source: "张奕然", category: "浪漫", emoji: "❄️" },
+  { id: 15, text: "愿望都能实现",                            source: "张奕然", category: "励志", emoji: "✨" },
+  { id: 16, text: "今天我长这样挺萌的",                      source: "张奕然", category: "可爱", emoji: "😊" },
+  { id: 17, text: "我是猪猪大王",                            source: "张奕然", category: "可爱", emoji: "🐷" },
+  { id: 18, text: "每个夏天都见面吧",                        source: "张奕然", category: "暖心", emoji: "🍉" },
+  { id: 19, text: "I need all of you",                       source: "张奕然", category: "暖心", emoji: "💖" },
+  { id: 20, text: "拉钩一百万年万年我们不说再见",            source: "张奕然", category: "暖心", emoji: "🤝" },
+  { id: 21, text: "根本不可能放弃的",                        source: "张奕然", category: "励志", emoji: "🔥" },
+  { id: 22, text: "下面的乖女娃娃们，你们好可爱哦！",        source: "张奕然", category: "可爱", emoji: "🎀" },
+  { id: 23, text: "我们对彼此的想念一定会化作更大的力量，支撑着我往更高更远的地方走去", source: "张奕然", category: "励志", emoji: "🌟" },
+  { id: 24, text: "谢谢无数爱的托举，让我可以成为我自己",   source: "张奕然", category: "感恩", emoji: "🙏" },
+  { id: 25, text: "我很爱你们，也谢谢你们一直都在。新的一年，我们一定还会再见的", source: "张奕然", category: "感恩", emoji: "💕" },
+  { id: 26, text: "大家好，我是想让你们认识我的张奕然",     source: "张奕然", category: "可爱", emoji: "🐤" },
+  { id: 27, text: "没办法，天生好猪命~",                    source: "张奕然", category: "可爱", emoji: "🐖" }
+];
+
+// ========================
+// AUDIO
+// ========================
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function playFlipSound() {
+  try {
+    const ctx = getAudioCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    const sampleRate = ctx.sampleRate;
+    const duration = 0.12;
+    const length = Math.floor(sampleRate * duration);
+    const buffer = ctx.createBuffer(1, length, sampleRate);
+    const data = buffer.getChannelData(0);
+    let prev = 0;
+    for (let i = 0; i < length; i++) {
+      const t = i / sampleRate;
+      const envelope = Math.sin(t / duration * Math.PI) * (1 - t / duration);
+      const noise = (Math.random() * 2 - 1);
+      prev = prev * 0.92 + noise * 0.08;
+      data[i] = (prev * 0.5 + noise * 0.5) * envelope;
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 1500;
+    filter.Q.value = 0.6;
+    const gainNode = ctx.createGain();
+    gainNode.gain.value = 0.10;
+    source.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    source.start();
+  } catch(e) {
+    try {
+      const audio = new Audio();
+      audio.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+      audio.volume = 0.08;
+      audio.play().catch(()=>{});
+    } catch(e2) {}
+  }
+}
+
+function playCelebrationSound() {
+  try {
+    const ctx = getAudioCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.1);
+      gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.1);
+      gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + i * 0.1 + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.1 + 0.4);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + i * 0.1);
+      osc.stop(ctx.currentTime + i * 0.1 + 0.4);
+    });
+  } catch(e) {}
+}
+
+// ========================
+// DOM REFS
+// ========================
+const $ = id => document.getElementById(id);
+
+const curEmoji = $('curEmoji');
+const curText = $('curText');
+const curSource = $('curSource');
+const curCategory = $('curCategory');
+
+const backEmoji = $('backEmoji');
+const backText = $('backText');
+const backSource = $('backSource');
+const backCategory = $('backCategory');
+
+const currentPage = $('currentPage');
+const backPage = $('backPage');
+const pageIndicator = $('pageIndicator');
+const prevBtn = $('prevBtn');
+const nextBtn = $('nextBtn');
+const randomBtn = $('randomBtn');
+const holeShadows = $('holeShadows');
+
+const progressText = $('progressText');
+const progressFill = $('progressFill');
+const easterBadge = $('easterBadge');
+const easterOverlay = $('easterOverlay');
+const easterCloseBtn = $('easterCloseBtn');
+const confettiContainer = $('confettiContainer');
+
+// ========================
+// STATE
+// ========================
+let currentIndex = 0;
+let animating = false;
+const totalQuotes = quotes.length;
+
+// ========================
+// VISITED TRACKING
+// ========================
+const STORAGE_KEY = 'calendar_quotes_visited_v1';
+
+function loadVisited() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return new Set(JSON.parse(raw));
+  } catch(e) {}
+  return new Set();
+}
+
+function saveVisited(set) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set)));
+  } catch(e) {}
+}
+
+const visitedSet = loadVisited();
+
+function markVisited(index) {
+  if (!visitedSet.has(index)) {
+    visitedSet.add(index);
+    saveVisited(visitedSet);
+    updateProgress();
+    checkEasterEgg();
+  }
+}
+
+function getVisitedCount() {
+  return visitedSet.size;
+}
+
+// ========================
+// PROGRESS
+// ========================
+function updateProgress() {
+  const count = getVisitedCount();
+  const pct = totalQuotes > 0 ? (count / totalQuotes * 100) : 0;
+  progressText.textContent = `已看 ${count} / ${totalQuotes}`;
+  progressFill.style.width = Math.min(pct, 100) + '%';
+}
+
+// ========================
+// EASTER EGG
+// ========================
+let eggTriggeredThisSession = false;
+
+function checkEasterEgg() {
+  if (getVisitedCount() >= totalQuotes) {
+    easterBadge.classList.add('show');
+    if (!eggTriggeredThisSession) {
+      eggTriggeredThisSession = true;
+      setTimeout(() => { showEasterEgg(); }, 600);
+    }
+  }
+}
+
+function showEasterEgg() {
+  launchConfetti();
+  playCelebrationSound();
+  easterOverlay.classList.add('show');
+}
+
+function launchConfetti() {
+  const colors = ['#ffb5c2','#ffe082','#81d4fa','#ff8a9e','#a5d6a7','#ce93d8',
+                  '#ffab91','#90caf9','#fff176','#f48fb1','#ffcc02','#69f0ae'];
+  const shapes = ['■','●','▲','★','♦','♥'];
+  confettiContainer.innerHTML = '';
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const size = 6 + Math.random() * 8;
+    const left = Math.random() * 100;
+    const delay = Math.random() * 1.2;
+    const duration = 1.8 + Math.random() * 1.2;
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    piece.textContent = shape;
+    piece.style.cssText = `
+      left:${left}%;
+      top:-10px;
+      font-size:${size}px;
+      color:${color};
+      animation-delay:${delay}s;
+      animation-duration:${duration}s;
+    `;
+    confettiContainer.appendChild(piece);
+  }
+  setTimeout(() => { confettiContainer.innerHTML = ''; }, 4000);
+}
+
+// ========================
+// RENDER
+// ========================
+function fillPage(page, emojiEl, textEl, sourceEl, categoryEl, index) {
+  const q = quotes[index];
+  emojiEl.textContent = q.emoji;
+  textEl.textContent = q.text;
+  sourceEl.textContent = '— ' + q.source;
+  categoryEl.textContent = q.category;
+}
+
+function updateCurrentPage(index) {
+  fillPage(currentPage, curEmoji, curText, curSource, curCategory, index);
+}
+
+function updateBackPage(index) {
+  fillPage(backPage, backEmoji, backText, backSource, backCategory, index);
+  backPage.style.visibility = 'visible';
+}
+
+function hideBackPage() {
+  backPage.style.visibility = 'hidden';
+}
+
+function updateControls() {
+  pageIndicator.textContent = `第 ${currentIndex + 1} 句 / 共 ${totalQuotes} 句`;
+  prevBtn.disabled = currentIndex === 0;
+  nextBtn.disabled = currentIndex === totalQuotes - 1;
+}
+
+// ========================
+// HOLE SHADOWS
+// ========================
+function createHoleShadows() {
+  for (let i = 0; i < 7; i++) {
+    const span = document.createElement('span');
+    holeShadows.appendChild(span);
+  }
+}
+
+// ========================
+// RANDOM QUOTE
+// ========================
+function goRandom() {
+  if (animating) return;
+  if (totalQuotes <= 1) return;
+  let randIdx;
+  do {
+    randIdx = Math.floor(Math.random() * totalQuotes);
+  } while (randIdx === currentIndex && totalQuotes > 1);
+  const direction = randIdx > currentIndex ? 'next' : 'prev';
+  if (animating) return;
+  animating = true;
+  updateBackPage(randIdx);
+  playFlipSound();
+  const flipClass = direction === 'next' ? 'flipping-next' : 'flipping-prev';
+  void currentPage.offsetWidth;
+  currentPage.classList.add(flipClass);
+  setTimeout(() => {
+    currentIndex = randIdx;
+    updateCurrentPage(currentIndex);
+    currentPage.classList.remove('flipping-next', 'flipping-prev');
+    hideBackPage();
+    updateControls();
+    markVisited(currentIndex);
+    const slideClass = direction === 'next' ? 'slide-in-right' : 'slide-in-left';
+    currentPage.classList.add(slideClass);
+    setTimeout(() => {
+      currentPage.classList.remove(slideClass);
+      animating = false;
+    }, 350);
+    const nextNext = currentIndex < totalQuotes - 1 ? currentIndex + 1 : currentIndex - 1;
+    if (nextNext >= 0 && nextNext < totalQuotes) updateBackPage(nextNext);
+    hideBackPage();
+  }, 400);
+}
+
+// ========================
+// FLIP ANIMATION
+// ========================
+function flip(direction) {
+  if (animating) return;
+  const nextIdx = direction === 'next' ? currentIndex + 1 : currentIndex - 1;
+  if (nextIdx < 0 || nextIdx >= totalQuotes) return;
+  animating = true;
+  const isNext = direction === 'next';
+  updateBackPage(nextIdx);
+  playFlipSound();
+  const flipClass = isNext ? 'flipping-next' : 'flipping-prev';
+  void currentPage.offsetWidth;
+  currentPage.classList.add(flipClass);
+  setTimeout(() => {
+    currentIndex = nextIdx;
+    updateCurrentPage(currentIndex);
+    currentPage.classList.remove('flipping-next', 'flipping-prev');
+    hideBackPage();
+    updateControls();
+    markVisited(currentIndex);
+    const slideClass = isNext ? 'slide-in-right' : 'slide-in-left';
+    currentPage.classList.add(slideClass);
+    setTimeout(() => {
+      currentPage.classList.remove(slideClass);
+      animating = false;
+    }, 350);
+    const preloadTarget = currentIndex < totalQuotes - 1 ? currentIndex + 1 : currentIndex - 1;
+    if (preloadTarget >= 0 && preloadTarget < totalQuotes && preloadTarget !== currentIndex) {
+      updateBackPage(preloadTarget);
+      hideBackPage();
+    }
+  }, 400);
+}
+
+function goNext() { flip('next'); }
+function goPrev() { flip('prev'); }
+
+// ========================
+// KEYBOARD SUPPORT
+// ========================
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight') goNext();
+  else if (e.key === 'ArrowLeft') goPrev();
+  else if (e.key === ' ' || e.key === 'Space') { e.preventDefault(); goRandom(); }
+});
+
+// ========================
+// INIT
+// ========================
+function init() {
+  createHoleShadows();
+  currentIndex = 0;
+  updateCurrentPage(currentIndex);
+  updateControls();
+  updateProgress();
+  markVisited(0);
+  if (totalQuotes > 1) {
+    updateBackPage(1);
+    hideBackPage();
+  }
+  if (getVisitedCount() >= totalQuotes) {
+    easterBadge.classList.add('show');
+  }
+  nextBtn.addEventListener('click', goNext);
+  prevBtn.addEventListener('click', goPrev);
+  randomBtn.addEventListener('click', goRandom);
+  easterCloseBtn.addEventListener('click', () => {
+    easterOverlay.classList.remove('show');
+  });
+  easterOverlay.addEventListener('click', (e) => {
+    if (e.target === easterOverlay) {
+      easterOverlay.classList.remove('show');
+    }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>

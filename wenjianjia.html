@@ -1,0 +1,336 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>橙色星球 · 梦境匣子 | 瞳瞳的专属星盒</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Noto+Serif+SC:wght@300;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root{
+  --primary:#FF952D;
+  --primary-light:#FFB866;
+  --primary-dark:#E67A00;
+  --pure-white:#FFFFFF;
+  --cream:#FFF9F0;
+  --dark:#3E2A1A;
+  --soft:#C27E4A;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif;background:var(--pure-white);overflow-x:hidden;color:var(--dark);min-height:100vh}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.03;pointer-events:none;z-index:99999;mix-blend-mode:multiply}
+
+.folder-page{position:relative;z-index:2;background:linear-gradient(170deg,var(--pure-white),var(--cream),#FFF5E8,var(--pure-white));background-size:400% 400%;animation:bgS 20s ease infinite;min-height:100vh;padding:1.5rem;padding-top:4rem;padding-bottom:6rem}
+@keyframes bgS{0%{background-position:0% 0%}25%{background-position:100% 0%}50%{background-position:100% 100%}75%{background-position:0% 100%}100%{background-position:0% 0%}}
+.dream-nav{position:fixed;top:0;left:0;width:100%;background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,149,45,0.2);padding:.7rem 1.5rem;z-index:50;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:900;background:linear-gradient(135deg,var(--primary),var(--primary-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-back{background:rgba(255,149,45,0.12);border:1px solid rgba(255,149,45,0.2);color:var(--primary);padding:.35rem 1rem;border-radius:30px;font-size:.82rem;cursor:pointer;transition:.3s}
+.nav-back:hover{background:rgba(255,149,45,0.22)}
+.dream-welcome{text-align:center;margin-bottom:2rem;animation:fsu .8s ease forwards}
+@keyframes fsu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.welcome-hello{font-size:clamp(1.6rem,5vw,2.8rem);font-weight:700;color:var(--dark)}
+.name-hl{background:linear-gradient(135deg,var(--primary),var(--primary-dark));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.welcome-desc{color:var(--soft);font-size:0.9rem;margin-top:0.5rem}
+
+/* 错落有致的正方形文件夹网格 */
+.dream-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.df {
+  position: relative;
+  border-radius: 28px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  background: #FFFFFF;
+  backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(255,149,45,0.25);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  opacity: 0;
+  transform: translateY(25px) scale(0.96);
+  animation: fa 0.6s ease forwards;
+}
+@keyframes fa { to { opacity: 1; transform: translateY(0) scale(1); } }
+.df:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 25px 35px rgba(0,0,0,0.1); background: white; }
+.df-gallery { grid-column: span 2; grid-row: span 2; aspect-ratio: 1 / 1; background: linear-gradient(145deg, #FFF9EF, #FFF0E0); }
+.df-msg { grid-column: span 1; grid-row: span 1; aspect-ratio: 1 / 1; background: linear-gradient(145deg, #FFF5EA, #FFE8DC); }
+.df-stage { grid-column: span 1; grid-row: span 1; aspect-ratio: 1 / 1; background: linear-gradient(145deg, #FFF4E8, #FFECDC); }
+.df-variety { grid-column: span 2; grid-row: span 1; aspect-ratio: 2 / 1; background: linear-gradient(145deg, #F0F8FF, #E8F4F8); }
+.df-fancam { grid-column: span 1; grid-row: span 2; aspect-ratio: 1 / 2; background: linear-gradient(145deg, #FFF0F5, #FFE8F0); }
+.df-quote { grid-column: span 1; grid-row: span 1; background: linear-gradient(145deg, #FFF8EC, #FFF0E0); aspect-ratio: 1 / 1; }
+.df-intro { grid-column: span 1; grid-row: span 1; background: linear-gradient(145deg, #FFFFF0, #FFF8DC); aspect-ratio: 1 / 1; }
+.df-game { grid-column: span 2; grid-row: span 1; background: linear-gradient(145deg, #FFF4EC, #FFE6DC); aspect-ratio: 2 / 1; }
+
+.fg{position:absolute;width:70px;height:70px;border-radius:50%;filter:blur(35px);opacity:.35;top:10%;right:10%;pointer-events:none;background:var(--primary);}
+.fe{font-size:2rem;margin-bottom:.2rem}
+.ft{font-size:1.15rem;font-weight:700;color:var(--dark)}
+.fs{font-size:0.85rem;color:var(--soft);margin-top:.15rem}
+
+/* 小猪窝样式 */
+.pig-nest{position:fixed;bottom:20px;right:20px;z-index:55;cursor:pointer;transition:transform .3s}
+.pig-house{width:72px;height:62px;background:linear-gradient(145deg,#D4A574,#C09060);border-radius:50% 50% 8px 8px;position:relative;box-shadow:0 6px 20px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center}
+.pig-house::before{content:'';position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:38px solid transparent;border-right:38px solid transparent;border-bottom:18px solid #B08050}
+.pig-face-img { width: 48px; height: 48px; object-fit: contain; display: block; }
+.pig-zzz{position:absolute;top:-8px;right:-5px;font-size:.9rem;opacity:.6;animation:zzz 2.5s ease-in-out infinite}
+@keyframes zzz{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-8px);opacity:.8}}
+.pig-heart{position:fixed;font-size:1.6rem;pointer-events:none;animation:heartUp 1.2s ease-out forwards;z-index:9999}
+@keyframes heartUp{0%{transform:translateY(0) scale(.7);opacity:1}100%{transform:translateY(-100px) scale(1.4);opacity:0}}
+.bless-float {
+  position: fixed;
+  font-size: 0.7rem;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 10000;
+  white-space: nowrap;
+  animation: blessFly 1.5s ease-out forwards;
+  text-shadow: 0 0 4px rgba(255,255,200,0.8);
+}
+@keyframes blessFly {
+  0% { transform: translateY(0) scale(0.8); opacity: 1; }
+  70% { opacity: 0.9; }
+  100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
+}
+.star-field{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.floating-star{position:absolute;pointer-events:none;animation:sd linear infinite}
+@keyframes sd{0%{transform:translateY(-20px) rotate(0);opacity:0}10%{opacity:.6}90%{opacity:.6}100%{transform:translateY(calc(100vh + 20px)) rotate(360deg);opacity:0}}
+.toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-18px);background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border:1px solid rgba(255,149,45,.3);padding:.7rem 1.8rem;border-radius:40px;color:var(--primary);font-weight:700;font-size:.88rem;z-index:100000;opacity:0;transition:.4s cubic-bezier(.22,1,.36,1);pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 图片和视频模态框 */
+.image-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);backdrop-filter:blur(15px);z-index:100000;display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:0.3s;cursor:pointer}
+.image-modal.active{visibility:visible;opacity:1}
+.modal-img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:20px}
+.video-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);backdrop-filter:blur(15px);z-index:100001;display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:0.3s}
+.video-modal.active{visibility:visible;opacity:1}
+.modal-video{max-width:90vw;max-height:90vh;border-radius:20px}
+.modal-close{position:absolute;top:20px;right:30px;font-size:2.5rem;color:white;cursor:pointer;background:rgba(0,0,0,0.5);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:0.2s}
+.modal-close:hover{background:var(--primary);transform:scale(1.1)}
+
+/* 小泡泡canvas */
+
+
+/* 响应式 */
+@media (max-width: 900px) { .dream-grid { gap: 1rem; } }
+@media (max-width: 650px) { .dream-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } .df-gallery, .df-variety, .df-game, .df-fancam { grid-column: span 1; grid-row: span 1; aspect-ratio: 1/1; } .df-variety, .df-game { aspect-ratio: 1/1; } .df-fancam { aspect-ratio: 1/1; } }
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+
+<!-- 主页面 · 梦境匣子集合 -->
+<div class="folder-page">
+  <nav class="dream-nav">
+    <div class="nav-logo">✦ ORANGE PLANET</div>
+    <button class="nav-back" id="navBack">🌙 回到梦境入口</button>
+  </nav>
+  <div class="star-field" id="starField"></div>
+  <div class="dream-welcome">
+    <div class="welcome-hello">欢迎瞳瞳的<span class="name-hl" id="displayName">宝贝</span></div>
+    <div class="welcome-desc">✨谢谢瞳瞳的宝贝们来看瞳瞳~~ 快来鼓励鼓励我~~✨</div>
+  </div>
+  <div class="dream-grid">
+    <div class="df df-gallery" data-url="gallery.html"><div class="fg"></div><span class="fe">📖</span><div class="ft">专属瞳瞳的回忆录</div><div class="fs">四册相盒·随机惊喜</div></div>
+    <div class="df df-msg" data-url="massage.html"><div class="fg"></div><span class="fe">💬</span><div class="ft">关于“我”想对瞳瞳说的话</div><div class="fs">发射爱意</div></div>
+    <div class="df df-stage" data-url="stage.html"><div class="fg"></div><span class="fe">🎭</span><div class="ft">是闪闪发光大明星</div><div class="fs">璀璨舞台·视频专区</div></div>
+    <div class="df df-variety" data-url="variety.html"><div class="fg"></div><span class="fe">📦</span><div class="ft">瞳瞳和他的小伙伴</div><div class="fs">物料合集·视频跳转</div></div>
+    <div class="df df-fancam" data-url="fancam.html"><div class="fg"></div><span class="fe">📹</span><div class="ft">椰蓉眼中的瞳瞳</div><div class="fs">独家直拍·影像馆</div></div>
+    <div class="df df-quote" data-url="quote.html"><div class="fg"></div><span class="fe">📖</span><div class="ft">瞳言瞳语</div><div class="fs">那些说过的话</div></div>
+    <div class="df df-intro" data-url="intro.html"><div class="fg"></div><span class="fe">🌟</span><div class="ft">关于瞳瞳的一切</div><div class="fs">关于他</div></div>
+    <div class="df df-game" data-url="game.html"><div class="fg"></div><span class="fe">🎮</span><div class="ft">小游戏</div><div class="fs">玩一局？</div></div>
+  </div>
+  <div class="pig-nest" id="pigNest">
+    <div class="pig-zzz">💤</div>
+    <div class="pig-house">
+      <img id="pigFaceImg" class="pig-face-img" src="https://domiii.oss-cn-hangzhou.aliyuncs.com/pig_normal.png" alt="小猪">
+    </div>
+  </div>
+</div>
+
+<!-- 图片和视频全局模态框 -->
+<div id="imageModal" class="image-modal" onclick="closeModal()">
+  <span class="modal-close" onclick="closeModal()">&times;</span>
+  <img id="modalImage" class="modal-img" alt="放大图">
+</div>
+<div id="videoModal" class="video-modal" onclick="closeVideoModal()">
+  <span class="modal-close" onclick="closeVideoModal()">&times;</span>
+  <video id="modalVideo" class="modal-video" controls autoplay></video>
+</div>
+
+<script>
+(function(){
+  // 读取开场页存储的用户名
+  const displaySpan = document.getElementById('displayName');
+  const navBack = document.getElementById('navBack');
+  let storedName = localStorage.getItem('orange_username');
+  if (storedName && storedName.trim() !== "") {
+    displaySpan.textContent = storedName + "宝贝";
+  } else {
+    displaySpan.textContent = "小天使";
+  }
+  
+  // 吐司提示
+  function showToast(msg, duration=2000) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
+  window.showToast = showToast;
+  
+  // 返回梦境入口（跳转回开场页）
+  navBack.onclick = () => {
+    window.location.href = 'index.html';
+  };
+  
+  // 星星闪烁特效
+  let starInt = null;
+  function startStars() {
+    if (starInt) clearInterval(starInt);
+    const cont = document.getElementById('starField');
+    if (!cont) return;
+    starInt = setInterval(() => {
+      const s = document.createElement('div');
+      s.className = 'floating-star';
+      s.textContent = ['🧡', '✧', '🥰', '˚💕', '💫', '🐷'][Math.floor(Math.random() * 6)];
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = '-20px';
+      s.style.fontSize = (10 + Math.random() * 14) + 'px';
+      s.style.opacity = 0.3 + Math.random() * 0.35;
+      const dur = 12 + Math.random() * 16;
+      s.style.animationDuration = dur + 's';
+      cont.appendChild(s);
+      setTimeout(() => s.remove(), (dur + 2) * 1000);
+    }, 800);
+  }
+  function stopStars() {
+    if (starInt) { clearInterval(starInt); starInt = null; }
+    const sc = document.getElementById('starField');
+    if (sc) sc.innerHTML = '';
+  }
+  startStars();
+  
+  // 点击空白处出现小猪PNG
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('button,a,input,.df,.pig-nest,.album-back-btn,.gallery-item,.filter-chip,.material-link,.card-link-btn,.random-btn,.weibo-link,.weibo-entry-card,.year-btn,.msg-like,.msg-del,.msg-send-btn')) return;
+    const img = document.createElement('img');
+    img.src='https://domiii.oss-cn-hangzhou.aliyuncs.com/pig_happy.png';
+    const size = 25 + Math.random() * 40;
+    img.style.cssText = `position:fixed;width:${size}px;height:auto;pointer-events:none;z-index:9999;left:${e.clientX - size/2}px;top:${e.clientY - size/2}px;opacity:0.8;animation:pigFloat 1s ease-out forwards`;
+    document.body.appendChild(img);
+    setTimeout(() => img.remove(), 1000);
+  });
+
+  // 小猪浮动动画
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = `@keyframes pigFloat{0%{transform:translateY(0) scale(0.8);opacity:0.8}100%{transform:translateY(-80px) scale(1.1);opacity:0}}`;
+  document.head.appendChild(styleSheet);
+
+  // ☆☆☆ 小猪窝点击特效（爱心 + 祝福语 + 图片切换）☆☆☆
+  const pigNest = document.getElementById('pigNest');
+  const faceImg = document.getElementById('pigFaceImg');
+  const normalSrc='https://domiii.oss-cn-hangzhou.aliyuncs.com/pig_normal.png';
+  const happySrc='https://domiii.oss-cn-hangzhou.aliyuncs.com/pig_happy.png';
+  
+  pigNest.addEventListener('click', function (e) {
+    e.stopPropagation();
+    const rect = this.getBoundingClientRect();
+    const px = rect.left + rect.width/2, py = rect.top;
+    // 爱心特效
+    for (let i=0;i<5;i++) setTimeout(() => {
+      const h = document.createElement('div');
+      h.className = 'pig-heart';
+      h.innerText = ['❤️','🧡','💛','🐷','💕'][Math.floor(Math.random()*5)];
+      h.style.left = (px -15 + (Math.random()-0.5)*50)+'px';
+      h.style.top = (py -10 + (Math.random()-0.5)*20)+'px';
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 1200);
+    }, i*70);
+    
+    // 小猪图片切换（如果有图片资源则切换，没有也不影响体验）
+    if (faceImg) {
+      faceImg.src = happySrc;
+      setTimeout(() => {
+        faceImg.src = normalSrc;
+      }, 500);
+    }
+    
+    // 小猪窝迸发小泡泡
+    spawnBubbles(px, py);
+    
+    // 祝福语飘浮（更小字体 + 向左偏移）
+    const blessings = ['好运+1 🍀', '暴富 💰', '舞台闪闪发光 ✨', '快乐+1 🎈', '暴瘦 👗', '美梦成真 🌙'];
+    const randomBless = blessings[Math.floor(Math.random() * blessings.length)];
+    const blessDiv = document.createElement('div');
+    blessDiv.textContent = randomBless;
+    blessDiv.className = 'bless-float';
+    const offsetX = -25;
+    const offsetY = -10;
+    blessDiv.style.left = (px + offsetX) + 'px';
+    blessDiv.style.top = (py + offsetY) + 'px';
+    blessDiv.style.color = ['#FF952D', '#FF5E7E', '#FFB347', '#FF69B4'][Math.floor(Math.random()*4)];
+    document.body.appendChild(blessDiv);
+    setTimeout(() => blessDiv.remove(), 1500);
+  });
+  
+  // 文件夹跳转（所有子页面需要独立存在，这里模拟跳转并做检查）
+  const gridItems = document.querySelectorAll('.df');
+  gridItems.forEach(item => {
+    const url = item.getAttribute('data-url');
+    if (url) {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const userName = localStorage.getItem('orange_username');
+        if (!userName) {
+          showToast('请先告诉domi你的名字～', 1500);
+          // 可跳转回开场页
+          setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+          return;
+        }
+        // 尝试跳转，如果子页面不存在会在控制台报错，但不影响体验
+        window.location.href = url + '?from=index';
+      });
+    }
+  });
+  
+  // 全局媒体展示函数（供子页面可能调用）
+  window.showMedia = function(url) {
+    const lowerUrl = url.toLowerCase();
+    if (lowerUrl.endsWith('.mp4') || lowerUrl.endsWith('.webm')) {
+      const videoModal = document.getElementById('videoModal');
+      document.getElementById('modalVideo').src = url;
+      videoModal.classList.add('active');
+      document.getElementById('modalVideo').play();
+    } else {
+      const modal = document.getElementById('imageModal');
+      document.getElementById('modalImage').src = url;
+      modal.classList.add('active');
+    }
+  };
+  window.closeModal = function() { document.getElementById('imageModal').classList.remove('active'); };
+  window.closeVideoModal = function() {
+    const modal = document.getElementById('videoModal');
+    modal.classList.remove('active');
+    const vid = document.getElementById('modalVideo');
+    vid.pause();
+    vid.src = '';
+  };
+  
+  // 页面关闭前无需额外清理星星，但保留效果
+  window.addEventListener('beforeunload', () => {
+    if (starInt) clearInterval(starInt);
+  });
+})();
+</script>
+</body>
+</html>

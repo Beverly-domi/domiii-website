@@ -1,0 +1,817 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>关于瞳瞳的一切</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root{
+  --primary:#FF952D;
+  --primary-light:#FFB866;
+  --primary-dark:#E67A00;
+  --pure-white:#FFFFFF;
+  --cream:#FFF9F0;
+  --dark:#3E2A1A;
+  --soft:#C27E4A;
+}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+body{
+  font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  font-size:16px;
+  background:linear-gradient(125deg, #FFF7F0, #FFFAF5, #FFF0E8);
+  background-attachment:fixed;
+  min-height:100vh;
+  padding:1.8rem;
+  padding-top:5rem;
+  padding-bottom:3rem;
+  position:relative;
+}
+/* 顶部导航 */
+.top-nav{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background:rgba(255,255,255,0.94);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,149,45,0.25);
+  padding:.7rem 2rem;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow:0 2px 12px rgba(0,0,0,0.02);
+}
+.nav-logo{
+  font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  font-size:1.25rem;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.back-home{
+  background:rgba(255,149,45,0.1);
+  border:1px solid rgba(255,149,45,0.25);
+  color:var(--primary);
+  padding:.4rem 1rem;
+  border-radius:40px;
+  font-size:.8rem;
+  cursor:pointer;
+  transition:.25s;
+  text-decoration:none;
+  font-weight:500;
+}
+.back-home:hover{
+  background:rgba(255,149,45,0.2);
+  border-color:var(--primary);
+}
+/* 双栏主布局 */
+.split-layout{
+  max-width:1400px;
+  margin:0 auto;
+  display:flex;
+  flex-wrap:wrap;
+  gap:2rem;
+  position:relative;
+  z-index:10;
+}
+/* 左侧双卡片容器 */
+.left-column{
+  flex: 1.1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+/* 主资料卡样式 (完整信息) */
+.profile-card{
+  background: rgba(255,250,240,0.75);
+  backdrop-filter: blur(8px);
+  border-radius: 48px;
+  padding: 1.5rem 1.3rem;
+  border: 1px solid rgba(255,149,45,0.25);
+  box-shadow: 0 20px 30px -10px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+.profile-header{
+  text-align: center;
+  margin-bottom: 1.2rem;
+}
+/* 头像区域 - 无按钮版本 */
+.avatar-wrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+.avatar-frame{
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #FFE6D5, #FFD9BE);
+  box-shadow: 0 12px 20px -8px rgba(255,149,45,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  border: 3px solid rgba(255,149,45,0.5);
+  overflow: hidden;
+}
+.avatar-img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+.avatar-placeholder{
+  font-size: 3.2rem;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-placeholder span{
+  font-size: 3rem;
+}
+.profile-name{
+  font-size: 1.9rem;
+  font-weight: 900;
+  color:var(--dark);
+  letter-spacing: 1px;
+  margin-top: 0.2rem;
+}
+.profile-name small{
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: var(--primary);
+  color:white;
+  padding: 0.1rem 0.6rem;
+  border-radius: 30px;
+  display: inline-block;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.profile-tag{
+  background: rgba(255,149,45,0.12);
+  color: var(--primary-dark);
+  padding: 0.2rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  display: inline-block;
+  margin-top: 6px;
+}
+.info-grid{
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 1.5rem 0;
+}
+.info-row{
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border-bottom: 1px dashed rgba(255,149,45,0.2);
+  padding-bottom: 0.6rem;
+}
+.info-icon{
+  width: 36px;
+  font-size: 1.3rem;
+  color: var(--primary);
+  text-align: center;
+}
+.info-label{
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #A56934;
+  width: 70px;
+  letter-spacing: 1px;
+}
+.info-value{
+  flex:1;
+  font-weight: 500;
+  font-size: 0.88rem;
+  color: var(--dark);
+  word-break: break-word;
+}
+.fans-badge{
+  background: #FFB7C5;
+  color: #9B2F46;
+  padding: 0.2rem 0.8rem;
+  border-radius: 40px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.protect-code{
+  font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  background: #FFF2E0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 24px;
+  font-size: 0.8rem;
+}
+/* 简洁资料卡样式 (无按钮版本) */
+.simple-card{
+  background: rgba(255,250,245,0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 40px;
+  padding: 1.2rem 1.2rem;
+  border: 1px solid rgba(255,149,45,0.2);
+  transition: 0.2s;
+}
+.simple-title{
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  border-left: 3px solid var(--primary);
+  padding-left: 0.7rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.simple-avatar-area{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.simple-avatar-frame{
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: #FFEFDF;
+  border: 2px solid var(--primary-light);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+}
+.simple-avatar-img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.simple-avatar-placeholder{
+  font-size: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.simple-info{
+  flex: 1;
+}
+.simple-info p{
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--dark);
+}
+.simple-info strong{
+  color: #C25D00;
+  width: 55px;
+  display: inline-block;
+}
+.simple-extra{
+  margin-top: 0.5rem;
+  border-top: 1px dashed rgba(255,149,45,0.2);
+  padding-top: 0.7rem;
+  font-size: 0.8rem;
+  color: #A56934;
+}
+.simple-extra i{
+  margin-right: 6px;
+  color: var(--primary);
+}
+/* 右侧大事记区域 */
+.timeline-wrapper{
+  flex: 2.2;
+  min-width: 320px;
+  background: rgba(255,248,240,0.45);
+  backdrop-filter: blur(6px);
+  border-radius: 56px;
+  padding: 1.2rem 1.2rem 1.8rem 1.2rem;
+  border: 1px solid rgba(255,149,45,0.2);
+}
+.section-title{
+  font-size: 1.5rem;
+  font-weight: 800;
+  color:var(--dark);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-left: 5px solid var(--primary);
+  padding-left: 1rem;
+}
+.timeline-container{
+  position:relative;
+  max-width: 100%;
+  margin:0 auto;
+  padding:0.8rem 0 0.5rem 0;
+}
+.timeline-line{
+  position:absolute;
+  left:50%;
+  top:0;
+  bottom:0;
+  width:3px;
+  background:linear-gradient(180deg,var(--primary),var(--primary-light),var(--primary));
+  transform:translateX(-50%);
+  height:0;
+  transition:height 1.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+.timeline-item{
+  position:relative;
+  margin-bottom: 1.2rem;
+  display:flex;
+  justify-content:center;
+  opacity:0;
+}
+.timeline-item.visible{
+  animation: fadeInUpSlow 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.1) forwards;
+}
+.timeline-item.left{
+  justify-content:flex-start;
+}
+.timeline-item.right{
+  justify-content:flex-end;
+}
+.timeline-item.left .timeline-content{
+  margin-right:50%;
+  transform:translateX(30px);
+}
+.timeline-item.right .timeline-content{
+  margin-left:50%;
+  transform:translateX(-30px);
+}
+.timeline-item.visible.left .timeline-content,
+.timeline-item.visible.right .timeline-content{
+  transform:translateX(0);
+  transition: transform 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.1);
+}
+@keyframes fadeInUpSlow{
+  0%{
+    opacity:0;
+    transform: translateY(28px);
+  }
+  100%{
+    opacity:1;
+    transform: translateY(0);
+  }
+}
+.timeline-dot{
+  position:absolute;
+  left:50%;
+  top:18px;
+  width:13px;
+  height:13px;
+  background:var(--primary);
+  border-radius:50%;
+  transform:translateX(-50%);
+  z-index:3;
+  box-shadow:0 0 0 3px rgba(255,149,45,0.25);
+}
+.timeline-content{
+  width:46%;
+  background:white;
+  border-radius:26px;
+  padding:0.75rem 1rem;
+  box-shadow:0 8px 16px rgba(0,0,0,0.03);
+  position:relative;
+  border:1px solid rgba(255,149,45,0.12);
+  transition:transform 0.3s ease, box-shadow 0.3s ease;
+}
+.timeline-content:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 24px rgba(0,0,0,0.08);
+  border-color:rgba(255,149,45,0.35);
+}
+.timeline-year{
+  font-size:0.85rem;
+  font-weight:800;
+  color:var(--primary);
+  margin-bottom:0.15rem;
+  display:flex;
+  align-items:center;
+  gap:0.3rem;
+}
+.timeline-title{
+  font-size:0.85rem;
+  font-weight:700;
+  color:var(--dark);
+  margin-bottom:0.2rem;
+  line-height:1.3;
+}
+.timeline-desc{
+  font-size:0.74rem;
+  color:#5C3E28;
+  line-height:1.4;
+  opacity:0.85;
+}
+/* toast */
+.toast{
+  position:fixed;
+  top:70px;
+  left:50%;
+  transform:translateX(-50%) translateY(-20px);
+  background:rgba(30,20,15,0.9);
+  backdrop-filter:blur(12px);
+  color:#FFE0B2;
+  padding:0.5rem 1.2rem;
+  border-radius:40px;
+  font-size:0.8rem;
+  z-index:200;
+  opacity:0;
+  transition:0.2s;
+  pointer-events:none;
+  white-space:nowrap;
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+/* 星星雨动画与domi落点特效 */
+@keyframes twinkle {
+  0% { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.1); }
+}
+.star-rain {
+  position: fixed;
+  top: -20px;
+  font-size: 1.2rem;
+  pointer-events: none;
+  z-index: 999;
+  user-select: none;
+  animation: fallStar linear forwards;
+}
+@keyframes fallStar {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(calc(100vh + 30px)) rotate(360deg);
+    opacity: 0;
+  }
+}
+.domi-transform {
+  position: fixed;
+  font-size: 1rem;
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 1000;
+  background: linear-gradient(135deg, #FF952D, #FFB866);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 4px rgba(255,149,45,0.3);
+  white-space: nowrap;
+  animation: domiAppear 0.5s ease-out forwards;
+}
+@keyframes domiAppear {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+@media (max-width: 880px){
+  .split-layout{flex-direction:column;}
+  .timeline-line{left:20px;}
+  .timeline-dot{left:20px;}
+  .timeline-item.left,
+  .timeline-item.right{justify-content:flex-start;padding-left:45px;}
+  .timeline-item.left .timeline-content,
+  .timeline-item.right .timeline-content{width:90%;margin:0;transform:none;}
+  body{padding:1rem; padding-top:4.8rem;}
+  .simple-avatar-area{flex-direction: column; align-items: flex-start;}
+}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+  <div class="nav-logo">✨ 关于瞳瞳的一切 · 星星雨 ✨</div>
+    <a href="wenjianjia.html" class="back-home" id="backToHomeBtn">🏠 返回主页</a>
+</div>
+
+<div class="split-layout">
+  <!-- 左侧双卡片容器 -->
+  <div class="left-column">
+    <!-- 主资料卡（完整信息，头像通过后台代码设置） -->
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="avatar-wrapper">
+          <div class="avatar-frame" id="mainAvatarFrame">
+            <div class="avatar-placeholder" id="mainAvatarPlaceholder">
+              <span>🥥✨</span>
+            </div>
+            <img id="mainAvatarImg" class="avatar-img" style="display: none;" alt="头像">
+          </div>
+        </div>
+        <div class="profile-name">张奕然 <small>瞳瞳</small></div>
+        <div class="profile-tag"><i class="fas fa-star"></i>  全能歌担</div>
+      </div>
+      <div class="info-grid">
+        <div class="info-row"><div class="info-icon"><i class="fas fa-cake-candles"></i></div><div class="info-label">生日</div><div class="info-value">2010.09.15</div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-map-pin"></i></div><div class="info-label">居住地</div><div class="info-value">四川成都</div></div>
+        <div class="info-row"><div class="info-icon"><i class="fab fa-weibo"></i></div><div class="info-label">微博</div><div class="info-value">@TF家族-张奕然YR</div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-language"></i></div><div class="info-label">英文名</div><div class="info-value">Domi</div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-star-of-life"></i></div><div class="info-label">星座</div><div class="info-value">处女座 ♍</div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-crown"></i></div><div class="info-label">小名</div><div class="info-value">毛豆🫛 / 瞳瞳</div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-calendar-alt"></i></div><div class="info-label">公开时间</div><div class="info-value">2023.03.06</div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-futbol"></i></div><div class="info-label">爱好</div><div class="info-value">篮球 羽毛球 乒乓球 🏀🏸🏓</div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-palette"></i></div><div class="info-label">喜欢的颜色</div><div class="info-value">🌸 粉色</div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-heart"></i></div><div class="info-label">粉丝名</div><div class="info-value"><span class="fans-badge">椰蓉 🥥</span></div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-shield-alt"></i></div><div class="info-label">保护色</div><div class="info-value"><span class="protect-code">羽奕燃橙 #FF952D</span></div></div>
+        <div class="info-row"><div class="info-icon"><i class="fas fa-tv"></i></div><div class="info-label">B站弹幕色</div><div class="info-value"><span style="background:#FF952D; display:inline-block; width:20px; height:20px; border-radius:20px; vertical-align:middle; margin-right:8px;"></span> 主色 #FF952D (电脑端)</div></div>
+      </div>
+      <div style="margin-top: 8px; font-size:0.7rem; text-align:center; color:#C57F44;">✨ “一起走花路吧” ✨</div>
+    </div>
+
+    <!-- 简洁资料卡 -->
+    <div class="simple-card">
+      <div class="simple-title"><i class="fas fa-id-card"></i> 基础档案 · 速览</div>
+      <div class="simple-avatar-area">
+        <div class="simple-avatar-frame" id="simpleAvatarFrame">
+          <div class="simple-avatar-placeholder" id="simpleAvatarPlaceholder">🥥</div>
+          <img id="simpleAvatarImg" class="simple-avatar-img" style="display: none;" alt="简卡头像">
+        </div>
+        <div class="simple-info">
+          <p><strong>姓名</strong> 咖啡</p>
+          <p><strong>性别</strong> 女</p>
+          <p><strong>来历</strong> 有一只"小猪"在地下车库遇到了我,他跟平时喂养我的老奶奶说他“要养~要养~”让我在重庆有了一个家，我的名字叫咖啡，是因为他最喜欢喝咖啡，我以后就是这个家里的小公主啦~</p>
+        </div>
+      </div>
+      <div class="simple-extra">
+        <i class="fas fa-leaf"></i> 昵称：咖啡 &nbsp;|&nbsp; <i class="fas fa-music"></i> 
+      </div>
+    </div>
+  </div>
+
+  <!-- 右侧大事记时间轴（26条） -->
+  <div class="timeline-wrapper">
+    <div class="section-title"><i class="fas fa-timeline"></i> 大事记</div>
+    <div class="timeline-container" id="timelineContainer">
+      <div class="timeline-line" id="timelineLine"></div>
+      <div id="timelineItems"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toastMsg" class="toast"></div>
+
+<script>
+// ======================== 后台配置区：头像图片URL ========================
+const MAIN_AVATAR_URL = "https://domiii.oss-cn-hangzhou.aliyuncs.com/touxiang.jpg";   
+const SIMPLE_AVATAR_URL = "https://domiii.oss-cn-hangzhou.aliyuncs.com/kafei.jpg";    
+// =========================================================================
+
+// 完整26条大事记数据（含新增2026年4月公演）
+const timelineData = [
+  { year: '2010年9月15日', title: '🍼 新生命降临', desc: '顺利出生啦，从此世界上多了一个活泼可爱的张奕然。', icon: '🎂' },
+  { year: '2020年2月', title: '学而思网校广告 · 初亮相', desc: '校园少年形象初次露面，小小亮相就很出彩。', icon: '📺' },
+  { year: '2020年8月', title: '猿辅导APP · 全国认识', desc: '清爽少年模样被全国观众认识，超厉害～', icon: '📱' },
+  { year: '2020年9月', title: '蒙牛LOGO焕新宣传片', desc: '第一次拍摄品牌大片，体验满满，收获超多。', icon: '🥛' },
+  { year: '2021年4月', title: '微电影《成都漫步》·7个热搜', desc: '第一次拍戏就收获7个热搜，表演细腻引发热议。', icon: '🎬' },
+  { year: '2021年6月', title: '核桃编程+翻唱《大鱼》', desc: '科技少年形象；首支翻唱《大鱼》声音软糯空灵，大受好评。', icon: '🐟' },
+  { year: '2022年', title: '时代峰峻 · 专业训练开启', desc: '来到时代峰峻接受系统训练，踏上舞台旅程。', icon: '🏢' },
+  { year: '2023年3月6日', title: '官方训练视频公开', desc: '正式和大家打招呼，梦想再近一步。', icon: '📹' },
+  { year: '2023年5月', title: '首场公演《立夏》·《爱人错过》', desc: '演唱《爱人错过》，独特嗓音打动观众。', icon: '🎤' },
+  { year: '2023年6月', title: '考核《即刻出发》· 入选歌担', desc: '成功入选歌担队伍，努力终有回报。', icon: '🚀' },
+  { year: '2023年7月', title: '双人舞台《小半》', desc: 'TF少年梦工厂·多巴胺公演，合作超开心。', icon: '💞' },
+  { year: '2023年11月', title: '《推开世界的门》· 收获喜爱', desc: '考核曲目圈粉无数，更多人认识奕然。', icon: '🚪' },
+  { year: '2024年2月', title: '新春音乐会《新贵妃醉酒》', desc: '戏曲唱腔搭配现代舞曲，惊艳解锁新风格。', icon: '👘' },
+  { year: '2024年5月', title: '唱跳综合考核第三名', desc: '演唱《我曾经也想一了百了》，进步惊喜。', icon: '🏅' },
+  { year: '2024年8月', title: '“肆意生长”见面会《被驯服的象》', desc: '奖励舞台愈发纯熟，一步步变优秀。', icon: '🐘' },
+  { year: '2024年9月', title: '自制短剧《危险的关系》+片尾曲', desc: '饰演奕莎贝拉，演唱《浪漫纯属虚构》，唱演俱佳。', icon: '🎭' },
+  { year: '2024年10月', title: '舞蹈《BoomBoomBass》惊艳全场', desc: '考核舞蹈大获好评，向全能选手迈进。', icon: '💃' },
+  { year: '2024年10-12月', title: '持续进步《星期五练习生》', desc: '声乐舞蹈稳扎稳打，每日悄悄变厉害。', icon: '✨' },
+  { year: '2025年1月', title: '「热爱」新春音乐会·甜炸舞台', desc: '《芭啦芭啦樱之花》表现力满分，《彩虹的微笑》圈粉无数。', icon: '🌈' },
+  { year: '2025年4月', title: '舞蹈考核《Call me baby》', desc: '明显进步，虽有微小失误但整体完成漂亮。', icon: '📞' },
+  { year: '2025年6月', title: '突围纪录片·高难度《暮色回响》', desc: '清亮高音+饱满情感完成演唱，听得超舒服。', icon: '🌙' },
+  { year: '2025年8月', title: '「肆意少年」公演·三舞台炸场', desc: '《Lucifer》表情精准，《心动》活力，双人舞台《第一次爱的人》好评如潮。', icon: '💥' },
+  { year: '2025年9-11月', title: '闭关训练三个月·回归夺第一', desc: '拿下考核第一名！演唱《阿尔兹海默的爱》获专业歌手认可。', icon: '🥇' },
+  { year: '2025年12月', title: '「荣耀」新春音乐会·热搜霸榜', desc: '主榜TOP17，获得“四代第一饭撒天才”称号，我真的很棒~~~', icon: '🏆' },
+  { year: '2026年1-4月', title: '《我有我的young》《Bababa》爆火', desc: '舞台直拍播放飙升，实力魅力被越来越多人认可，继续闪耀。', icon: '🔥' },
+  { year: '2026年4月', title: '《FUN肆.P2K》二班公演 · 全能ACE', desc: '非常完美的完成了每一个舞台，一定会成为最强ace。', icon: '🏆' }
+];
+
+// 渲染时间轴
+function renderTimeline() {
+  const container = document.getElementById('timelineItems');
+  if (!container) return;
+  let html = '';
+  timelineData.forEach((item, idx) => {
+    const side = idx % 2 === 0 ? 'left' : 'right';
+    const safeYear = escapeHtml(item.year);
+    const safeTitle = escapeHtml(item.title);
+    const safeDesc = escapeHtml(item.desc);
+    html += `
+      <div class="timeline-item ${side}" data-year="${safeYear}">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="timeline-year"><span class="timeline-icon">${item.icon}</span> ${safeYear}</div>
+          <div class="timeline-title">${safeTitle}</div>
+          <div class="timeline-desc">${safeDesc}</div>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+  
+  const line = document.getElementById('timelineLine');
+  const items = document.querySelectorAll('.timeline-item');
+  const observer = new IntersectionObserver((entries) => {
+    let maxHeight = 0;
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        const rect = entry.target.getBoundingClientRect();
+        const containerRect = document.querySelector('.timeline-container').getBoundingClientRect();
+        const itemTop = rect.top - containerRect.top;
+        const heightToAdd = itemTop + rect.height / 2;
+        if (heightToAdd > maxHeight) maxHeight = heightToAdd;
+      }
+    });
+    if (maxHeight > 0 && line) {
+      const currentH = parseFloat(line.style.height) || 0;
+      line.style.height = Math.max(currentH, maxHeight) + 'px';
+    }
+  }, { threshold: 0.2, rootMargin: '0px 0px -20px 0px' });
+  items.forEach(item => observer.observe(item));
+  setTimeout(() => {
+    const firstItem = document.querySelector('.timeline-item');
+    if (firstItem && line) {
+      const rect = firstItem.getBoundingClientRect();
+      const contRect = document.querySelector('.timeline-container').getBoundingClientRect();
+      const initH = rect.top - contRect.top + rect.height / 2;
+      if (initH > 0 && (!line.style.height || line.style.height === '0px')) line.style.height = initH + 'px';
+    }
+  }, 200);
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
+
+function showToast(msg, duration = 1800) {
+  const toast = document.getElementById('toastMsg');
+  if (toast) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), duration);
+  }
+}
+
+// 头像初始化
+function initAvatars() {
+  const mainPlaceholder = document.getElementById('mainAvatarPlaceholder');
+  const mainImg = document.getElementById('mainAvatarImg');
+  if (MAIN_AVATAR_URL && MAIN_AVATAR_URL.trim() !== "") {
+    mainImg.src = MAIN_AVATAR_URL;
+    mainImg.style.display = 'block';
+    if (mainPlaceholder) mainPlaceholder.style.display = 'none';
+    mainImg.onerror = function() {
+      mainImg.style.display = 'none';
+      if (mainPlaceholder) mainPlaceholder.style.display = 'flex';
+    };
+  } else {
+    if (mainPlaceholder) mainPlaceholder.style.display = 'flex';
+    mainImg.style.display = 'none';
+  }
+  
+  const simplePlaceholder = document.getElementById('simpleAvatarPlaceholder');
+  const simpleImg = document.getElementById('simpleAvatarImg');
+  if (SIMPLE_AVATAR_URL && SIMPLE_AVATAR_URL.trim() !== "") {
+    simpleImg.src = SIMPLE_AVATAR_URL;
+    simpleImg.style.display = 'block';
+    if (simplePlaceholder) simplePlaceholder.style.display = 'none';
+    simpleImg.onerror = function() {
+      simpleImg.style.display = 'none';
+      if (simplePlaceholder) simplePlaceholder.style.display = 'flex';
+    };
+  } else {
+    if (simplePlaceholder) simplePlaceholder.style.display = 'flex';
+    simpleImg.style.display = 'none';
+  }
+}
+
+// 返回主页: 直接跳转到 wenjianjia.html (原文件夹页面)
+function bindBack() {
+  const backBtn = document.getElementById('backToHomeBtn');
+  if (backBtn) {
+    backBtn.addEventListener('click', (e) => {
+      // 已经是 <a href="wenjianjia.html"> 原生链接，但为了防止额外逻辑干扰，不做preventDefault
+      // 保留原生跳转即可，无需额外代码。
+      // 为了确保星星雨不干扰，直接放行。但是a标签已经是正确的跳转地址
+    });
+  }
+}
+
+// ======================== 星星雨特效 ========================
+function startStarRain() {
+  const starSymbols = ['⭐', '🌟', '✨', '💫', '🧡', '🍊', '🥥'];
+  let intervalId = setInterval(() => {
+    const existingStars = document.querySelectorAll('.star-rain').length;
+    if (existingStars > 45) return;
+    
+    const star = document.createElement('div');
+    star.className = 'star-rain';
+    const randomStar = starSymbols[Math.floor(Math.random() * starSymbols.length)];
+    star.textContent = randomStar;
+    const startX = Math.random() * window.innerWidth;
+    const duration = 5 + Math.random() * 4;
+    const size = 14 + Math.floor(Math.random() * 12);
+    star.style.left = startX + 'px';
+    star.style.fontSize = size + 'px';
+    star.style.animation = `fallStar ${duration}s linear forwards`;
+    star.style.opacity = 0.8 + Math.random() * 0.3;
+    star.style.filter = `drop-shadow(0 0 2px rgba(255,149,45,0.6))`;
+    
+    document.body.appendChild(star);
+    
+    star.addEventListener('animationend', () => {
+      if (star && star.parentNode) {
+        const rect = star.getBoundingClientRect();
+        const endX = rect.left + rect.width / 2;
+        const endY = window.innerHeight - 20;
+        const domiSpan = document.createElement('div');
+        domiSpan.className = 'domi-transform';
+        domiSpan.textContent = 'Domi ✨';
+        domiSpan.style.left = (endX - 20) + 'px';
+        domiSpan.style.top = (endY - 15) + 'px';
+        domiSpan.style.fontSize = '1rem';
+        domiSpan.style.fontWeight = 'bold';
+        document.body.appendChild(domiSpan);
+        setTimeout(() => {
+          if (domiSpan && domiSpan.parentNode) domiSpan.remove();
+        }, 600);
+        star.remove();
+      }
+    });
+    
+    setTimeout(() => {
+      if (star && star.parentNode) star.remove();
+    }, duration * 1000 + 500);
+  }, 400);
+  
+  window.addEventListener('beforeunload', () => {
+    clearInterval(intervalId);
+  });
+  window.starRainInterval = intervalId;
+}
+
+function init() {
+  renderTimeline();
+  initAvatars();
+  bindBack();
+  startStarRain();
+  
+  window.addEventListener('resize', () => {
+    const line = document.getElementById('timelineLine');
+    const visibleItems = document.querySelectorAll('.timeline-item.visible');
+    if (line && visibleItems.length) {
+      let maxH = 0;
+      const contRect = document.querySelector('.timeline-container').getBoundingClientRect();
+      visibleItems.forEach(it => {
+        const r = it.getBoundingClientRect();
+        const hh = r.top - contRect.top + r.height/2;
+        if(hh > maxH) maxH = hh;
+      });
+      if(maxH > 0) line.style.height = maxH + 'px';
+    }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

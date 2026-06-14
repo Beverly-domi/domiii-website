@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>橙色星球 · 梦境入口 | 瞳瞳的专属星盒</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root{
+  --primary:#FF952D;
+  --primary-light:#FFB866;
+  --primary-dark:#E67A00;
+  --pure-white:#FFFFFF;
+  --cream:#FFF9F0;
+  --dark:#3E2A1A;
+  --soft:#C27E4A;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif;font-size:16px;background:#2A1500;overflow:hidden;color:var(--dark);height:100vh}
+
+/* ===== Telescope-Zoom 开场 ===== */
+.intro-wrapper {
+  position:relative;
+  width:100%;
+  height:100vh;
+  overflow:hidden;
+  background:#FFFFFF;
+  touch-action:none;
+}
+
+/* 背景渐变层 */
+.intro-bg {
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:1;
+  background:linear-gradient(160deg, #FFE0C0 0%, #FFEDD5 35%, #FFF8F0 65%, #FFFFFF 100%);
+}
+/* 星星画布 */
+.star-canvas {
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:1;
+  pointer-events:none;
+}
+
+/* 前景缩放层（最终大图） */
+.section__media {
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:3;
+  pointer-events:none;
+  transform:scale(0.15);
+  transform-origin:center center;
+  will-change:transform,opacity;
+  opacity:0;
+  contain:layout style;
+}
+.section__media__front {
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+}
+.section__media__front img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.section__media__front {
+  will-change:transform;
+}
+.section__media__front.masked img {
+  -webkit-mask-image:linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%),
+                     linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+  -webkit-mask-composite:intersect;
+  mask-image:linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%),
+             linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+  mask-composite:intersect;
+}
+.front-1{transform:scale(1)}
+.front-2{transform:scale(0.85)}
+.front-3{transform:scale(0.6)}
+.front-4{transform:scale(0.45)}
+.front-5{transform:scale(0.3)}
+.front-6{transform:scale(0.15)}
+
+/* 散落小图 — 随机分布，完美拍立得样式 */
+.section__images {
+  position:absolute;
+  top:0;left:0;
+  width:100vw;height:100vh;
+  z-index:5;
+  pointer-events:none;
+}
+/* 拍立得容器 — 优化内边距和图片比例，确保照片完全在相框内 */
+.polaroid {
+  position:absolute;
+  background:#FFFFFF;
+  padding:8px 8px 22px 8px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.12);
+  border-radius:4px;
+  transition:transform 0.45s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease;
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:default;
+  will-change:transform,opacity;
+  pointer-events:auto;
+  contain:layout style;
+  backdrop-filter: blur(0px);
+  /* 确保相框内的图片不会溢出 */
+  overflow: hidden;
+}
+/* 图片区域完美适配相框宽度，保持正方形比例且不溢出 */
+.polaroid .photo-frame {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #faf5eb;
+  border-radius: 2px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+}
+.polaroid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 1px;
+  transition: transform 0.3s ease;
+}
+/* 图钉装饰 */
+.polaroid::before {
+  content:'📌';
+  position:absolute;
+  top:-12px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:18px;
+  z-index:3;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,0.2));
+  pointer-events:none;
+}
+/* hover效果只在PC上优雅 */
+@media (hover: hover) {
+  .polaroid:hover {
+    transform: rotate(0deg) scale(1.12) !important;
+    box-shadow:0 20px 40px rgba(0,0,0,0.25);
+    z-index:20;
+  }
+  .polaroid:hover img {
+    transform: scale(1.02);
+  }
+}
+/* 拍立得位置及旋转预设（更自然散布，并确保不重叠严重） */
+.polaroid:nth-child(1){width:18vw;max-width:170px;min-width:100px;top:3vh;left:-2vw;transform:rotate(-5deg)}
+.polaroid:nth-child(2){width:14vw;max-width:140px;min-width:90px;top:12vh;left:14vw;transform:rotate(4deg)}
+.polaroid:nth-child(3){width:16vw;max-width:160px;min-width:95px;top:24vh;left:4vw;transform:rotate(-3deg)}
+.polaroid:nth-child(4){width:12vw;max-width:130px;min-width:85px;top:40vh;left:-1vw;transform:rotate(6deg)}
+.polaroid:nth-child(5){width:15vw;max-width:150px;min-width:90px;top:56vh;left:3vw;transform:rotate(-4deg)}
+.polaroid:nth-child(6){width:13vw;max-width:135px;min-width:85px;top:8vh;right:4vw;transform:rotate(3deg)}
+.polaroid:nth-child(7){width:17vw;max-width:165px;min-width:100px;top:30vh;right:-2vw;transform:rotate(-6deg)}
+.polaroid:nth-child(8){width:14vw;max-width:140px;min-width:88px;top:48vh;right:5vw;transform:rotate(5deg)}
+.polaroid:nth-child(9){width:15vw;max-width:150px;min-width:92px;top:67vh;right:1vw;transform:rotate(-2deg)}
+.polaroid:nth-child(10){width:19vw;max-width:180px;min-width:105px;bottom:3vh;left:-2vw;transform:rotate(4deg)}
+.polaroid:nth-child(11){width:13vw;max-width:135px;min-width:85px;top:54vh;right:22vw;transform:rotate(-5deg)}
+.polaroid:nth-child(12){width:16vw;max-width:160px;min-width:95px;bottom:6vh;right:24vw;transform:rotate(3deg)}
+.polaroid:nth-child(13){width:12vw;max-width:125px;min-width:80px;bottom:18vh;left:12vw;transform:rotate(-4deg)}
+.polaroid:nth-child(14){width:17vw;max-width:170px;min-width:100px;bottom:2vh;left:32vw;transform:rotate(6deg)}
+.polaroid:nth-child(15){width:15vw;max-width:150px;min-width:90px;top:44vh;left:24vw;transform:rotate(-2deg)}
+.polaroid:nth-child(16){width:14vw;max-width:140px;min-width:88px;bottom:40vh;right:16vw;transform:rotate(4deg)}
+.polaroid:nth-child(17){width:11vw;max-width:120px;min-width:78px;top:20vh;left:36vw;transform:rotate(-7deg)}
+.polaroid:nth-child(18){width:16vw;max-width:160px;min-width:95px;top:74vh;left:28vw;transform:rotate(5deg)}
+
+/* 迷雾 Canvas */
+.fog-canvas {
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  display:block;
+  z-index:4;
+  pointer-events:none;
+  transition:opacity 1.2s ease;
+  will-change:opacity;
+}
+
+/* 主内容 */
+.intro-content {
+  position:absolute;
+  top:0;left:0;
+  width:100%;height:100%;
+  z-index:6;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  pointer-events:none;
+}
+.intro-content>*{pointer-events:auto}
+
+/* 标题 — 带纯色背景的"幕布" */
+.title-wrap {
+  display:flex;
+  gap:0;
+  overflow:hidden;
+  border-radius:28px;
+  margin-bottom:1.5rem;
+  margin-top:18vh;
+  pointer-events:none;
+}
+.welcome-title {
+  display:inline-block;
+  font-size:clamp(1.8rem,5vw,4rem);
+  font-weight:700;
+  color:var(--primary);
+  letter-spacing:2px;
+  white-space:nowrap;
+  padding:1rem 1.6rem;
+  background:rgba(255,255,255,0.7);
+  backdrop-filter:blur(12px);
+  box-shadow:0 4px 24px rgba(0,0,0,0.06);
+  will-change:transform;
+  contain:layout style;
+}
+.title-left{
+  border-radius:28px 0 0 28px;
+  padding-right:0.3rem
+}
+.title-right{
+  border-radius:0 28px 28px 0;
+  padding-left:0.3rem
+}
+
+/* 名字卡片 */
+.name-card {
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(16px);
+  border-radius:64px;
+  padding:1.8rem;
+  width:85%;
+  max-width:380px;
+  text-align:center;
+  box-shadow:0 20px 35px rgba(0,0,0,0.3);
+  border:1px solid var(--primary);
+  transition:opacity 0.8s ease, transform 0.8s ease;
+}
+.name-card.hidden {
+  opacity:0;
+  transform:scale(0.8) translateY(30px);
+  pointer-events:none;
+}
+.name-card h2 {
+  color:var(--primary);
+  font-size:1.6rem;
+  margin-bottom:0.5rem;
+  font-weight:800;
+}
+.name-input {
+  width:100%;
+  padding:0.9rem 1rem;
+  font-size:1rem;
+  border:2px solid #FFD8C4;
+  border-radius:60px;
+  outline:none;
+  background:white;
+  margin:1rem 0;
+  text-align:center;
+}
+.name-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(255,149,45,0.2)}
+.enter-name-btn {
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;
+  border:none;
+  padding:0.8rem 1.8rem;
+  font-size:1.1rem;
+  font-weight:700;
+  border-radius:60px;
+  width:70%;
+  cursor:pointer;
+  transition:0.2s;
+  box-shadow:0 6px 18px rgba(255,149,45,0.5);
+}
+
+/* 小猪跑者 */
+.pig-runner {
+  position:absolute;
+  bottom:25px;left:0;
+  width:100%;
+  pointer-events:auto;
+  z-index:7;
+  cursor:pointer;
+  animation:pigRunning 9s infinite linear;
+}
+.piggy {
+  display:inline-block;
+  font-size:2.4rem;
+  filter:drop-shadow(2px 4px 8px rgba(0,0,0,0.3));
+  transition:transform 0.2s;
+}
+.piggy-bounce{transform:scale(1.2)}
+@keyframes pigRunning{
+  0%{transform:translateX(-15vw)}
+  25%{transform:translateX(30vw)}
+  50%{transform:translateX(60vw)}
+  75%{transform:translateX(85vw)}
+  100%{transform:translateX(calc(100vw - 60px))}
+}
+
+/* 吐司 */
+.toast{
+  position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-18px);
+  background:rgba(255,255,255,.95);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,149,45,.3);padding:.7rem 1.8rem;border-radius:40px;
+  color:var(--primary);font-weight:700;font-size:.88rem;z-index:100000;
+  opacity:0;transition:.4s cubic-bezier(.22,1,.36,1);pointer-events:none
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 涟漪 canvas */
+#rippleCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99998}
+
+/* 滚动提示 */
+.scroll-hint {
+  position:absolute;bottom:80px;left:50%;transform:translateX(-50%);
+  z-index:8;
+  color:rgba(255,255,255,0.7);font-size:0.85rem;letter-spacing:2px;
+  animation:floatHint 2.4s ease-in-out infinite;
+  pointer-events:none;text-shadow:0 2px 12px rgba(0,0,0,0.5);
+  transition:opacity 0.8s ease;
+  will-change:opacity;
+}
+.scroll-hint .arrow{display:block;text-align:center;font-size:1.4rem;margin-top:4px;animation:arrowBounce 2.4s ease-in-out infinite}
+@keyframes floatHint{
+  0%,100%{opacity:0.4;transform:translateX(-50%) translateY(0)}
+  50%{opacity:1;transform:translateX(-50%) translateY(-6px)}
+}
+@keyframes arrowBounce{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(4px)}
+}
+
+/* 响应式优化：小屏幕下相框自适应，图片依然完美嵌入 */
+@media (max-width:650px){
+  .polaroid{padding:6px 6px 18px 6px;}
+  .polaroid::before{font-size:14px;top:-10px}
+  .polaroid:nth-child(1){width:28vw;min-width:95px;top:2vh;left:-4vw;}
+  .polaroid:nth-child(2){width:22vw;min-width:85px;top:10vh;left:12vw;}
+  .polaroid:nth-child(3){width:26vw;min-width:90px;top:22vh;left:1vw;}
+  .polaroid:nth-child(4){width:20vw;min-width:80px;top:38vh;left:-3vw;}
+  .polaroid:nth-child(5){width:24vw;min-width:88px;top:54vh;left:0vw;}
+  .polaroid:nth-child(6){width:21vw;min-width:85px;top:7vh;right:1vw;}
+  .polaroid:nth-child(7){width:28vw;min-width:95px;top:28vh;right:-4vw;}
+  .polaroid:nth-child(8){width:22vw;min-width:85px;top:46vh;right:3vw;}
+  .polaroid:nth-child(9){width:25vw;min-width:88px;top:64vh;right:0vw;}
+  .polaroid:nth-child(10){width:30vw;min-width:100px;bottom:2vh;left:-4vw;}
+  .polaroid:nth-child(11){width:20vw;min-width:78px;top:52vh;right:18vw;}
+  .polaroid:nth-child(12){width:27vw;min-width:92px;bottom:3vh;right:22vw;}
+  .polaroid:nth-child(13){width:19vw;min-width:75px;bottom:16vh;left:8vw;}
+  .polaroid:nth-child(14){width:29vw;min-width:98px;bottom:1vh;left:28vw;}
+  .polaroid:nth-child(15){width:23vw;min-width:86px;top:42vh;left:20vw;}
+  .polaroid:nth-child(16){width:22vw;min-width:84px;bottom:36vh;right:12vw;}
+  .polaroid:nth-child(17){width:18vw;min-width:72px;top:18vh;left:32vw;}
+  .polaroid:nth-child(18){width:26vw;min-width:90px;top:72vh;left:24vw;}
+  .welcome-title{font-size:1.4rem; padding:0.7rem 1rem}
+  .name-card h2{font-size:1.2rem}
+  .enter-name-btn{width:85%}
+  .title-left{padding-right:0.2rem}
+  .title-right{padding-left:0.2rem}
+}
+
+/* 确保所有图片在任何尺寸下都完美填充拍立得正方形区域不会溢出 */
+.polaroid img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div id="introPage" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:10;">
+  <div class="intro-wrapper" id="introWrapper">
+
+    <!-- 背景渐变色 -->
+    <div class="intro-bg"></div>
+    <!-- 星星 Canvas -->
+    <canvas id="starCanvas" class="star-canvas"></canvas>
+
+    <!-- 前景缩放层（最终大图） -->
+    <div class="section__media" id="sectionMedia">
+      <div class="section__media__front front-1"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/beijing%20(2).jpg" alt="背景星球"></div>
+      <div class="section__media__front front-2"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/beijing%20(2).jpg" alt=""></div>
+      <div class="section__media__front front-3"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/beijing%20(2).jpg" alt=""></div>
+      <div class="section__media__front front-4"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/beijing%20(2).jpg" alt=""></div>
+      <div class="section__media__front front-5"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/beijing%20(2).jpg" alt=""></div>
+      <div class="section__media__front front-6"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/beijing%20(2).jpg" alt=""></div>
+    </div>
+
+    <!-- 拍立得照片墙 —— 每张照片都包裹在拍立得相框内，图片完美适配不溢出 -->
+    <div class="section__images" id="sectionImages">
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu1.jpg" alt="回忆1"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu2.jpg" alt="回忆2"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu3.jpg" alt="回忆3"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu4.jpg" alt="回忆4"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu5.jpg" alt="回忆5"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu6.jpg" alt="回忆6"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu7.jpg" alt="回忆7"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu8.jpg" alt="回忆8"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu9.jpg" alt="回忆9"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu10.jpg" alt="回忆10"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu11.jpg" alt="回忆11"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu12.jpg" alt="回忆12"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu13.jpg" alt="回忆13"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu14.jpg" alt="回忆14"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu15.jpg" alt="回忆15"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu16.jpg" alt="回忆16"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu17.jpg" alt="回忆17"></div></div>
+      <div class="polaroid"><div class="photo-frame"><img src="https://domiii.oss-cn-hangzhou.aliyuncs.com/xiaotu18.jpg" alt="回忆18"></div></div>
+    </div>
+
+    <!-- 迷雾 -->
+    <canvas id="fogCanvas" class="fog-canvas"></canvas>
+
+    <!-- 内容 -->
+    <div class="intro-content">
+      <div class="title-wrap">
+        <span class="welcome-title title-left">🐷 欢迎来到</span>
+        <span class="welcome-title title-right">小猪星球 🐷</span>
+      </div>
+      <div class="name-card hidden" id="nameCard">
+        <h2>✨ hiiii~ ✨</h2>
+        <input type="text" id="userNameInput" class="name-input" placeholder="输入你的名字" autocomplete="off">
+        <button id="enterNameBtn" class="enter-name-btn">🍊 坠入梦境 🍊</button>
+      </div>
+    </div>
+
+    <div class="scroll-hint" id="scrollHint">滚动探索<span class="arrow">⌄</span></div>
+    <div class="pig-runner"><span class="piggy" id="piggySpan">🐷</span></div>
+  </div>
+</div>
+
+<canvas id="rippleCanvas"></canvas>
+
+<script>
+(function(){
+  const introWrapper = document.getElementById('introWrapper');
+  const nameInput = document.getElementById('userNameInput');
+  const enterBtn = document.getElementById('enterNameBtn');
+  const nameCard = document.getElementById('nameCard');
+  const fogCanvas = document.getElementById('fogCanvas');
+  const sectionImages = document.getElementById('sectionImages');
+  const sectionMedia = document.getElementById('sectionMedia');
+  const scrollHint = document.getElementById('scrollHint');
+  const smallImgs = sectionImages.querySelectorAll('.polaroid');
+  const frontLayers = sectionMedia.querySelectorAll('.section__media__front');
+  const titleLeft = document.querySelector('.title-left');
+  const titleRight = document.querySelector('.title-right');
+  let ctx = fogCanvas?.getContext('2d');
+  let cw = 0, ch = 0, fogInit = false, recoveryInt = null;
+
+  // ----- 迷雾（淡雾，大笔刷）-----
+  function initFog() {
+    if (!fogCanvas) return;
+    const wrap = document.querySelector('.intro-wrapper');
+    if (!wrap) return;
+    const rect = wrap.getBoundingClientRect();
+    if (rect.width === 0) return;
+    cw = rect.width;
+    ch = rect.height;
+    fogCanvas.width = cw;
+    fogCanvas.height = ch;
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.filter = 'blur(10px)';
+    for (let l = 0; l < 3; l++) {
+      for (let i = 0; i < 120; i++) {
+        ctx.beginPath();
+        ctx.ellipse(Math.random() * cw, Math.random() * ch, Math.random() * 120 + 50, Math.random() * 100 + 40, Math.random() * Math.PI * 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, ' + (0.12 + Math.random() * 0.16) + ')';
+        ctx.fill();
+      }
+    }
+    ctx.filter = 'none';
+    fogInit = true;
+  }
+
+  function softErase(x, y) {
+    if (!ctx) return;
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    const radius = 180;
+    const grad = ctx.createRadialGradient(x, y, 5, x, y, radius);
+    grad.addColorStop(0, 'rgba(0,0,0,0.95)');
+    grad.addColorStop(0.4, 'rgba(0,0,0,0.7)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function startRecovery() {
+    if (recoveryInt) clearInterval(recoveryInt);
+    recoveryInt = setInterval(() => {
+      if (!fogInit) return;
+      ctx.save();
+      ctx.filter = 'blur(10px)';
+      for (let i = 0; i < 10; i++) {
+        ctx.beginPath();
+        ctx.ellipse(Math.random() * cw, Math.random() * ch, Math.random() * 120 + 50, Math.random() * 100 + 40, Math.random() * Math.PI * 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+        ctx.fill();
+      }
+      ctx.filter = 'none';
+      ctx.restore();
+    }, 1600);
+  }
+
+  function onEraseMove(e) {
+    if (!fogInit) return;
+    let cx, cy;
+    if (e.touches) {
+      if (e.touches.length) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+      else return;
+    } else { cx = e.clientX; cy = e.clientY; }
+    const rect = fogCanvas.getBoundingClientRect();
+    const rx = cx - rect.left, ry = cy - rect.top;
+    if (rx >= 0 && rx <= cw && ry >= 0 && ry <= ch) softErase(rx, ry);
+  }
+  window.addEventListener('mousemove', onEraseMove);
+  window.addEventListener('touchmove', (e) => { if (e.touches) onEraseMove(e); });
+
+  document.getElementById('piggySpan')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const p = document.getElementById('piggySpan');
+    p.classList.add('piggy-bounce');
+    setTimeout(() => p.classList.remove('piggy-bounce'), 400);
+  });
+
+  function showToast(msg, d) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), d||2000);
+  }
+  window.showToast = showToast;
+
+  // ----- 滚动驱动动画(rAF节流)-----
+  let accumulatedScroll = 0;
+  const MAX_SCROLL = 500;
+  let imgOrigins = null, rafPending = false;
+
+  function getImgOrigins() {
+    if (imgOrigins) return imgOrigins;
+    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    imgOrigins = [];
+    smallImgs.forEach((img) => {
+      const r = img.getBoundingClientRect();
+      imgOrigins.push({ x: r.left + r.width/2 - cx, y: r.top + r.height/2 - cy });
+    });
+    return imgOrigins;
+  }
+
+  function ease(t) {
+    return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+  }
+
+  function doScrollAnimation(progress) {
+    const raw = Math.max(0, Math.min(1, progress));
+    const p = ease(raw);
+
+    // 1. 拍立得 -> 汇聚到中心 (保留原旋转)
+    const origins = getImgOrigins();
+    smallImgs.forEach((img, i) => {
+      const ox = origins[i].x, oy = origins[i].y;
+      const s = 1 - p * 0.9;
+      const tx = -ox * p, ty = -oy * p;
+      const rot = parseFloat(img.dataset.rot) || 0;
+      img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ') rotate(' + rot + 'deg)';
+      img.style.opacity = 1 - p;
+    });
+
+    // 2. 前景缩放层（最终大图）从 0.15 -> 1
+    const zoomRaw = Math.max(0, Math.min(1, (raw - 0.05) / 0.85));
+    const zoomP = ease(zoomRaw);
+    const zoomScale = 0.15 + zoomP * 0.85;
+    sectionMedia.style.transform = 'scale(' + zoomScale + ')';
+    sectionMedia.style.opacity = Math.min(1, zoomP * 2);
+    frontLayers.forEach((el) => {
+      const base = parseFloat(el.dataset.baseScale) || 0.15;
+      el.style.transform = 'scale(' + (base + (1-base) * zoomP) + ')';
+    });
+
+    // 3. 标题分裂（幕布拉开）
+    const titleRaw = Math.max(0, Math.min(1, (raw - 0.1) / 0.6));
+    const titleP = ease(titleRaw);
+    const off = titleP * 45;
+    titleLeft.style.transform = 'translateX(-' + off + 'vw)';
+    titleRight.style.transform = 'translateX(' + off + 'vw)';
+
+    // 4. 迷雾渐隐
+    fogCanvas.style.opacity = Math.max(0, 1 - p * 1.5);
+
+    // 5. 滚动提示
+    scrollHint.style.opacity = Math.max(0, 1 - raw * 2);
+
+    // 6. 名字卡片
+    if (raw > 0.65) nameCard.classList.remove('hidden');
+    else nameCard.classList.add('hidden');
+  }
+
+  function scheduleScrollUpdate() {
+    if (!rafPending) {
+      rafPending = true;
+      requestAnimationFrame(function() {
+        rafPending = false;
+        doScrollAnimation(accumulatedScroll / MAX_SCROLL);
+      });
+    }
+  }
+
+  window.addEventListener('wheel', function(e) {
+    if (!introWrapper.contains(e.target)) return;
+    e.preventDefault();
+    accumulatedScroll += e.deltaY;
+    accumulatedScroll = Math.max(0, Math.min(accumulatedScroll, MAX_SCROLL));
+    scheduleScrollUpdate();
+  }, { passive: false });
+
+  var touchStartY = 0, touchAccum = 0;
+  window.addEventListener('touchstart', function(e) {
+    if (!introWrapper.contains(e.target)) return;
+    touchStartY = e.touches[0].clientY;
+    touchAccum = accumulatedScroll;
+  }, { passive: true });
+  window.addEventListener('touchmove', function(e) {
+    if (!introWrapper.contains(e.target)) return;
+    var dy = touchStartY - e.touches[0].clientY;
+    accumulatedScroll = touchAccum + dy;
+    accumulatedScroll = Math.max(0, Math.min(accumulatedScroll, MAX_SCROLL));
+    scheduleScrollUpdate();
+  }, { passive: true });
+
+  function enterWorld() {
+    const name = nameInput.value.trim();
+    if (!name) { showToast('✨ 请留下你的名字 ✨'); return; }
+    localStorage.setItem('orange_username', name);
+    enterBtn.disabled = true;
+    enterBtn.style.opacity = '0.6';
+    accumulatedScroll = MAX_SCROLL;
+    doScrollAnimation(1);
+    setTimeout(() => { window.location.href = 'wenjianjia.html'; }, 800);
+  }
+  enterBtn.addEventListener('click', enterWorld);
+  nameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') enterWorld(); });
+
+  // ----- 四角星星闪烁 -----
+  const starCanvas = document.getElementById('starCanvas');
+  const sCtx = starCanvas.getContext('2d');
+  let sW, sH, stars = [];
+  function resizeStars() {
+    sW = starCanvas.width = window.innerWidth;
+    sH = starCanvas.height = window.innerHeight;
+    stars = [];
+    const count = 30 + Math.floor(Math.random() * 15);
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * sW,
+        y: Math.random() * sH,
+        size: 20 + Math.random() * 40,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.2 + Math.random() * 0.4,
+        rotation: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.3,
+        driftX: (Math.random() - 0.5) * 0.3,
+        driftY: (Math.random() - 0.5) * 0.3,
+        driftPhase: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+  function drawStar(cx, cy, size, opacity, rotation, glow, spark) {
+    sCtx.save();
+    sCtx.translate(cx, cy);
+    sCtx.rotate(rotation);
+    sCtx.globalAlpha = opacity;
+    const outer = size;
+    const inner = size * 0.06;
+    sCtx.shadowColor = 'rgba(255, 220, 60, ' + (0.3 + glow * 0.7) + ')';
+    sCtx.shadowBlur = 15 + glow * 35;
+    sCtx.beginPath();
+    for (let i = 0; i < 4; i++) {
+      const angle = (i * Math.PI / 2) - Math.PI / 2;
+      sCtx.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
+      sCtx.lineTo(Math.cos(angle + Math.PI / 4) * inner, Math.sin(angle + Math.PI / 4) * inner);
+    }
+    sCtx.closePath();
+    sCtx.fillStyle = spark ? '#FFEE88' : '#FFD633';
+    sCtx.fill();
+    sCtx.restore();
+  }
+  function animStars(time) {
+    sCtx.clearRect(0, 0, sW, sH);
+    stars.forEach((s) => {
+      const t = time * 0.001;
+      const raw = 0.5 + 0.5 * Math.sin(t * s.speed + s.phase);
+      const pulse = 0.15 + 0.85 * raw * raw;
+      const scalePulse = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(t * s.speed * 1.3 + s.phase * 1.7));
+      const ox = Math.sin(t * 0.4 + s.driftPhase) * 60;
+      const oy = Math.cos(t * 0.35 + s.driftPhase * 1.3) * 50;
+      const spark = raw > 0.92;
+      s.rotation += s.rotSpeed * 0.012;
+      drawStar(s.x + ox, s.y + oy, s.size * scalePulse, pulse, s.rotation, pulse, spark);
+    });
+    requestAnimationFrame(animStars);
+  }
+  resizeStars();
+  window.addEventListener('resize', resizeStars);
+  animStars(0);
+
+  // 涟漪
+  const rCvs = document.getElementById('rippleCanvas'), rCtx = rCvs.getContext('2d');
+  let rW, rH, ripples = [];
+  function resizeR() { rW = rCvs.width = window.innerWidth; rH = rCvs.height = window.innerHeight; }
+  resizeR(); window.addEventListener('resize', resizeR);
+  function addRipple(x, y) {
+    for (let i = 0; i < 3; i++) ripples.push({ x, y, radius: i*8, maxRadius: 180 + Math.random()*120 + i*40, opacity: 0.5 - i*0.1, speed: 2.8 + Math.random()*1.5 + i*0.5, hue: 30, sat: 85 });
+  }
+  function animRipples() {
+    rCtx.clearRect(0, 0, rW, rH);
+    for (let i = ripples.length-1; i >= 0; i--) {
+      const r = ripples[i];
+      r.radius += r.speed; r.speed *= 0.997; r.opacity -= 0.008;
+      if (r.opacity <= 0 || r.radius >= r.maxRadius) { ripples.splice(i,1); continue; }
+      const thick = 3 + (r.ring||0)*2, innerR = Math.max(1, r.radius - thick);
+      rCtx.beginPath();
+      rCtx.arc(r.x, r.y, r.radius, 0, Math.PI*2);
+      rCtx.arc(r.x, r.y, innerR, 0, Math.PI*2, true);
+      const grad = rCtx.createRadialGradient(r.x, r.y, innerR, r.x, r.y, r.radius);
+      grad.addColorStop(0, 'hsla(' + r.hue + ',85%,70%,0)');
+      grad.addColorStop(0.7, 'hsla(' + r.hue + ',80%,65%,' + (r.opacity*0.8) + ')');
+      rCtx.fillStyle = grad;
+      rCtx.fill();
+    }
+    requestAnimationFrame(animRipples);
+  }
+  animRipples();
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('button,a,input,.pig-runner')) return;
+    addRipple(e.clientX, e.clientY);
+  });
+
+  // 初始化缩放层基础值
+  const baseScales = [1, 0.85, 0.6, 0.45, 0.3, 0.15];
+  frontLayers.forEach((el, i) => { el.dataset.baseScale = baseScales[i] || 0.15; });
+  window.addEventListener('resize', () => { imgOrigins = null; });
+
+  // 为每个拍立得添加随机旋转值，并保留完美相框效果
+  smallImgs.forEach((el) => {
+    const deg = (Math.random() - 0.5) * 9;
+    el.dataset.rot = deg;
+    el.style.transform = 'rotate(' + deg + 'deg)';
+  });
+
+  window.onload = () => {
+    initFog();
+    startRecovery();
+  };
+})();
+</script>
+</body>
+</html>

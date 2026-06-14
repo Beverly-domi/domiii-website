@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>留言磁带页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF952D;
+            --primary-dark: #E67A00;
+            --primary-light: #FFD19B;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(145deg, #FFF5E8 0%, #FFEAD4 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+            font-size: 16px;
+            padding: 1rem;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ========== 返回主页按钮 - 与stage.html统一 ========== */
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 9999;
+            background: var(--primary);
+            border: 1px solid var(--primary-dark);
+            color: white;
+            padding: .35rem 1rem;
+            border-radius: 40px;
+            font-size: .7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(255,149,45,0.3);
+        }
+        .back-home:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255,149,45,0.4);
+        }
+
+        /* 星星飘落容器 */
+        .falling-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 8;
+            overflow: hidden;
+        }
+
+        .star-particle {
+            position: absolute;
+            pointer-events: auto;
+            cursor: pointer;
+            z-index: 15;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+            filter: drop-shadow(0 0 3px #FFB347);
+            animation: fallFaster linear forwards;
+        }
+        .star-particle:hover {
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 8px var(--primary));
+        }
+
+        .star-icon {
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .star-message {
+            font-size: 0.45rem;
+            color: #FFA559;
+            background: rgba(255, 245, 235, 0.85);
+            backdrop-filter: blur(3px);
+            padding: 1px 5px;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 0.5px solid rgba(255,149,45,0.5);
+            opacity: 0.95;
+        }
+
+        @keyframes fallFaster {
+            0% {
+                transform: translateY(-30px) rotate(0deg);
+                opacity: 0.9;
+            }
+            85% {
+                opacity: 0.95;
+                transform: translateY(calc(100vh - 90px)) rotate(160deg);
+            }
+            100% {
+                transform: translateY(calc(100vh - 40px)) rotate(200deg);
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        /* 装饰层 */
+        .space-deco {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: hidden;
+        }
+        .floating-orbit {
+            position: absolute;
+            bottom: 6%;
+            right: 2%;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255,149,45,0.3);
+            animation: spinOrbit 20s linear infinite;
+        }
+        .orbit-moon {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
+            filter: drop-shadow(0 0 4px var(--primary));
+        }
+        @keyframes spinOrbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .space-capsule {
+            position: absolute;
+            top: 10%;
+            left: 1%;
+            font-size: 1.8rem;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.1));
+            opacity: 0.6;
+            animation: levitate 6s ease-in-out infinite;
+        }
+        @keyframes levitate {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+        .satellite {
+            position: absolute;
+            bottom: 12%;
+            left: 3%;
+            font-size: 1.4rem;
+            opacity: 0.5;
+            animation: drift 12s infinite alternate;
+        }
+        @keyframes drift {
+            0% { transform: translateX(0) rotate(0deg); }
+            100% { transform: translateX(25px) rotate(8deg); }
+        }
+
+        /* 主容器 */
+        .boombox-container {
+            max-width: 1400px;
+            width: 96%;
+            margin: 0 auto;
+            background: #FFFFFF;
+            border-radius: 3rem;
+            box-shadow: 0 30px 45px rgba(255, 149, 45, 0.2), 0 8px 20px rgba(0,0,0,0.08);
+            padding: 2rem 2rem 2rem 2rem;
+            border: 1px solid rgba(255, 149, 45, 0.35);
+            position: relative;
+            z-index: 20;
+            backdrop-filter: blur(1px);
+        }
+
+        .main-dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 录音机主体 */
+        .cassette-deck {
+            flex: 2.5;
+            min-width: 380px;
+            background: #FFFFFF;
+            border-radius: 2rem;
+            padding: 1.8rem;
+            box-shadow: 0 15px 30px rgba(255, 149, 45, 0.12), inset 0 1px 0 rgba(255,255,255,0.9);
+            border: 1px solid #FFDDB3;
+            position: relative;
+        }
+        .cassette-deck::before {
+            content: "◉  ◉";
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 2.6rem;
+            color: #FFD9B0;
+            opacity: 0.6;
+            font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+            letter-spacing: 12px;
+            pointer-events: none;
+        }
+
+        .tape-slot {
+            background: #FFF5E8;
+            border-radius: 2rem;
+            padding: 1.2rem;
+            margin-bottom: 2rem;
+            box-shadow: inset 0 0 0 2px #FFFFFF, 0 5px 12px rgba(255, 149, 45, 0.15);
+            border: 1px solid #FFCE9E;
+        }
+
+        .display-window {
+            background: #FFFFFF;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+            color: var(--primary-dark);
+            min-height: 210px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px solid #FFB366;
+            box-shadow: inset 0 0 12px rgba(255, 149, 45, 0.12);
+        }
+
+        .message-screen {
+            word-break: break-word;
+        }
+
+        .screen-nick {
+            font-size: 1.15rem;
+            color: var(--primary);
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+        .screen-text {
+            font-size: 1.35rem;
+            font-weight: 500;
+            line-height: 1.45;
+            margin: 0.9rem 0;
+            color: #5C3E28;
+        }
+        .screen-time {
+            font-size: 0.75rem;
+            color: #C27E4A;
+            border-top: 1px dashed #FFD9B5;
+            padding-top: 0.5rem;
+        }
+        .no-cassette-tip {
+            color: #FFB87A;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        /* 功能按钮 */
+        .button-panel {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .phys-btn {
+            background: #FFFFFF;
+            border: 1px solid var(--primary-light);
+            padding: 12px 0;
+            width: 100px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+            font-size: 1rem;
+            color: var(--primary-dark);
+            box-shadow: 0 4px 0 var(--primary-light);
+            cursor: pointer;
+            transition: 0.08s linear;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .phys-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--primary-light);
+        }
+        .play-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 0 var(--primary-dark);
+        }
+
+        /* 磁带架区域 */
+        .tape-rack {
+            flex: 1.3;
+            min-width: 280px;
+            background: #FFFBF5;
+            border-radius: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #FFE0BE;
+            box-shadow: 0 8px 18px rgba(255, 149, 45, 0.08);
+        }
+
+        .rack-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.3rem;
+            border-bottom: 2px solid #FFD8A8;
+            padding-bottom: 0.5rem;
+        }
+        .rack-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        .record-new-btn {
+            background: var(--primary);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 60px;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(255, 149, 45, 0.3);
+            transition: all 0.1s ease;
+        }
+        .record-new-btn:active {
+            transform: scale(0.96);
+            background: var(--primary-dark);
+        }
+
+        .cassettes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 460px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .tape-item {
+            background: linear-gradient(115deg, #FFFFFF, #FFF6ED);
+            border-radius: 24px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 5px 12px rgba(255, 149, 45, 0.12);
+            border-left: 8px solid #FFB366;
+        }
+        .tape-item:hover {
+            transform: translateY(-5px) scale(1.01);
+            background: #FFFFFF;
+            box-shadow: 0 15px 25px rgba(255, 149, 45, 0.2);
+            border-left: 8px solid var(--primary);
+        }
+        .tape-item.active-tape {
+            background: #FFF2E2;
+            border-left: 8px solid var(--primary);
+            box-shadow: 0 0 0 2px #FFD8A8, 0 8px 18px rgba(255, 149, 45, 0.25);
+        }
+        .tape-info {
+            flex: 1;
+            overflow: hidden;
+        }
+        .tape-nick {
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tape-preview {
+            font-size: 0.75rem;
+            color: #B2672E;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 4px;
+        }
+        .like-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #E6B27A;
+            transition: transform 0.15s ease;
+            padding: 6px;
+        }
+        .like-btn:active {
+            transform: scale(1.2);
+        }
+        .like-btn.liked {
+            color: #FF5E5E;
+            text-shadow: 0 0 3px #FFA07A;
+        }
+        .cassette-icon {
+            font-size: 1.8rem;
+            margin-right: 12px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+            color: var(--primary);
+        }
+
+        /* 弹窗样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 245, 235, 0.97);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-card {
+            background: #FFFFFF;
+            border-radius: 44px;
+            width: 360px;
+            padding: 2rem;
+            border-top: 8px solid var(--primary);
+            box-shadow: 0 30px 45px rgba(255, 100, 0, 0.25);
+        }
+        .modal-card input, .modal-card textarea {
+            width: 100%;
+            margin: 12px 0;
+            padding: 12px 18px;
+            border-radius: 60px;
+            border: 1px solid #FFD8A8;
+            background: #FFFCF8;
+            outline: none;
+            font-family: inherit;
+        }
+        .modal-card input:focus, .modal-card textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255,149,45,0.2);
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 14px;
+            margin-top: 20px;
+        }
+        .modal-buttons button {
+            padding: 8px 20px;
+            border-radius: 60px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            background: #F5EFE5;
+            color: var(--primary-dark);
+            transition: 0.1s;
+            font-family: inherit;
+        }
+        .modal-buttons button:last-child {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* 消息提示 */
+        .toast-msg {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FFEFE0;
+            backdrop-filter: blur(12px);
+            padding: 10px 26px;
+            border-radius: 50px;
+            color: var(--primary-dark);
+            font-size: 0.85rem;
+            z-index: 1100;
+            transition: opacity 0.2s ease;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            border: 1px solid #FFC48A;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .insert-animation {
+            animation: slotInsertSmooth 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+        }
+        @keyframes slotInsertSmooth {
+            0% { transform: scale(0.96) translateY(-6px); opacity: 0.7; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .cassettes-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .cassettes-list::-webkit-scrollbar-track {
+            background: #FFF1E4;
+            border-radius: 10px;
+        }
+        .cassettes-list::-webkit-scrollbar-thumb {
+            background: #FFC48A;
+            border-radius: 10px;
+        }
+        .tape-count-badge {
+            background: #FFE6D0;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            margin-left: 8px;
+            color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- 右上角 返回主页按钮 跳转 wenjianjia.html -->
+    <a href="wenjianjia.html" class="back-home" id="backHomeBtn">🏠 返回主页</a>
+
+    <div class="falling-stars" id="fallingStarsContainer"></div>
+
+    <div class="space-deco">
+        <div class="floating-orbit"><div class="orbit-moon">🍊</div></div>
+        <div class="space-capsule">🚀📼</div>
+        <div class="satellite">🛸✨</div>
+        <div style="position: absolute; bottom: 18%; right: 10%; font-size: 1.8rem; opacity: 0.4; animation: levitate 7s infinite;">⭐🎧</div>
+    </div>
+
+    <div class="boombox-container">
+        <div class="main-dashboard">
+            <div class="cassette-deck">
+                <div class="tape-slot">
+                    <div class="display-window" id="displayWindow">
+                        <div id="screenContent" class="message-screen">
+                            <div class="no-cassette-tip">
+                                <i class="fas fa-cassette-tape"></i> 🍊 点击右侧磁带<br> ✨ 星辰为你闪烁
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-panel">
+                    <button class="phys-btn play-btn" id="playMessageBtn"><i class="fas fa-play"></i> 播放</button>
+                    <button class="phys-btn" id="stopDisplayBtn"><i class="fas fa-eject"></i> 弹出</button>
+                </div>
+                <div style="font-size: 0.69rem; text-align: center; margin-top: 16px; color:#E67A66; letter-spacing: 1px;">🎵 磁带舱 · 橙意满载  🎵</div>
+            </div>
+
+            <div class="tape-rack">
+                <div class="rack-header">
+                    <h3><i class="fas fa-tape"></i> 我的磁带库 <span id="tapeCountBadge" class="tape-count-badge">0</span></h3>
+                    <button class="record-new-btn" id="openRecordModalBtn"><i class="fas fa-microphone-alt"></i> 录制新留言</button>
+                </div>
+                <div class="cassettes-list" id="cassettesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastMsg" class="toast-msg"></div>
+    <div id="recordModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="margin-bottom: 6px; color:var(--primary-dark);">📼 录制新磁带</h3>
+            <input type="text" id="modalNick" placeholder="你的昵称" maxlength="20">
+            <textarea id="modalText" rows="2" placeholder="留言内容 (最多60字)" maxlength="60"></textarea>
+            <div class="modal-buttons">
+                <button id="cancelModalBtn">取消</button>
+                <button id="confirmRecordBtn">保存磁带</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let messages = [];
+        let currentActiveId = null;
+        let likedSet = new Set();
+
+        const cassettesContainer = document.getElementById('cassettesList');
+        const screenDiv = document.getElementById('screenContent');
+        const playBtn = document.getElementById('playMessageBtn');
+        const stopBtn = document.getElementById('stopDisplayBtn');
+        const openModalBtn = document.getElementById('openRecordModalBtn');
+        const modalOverlay = document.getElementById('recordModal');
+        const cancelModal = document.getElementById('cancelModalBtn');
+        const confirmRecord = document.getElementById('confirmRecordBtn');
+        const modalNick = document.getElementById('modalNick');
+        const modalText = document.getElementById('modalText');
+        const tapeCountSpan = document.getElementById('tapeCountBadge');
+        const fallingContainer = document.getElementById('fallingStarsContainer');
+
+        let speechSynth = window.speechSynthesis;
+        let currentUtterance = null;
+        let bestVoice = null;
+        let starInterval = null;
+        let activeStars = [];
+
+        // 优先选择更自然的中文神经语音
+        function initBestVoice() {
+            if (!speechSynth) return;
+            const voices = speechSynth.getVoices();
+            // 优先列表：微软神经语音 > macOS Tingting > 其他中文
+            const preferred = ['Xiaoxiao', 'Yunxi', 'Tingting', 'Sin-Ji', 'Huihui', 'Kangkang', 'zh-CN', 'zh'];
+            for (const name of preferred) {
+                const found = voices.find(v => v.lang.startsWith('zh') && v.name.includes(name));
+                if (found) { bestVoice = found; break; }
+            }
+            if (!bestVoice) bestVoice = voices.find(v => v.lang.startsWith('zh'));
+        }
+        if (speechSynth) {
+            initBestVoice();
+            speechSynth.onvoiceschanged = initBestVoice;
+        }
+
+        // 星星飘落效果
+        function createFallingStar() {
+            if (!messages.length) return;
+            let leftPos;
+            if (Math.random() > 0.5) {
+                leftPos = 2 + Math.random() * 14;
+            } else {
+                leftPos = 84 + Math.random() * 14;
+            }
+            leftPos = Math.min(Math.max(leftPos, 2), 98);
+            
+            const starWrapper = document.createElement('div');
+            starWrapper.className = 'star-particle';
+            starWrapper.style.left = leftPos + '%';
+            const duration = 5 + Math.random() * 4;
+            starWrapper.style.animationDuration = duration + 's';
+            
+            const starIconSpan = document.createElement('div');
+            starIconSpan.className = 'star-icon';
+            const starIcons = ['⭐', '🌟', '✨', '💫'];
+            const randomIcon = starIcons[Math.floor(Math.random() * starIcons.length)];
+            starIconSpan.textContent = randomIcon;
+            
+            const messageSpan = document.createElement('div');
+            messageSpan.className = 'star-message';
+            messageSpan.textContent = '张奕然一定会闪闪发光';
+            
+            starWrapper.appendChild(starIconSpan);
+            starWrapper.appendChild(messageSpan);
+            
+            starWrapper.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const toast = document.getElementById('toastMsg');
+                toast.textContent = '🌟 张奕然一定会闪闪发光 🌟';
+                toast.style.opacity = '1';
+                setTimeout(() => toast.style.opacity = '0', 1200);
+                starWrapper.style.transform = 'scale(1.2)';
+                setTimeout(() => starWrapper.style.transform = '', 200);
+            });
+            
+            fallingContainer.appendChild(starWrapper);
+            activeStars.push(starWrapper);
+            
+            const onFinish = () => {
+                if (starWrapper.parentNode) starWrapper.remove();
+                const idx = activeStars.indexOf(starWrapper);
+                if (idx !== -1) activeStars.splice(idx, 1);
+            };
+            starWrapper.addEventListener('animationend', onFinish, { once: true });
+
+            if (activeStars.length > 55) {
+                const oldest = activeStars.shift();
+                if (oldest && oldest.parentNode) oldest.remove();
+            }
+        }
+
+        function startFallingStars() {
+            if (starInterval) clearInterval(starInterval);
+            for (let i = 0; i < 6; i++) setTimeout(() => createFallingStar(), i * 250);
+            starInterval = setInterval(() => {
+                if (document.hasFocus() && messages.length > 0) {
+                    createFallingStar();
+                }
+            }, 2000);
+        }
+
+        function showToast(msg, duration = 1800) {
+            const toast = document.getElementById('toastMsg');
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', duration);
+        }
+
+        function formatTime() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        }
+
+        function updateTapeCount() {
+            if(tapeCountSpan) tapeCountSpan.innerText = messages.length;
+        }
+
+        function saveToLocal() {
+            localStorage.setItem('tape_messages_star_v5', JSON.stringify(messages));
+            localStorage.setItem('tape_liked_set_star_v5', JSON.stringify(Array.from(likedSet)));
+            localStorage.setItem('tape_current_active_star_v5', currentActiveId !== null ? currentActiveId : '');
+        }
+
+        function loadFromLocal() {
+            const storedMsg = localStorage.getItem('tape_messages_star_v5');
+            if (storedMsg) {
+                try { messages = JSON.parse(storedMsg); } catch(e) { messages = []; }
+            }
+            if (!messages || messages.length === 0) {
+                messages = [
+                    { id: 1001, nick: "橘子汽水", text: "张奕然一定会闪闪发光！橙色星海为你亮起", time: "2025-06-10 19:30", likes: 8 },
+                    { id: 1002, nick: "奶油柑橘", text: "每一条留言都是一颗星星，汇聚成银河", time: "2025-06-11 09:15", likes: 5 },
+                    { id: 1003, nick: "甜橙星球", text: "复古录音机里播放的是梦想的频率", time: "2025-06-12 14:22", likes: 6 },
+                    { id: 1004, nick: "星光旅人", text: "愿你如星辰，永远闪耀 ✨", time: "2025-06-12 18:45", likes: 4 },
+                    { id: 1005, nick: "奕然的小宇宙", text: "磁带转动，爱意永恒。张奕然加油！", time: "2025-06-13 09:30", likes: 10 }
+                ];
+                saveToLocal();
+            }
+            const storedLiked = localStorage.getItem('tape_liked_set_star_v5');
+            if (storedLiked) {
+                try { likedSet = new Set(JSON.parse(storedLiked)); } catch(e) { likedSet = new Set(); }
+            }
+            const storedActive = localStorage.getItem('tape_current_active_star_v5');
+            if (storedActive && storedActive !== '') {
+                const activeNum = parseInt(storedActive);
+                if (messages.find(m => m.id === activeNum)) currentActiveId = activeNum;
+                else currentActiveId = null;
+            } else { currentActiveId = null; }
+            updateTapeCount();
+        }
+
+        function stopSpeech() { if(speechSynth) speechSynth.cancel(); if(currentUtterance) currentUtterance=null; }
+
+        function playCurrentMessageSpeech() {
+            if (!currentActiveId) { showToast("📼 请先插入一盘磁带", 1200); return; }
+            const msg = messages.find(m => m.id === currentActiveId);
+            if (!msg) return;
+            stopSpeech();
+            const textToSpeak = `${msg.nick} 说：${msg.text}`;
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.05;
+                // 用选好的最佳中文语音
+                if (bestVoice) utterance.voice = bestVoice;
+                currentUtterance = utterance;
+                utterance.onend = () => { currentUtterance = null; };
+                speechSynth.speak(utterance);
+                showToast(`🔊 播放中: ${msg.nick} 的留言`, 1200);
+            } else { showToast("⚠️ 浏览器不支持语音朗读", 1000); }
+        }
+
+        function updateDisplayWindow() {
+            if (!screenDiv) return;
+            if (currentActiveId === null) {
+                screenDiv.innerHTML = `<div class="no-cassette-tip"><i class="fas fa-cassette-tape"></i> 🚀 星辰磁带舱<br>点击右侧磁带 或 点击飘落的星星✨</div>`;
+                return;
+            }
+            const msg = messages.find(m => m.id === currentActiveId);
+            if (!msg) { screenDiv.innerHTML = `<div class="no-cassette-tip">磁带已失效</div>`; return; }
+            screenDiv.innerHTML = `
+                <div class="screen-nick"><i class="fas fa-star-of-life"></i> ${escapeHtml(msg.nick)}  <span style="font-size:0.75rem;">❤️ ${msg.likes}</span></div>
+                <div class="screen-text">“ ${escapeHtml(msg.text)} ”</div>
+                <div class="screen-time"><i class="far fa-clock"></i> 录制于 ${msg.time}</div>
+            `;
+        }
+
+        function renderTapeList() {
+            if (!cassettesContainer) return;
+            if (messages.length === 0) {
+                cassettesContainer.innerHTML = `<div style="color:#E6A768; text-align:center; padding:1.5rem;">📼 暂无留言，点击「录制新留言」<br>✨ 让星河充满祝福</div>`;
+                updateTapeCount();
+                return;
+            }
+            const sorted = [...messages].sort((a,b) => new Date(b.time) - new Date(a.time));
+            cassettesContainer.innerHTML = '';
+            sorted.forEach(t => {
+                const isLiked = likedSet.has(t.id);
+                const activeClass = (currentActiveId === t.id) ? 'active-tape' : '';
+                const tapeDiv = document.createElement('div');
+                tapeDiv.className = `tape-item ${activeClass}`;
+                tapeDiv.dataset.id = t.id;
+                tapeDiv.innerHTML = `
+                    <div class="cassette-icon"><i class="fas fa-cassette-tape"></i></div>
+                    <div class="tape-info">
+                        <div class="tape-nick">🍊 ${escapeHtml(t.nick)}</div>
+                        <div class="tape-preview">${escapeHtml(t.text.substring(0, 30))}${t.text.length>30?'…':''}</div>
+                    </div>
+                    <div class="tape-actions">
+                        <button class="like-btn ${isLiked ? 'liked' : ''}" data-id="${t.id}"><i class="fas fa-heart"></i></button>
+                    </div>
+                `;
+                tapeDiv.addEventListener('click', (e) => {
+                    if (e.target.closest('.like-btn')) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    insertTapeAndDisplay(t.id);
+                });
+                const likeButton = tapeDiv.querySelector('.like-btn');
+                if (likeButton) {
+                    likeButton.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleLike(t.id, likeButton);
+                    });
+                }
+                cassettesContainer.appendChild(tapeDiv);
+            });
+            updateTapeCount();
+        }
+
+        function toggleLike(msgId, btnElement) {
+            const message = messages.find(m => m.id === msgId);
+            if (!message) return;
+            if (likedSet.has(msgId)) {
+                likedSet.delete(msgId);
+                message.likes = Math.max(0, (message.likes || 1) - 1);
+                btnElement.classList.remove('liked');
+                showToast(`💔 取消收藏 ${message.nick}`, 800);
+            } else {
+                likedSet.add(msgId);
+                message.likes = (message.likes || 0) + 1;
+                btnElement.classList.add('liked');
+                showToast(`🧡 收藏了 ${message.nick} 的留言`, 800);
+            }
+            saveToLocal();
+            renderTapeList();
+            if (currentActiveId === msgId) updateDisplayWindow();
+        }
+
+        function insertTapeAndDisplay(tapeId) {
+            const targetMsg = messages.find(m => m.id === tapeId);
+            if (!targetMsg) return;
+            const deckDiv = document.querySelector('.cassette-deck');
+            if (deckDiv) {
+                deckDiv.classList.add('insert-animation');
+                setTimeout(() => deckDiv.classList.remove('insert-animation'), 350);
+            }
+            currentActiveId = tapeId;
+            updateDisplayWindow();
+            renderTapeList();
+            saveToLocal();
+            showToast(`📼 插入「${targetMsg.nick}」的橙味磁带`, 1100);
+        }
+
+        function stopDisplay() {
+            if (currentActiveId === null) { showToast("没有正在播放的磁带", 1000); return; }
+            stopSpeech();
+            currentActiveId = null;
+            updateDisplayWindow();
+            renderTapeList();
+            saveToLocal();
+            showToast('⏏️ 磁带已弹出', 1000);
+        }
+
+        function addNewTape(nick, text) {
+            if (!text.trim()) { showToast('🎙️ 请写下你的祝福', 1000); return false; }
+            const finalNick = nick.trim() === '' ? '星际旅人' : nick.trim().substring(0, 20);
+            const finalText = text.trim().substring(0, 60);
+            const newMsg = { id: Date.now(), nick: finalNick, text: finalText, time: formatTime(), likes: 0 };
+            messages.push(newMsg);
+            saveToLocal();
+            renderTapeList();
+            insertTapeAndDisplay(newMsg.id);
+            return true;
+        }
+
+        function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+        function openModal() { modalNick.value = ''; modalText.value = ''; modalOverlay.classList.add('show'); }
+        function closeModal() { modalOverlay.classList.remove('show'); }
+        function confirmAdd() { if(addNewTape(modalNick.value, modalText.value)) closeModal(); }
+
+        function bindEvents() {
+            playBtn.addEventListener('click', playCurrentMessageSpeech);
+            stopBtn.addEventListener('click', stopDisplay);
+            openModalBtn.addEventListener('click', openModal);
+            cancelModal.addEventListener('click', closeModal);
+            confirmRecord.addEventListener('click', confirmAdd);
+            modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) closeModal(); });
+        }
+
+        function init() {
+            loadFromLocal();
+            renderTapeList();
+            if (currentActiveId && messages.find(m => m.id === currentActiveId)) updateDisplayWindow();
+            else updateDisplayWindow();
+            bindEvents();
+            startFallingStars();
+        }
+
+        init();
+    </script>
+</body>
+</html>

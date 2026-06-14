@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>高会限定 · 时光珍藏 | 橙白镭射相册</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+            font-size: 16px;
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #FFF7E8, #FFEFD6, #FFE4C4, #FFD9B5);
+            background-size: 200% 200%;
+            animation: softLaserShift 12s ease infinite alternate;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes softLaserShift {
+            0% {
+                background-position: 0% 0%;
+                background: radial-gradient(circle at 20% 30%, #FFF7E8, #FFEFD6, #FFE4C4, #FFD9B5);
+            }
+            100% {
+                background-position: 100% 50%;
+                background: radial-gradient(circle at 80% 70%, #FFFBF0, #FFEFDB, #FFE6CE, #FFDCB9);
+            }
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, rgba(255, 200, 150, 0.12) 0px, rgba(255, 200, 150, 0.12) 2px, transparent 2px, transparent 10px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 顶部导航栏 */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            background: rgba(255, 245, 230, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #FFD9AE;
+        }
+
+        .back-home {
+            background: #FFB26B;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #6B2E00;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-home:active {
+            transform: scale(0.94);
+            background: #F2984B;
+        }
+
+        @media (max-width: 550px) {
+            .top-nav {
+                justify-content: space-between;
+            }
+        }
+
+        /* 左右布局 筛选栏+内容 */
+        .app-layout {
+            display: flex;
+            max-width: 1400px;
+            margin: 1.5rem auto 2rem;
+            padding: 0 1.5rem;
+            gap: 2rem;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* 左侧筛选栏 */
+        .filter-sidebar {
+            width: 260px;
+            flex-shrink: 0;
+            background: rgba(255, 248, 235, 0.85);
+            backdrop-filter: blur(16px);
+            border-radius: 40px;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 200, 120, 0.7);
+            height: fit-content;
+            position: sticky;
+            top: 90px;
+        }
+
+        .filter-title {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #B85C1A;
+            text-align: center;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #FFCF9A;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .year-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .year-btn {
+            width: 100%;
+            background: #FFE3C4;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #914d1a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .year-btn.active {
+            background: #FFB26B;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .month-list {
+            display: none;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-left: 8px;
+            margin-top: 6px;
+        }
+
+        .month-list.open {
+            display: flex;
+        }
+
+        .month-chip {
+            background: rgba(255, 235, 210, 0.9);
+            border: 1px solid #FFD0A0;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #B45A2C;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .month-chip.active {
+            background: #E67E22;
+            color: white;
+            border-color: #E67E22;
+            box-shadow: 0 2px 6px rgba(230,126,34,0.3);
+        }
+
+        .reset-filter {
+            margin-top: 20px;
+            text-align: center;
+            padding-top: 12px;
+            border-top: 1px solid #FFD9AE;
+        }
+
+        .reset-btn {
+            background: #FFD9AE;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-weight: 700;
+            color: #9B4A1A;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.1s;
+        }
+
+        .reset-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* 内容区域 */
+        .gaohui-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+
+        @media (max-width: 800px) {
+            .app-layout {
+                flex-direction: column;
+            }
+            .filter-sidebar {
+                width: 100%;
+                position: static;
+                order: 1;
+            }
+            .gaohui-container {
+                order: 2;
+            }
+            .masonry-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 1rem;
+            }
+        }
+
+        .photo-card {
+            background: rgba(255, 250, 240, 0.96);
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 20px 28px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1), box-shadow 0.2s;
+            cursor: pointer;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(255, 200, 120, 0.5);
+        }
+
+        .photo-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 28px 38px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            display: block;
+            background: #FFE1BC;
+        }
+
+        .card-caption {
+            padding: 12px 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #AD5A20;
+            background: #FFF8EF;
+            border-top: 1px solid #FFDFB5;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .caption-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .media-badge {
+            background: #FFE0B5;
+            padding: 3px 8px;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #B4541A;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-img-wrapper {
+            position: relative;
+        }
+
+        .video-badge, .audio-badge {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            border-radius: 30px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            pointer-events: none;
+        }
+
+        .audio-badge {
+            right: auto;
+            left: 12px;
+            background: #E67E22cc;
+        }
+
+        .counter-stats {
+            text-align: center;
+            margin: 2rem 0 1rem;
+            font-size: 0.85rem;
+            color: #B45A2C;
+            font-weight: 600;
+            background: rgba(255, 245, 230, 0.7);
+            backdrop-filter: blur(8px);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 6px 20px;
+            border-radius: 40px;
+        }
+
+        /* 灯箱扩展支持语音和媒体 */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(25px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+            flex-direction: column;
+        }
+
+        .lightbox.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .lightbox-media {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 32px;
+            box-shadow: 0 0 40px #FFB86B;
+        }
+
+        .audio-player-card {
+            background: #2c1a0e;
+            border-radius: 60px;
+            padding: 20px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .floating-bubble {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, rgba(255, 250, 235, 0.7), rgba(255, 240, 215, 0.5), rgba(255, 230, 190, 0.4));
+            backdrop-filter: blur(3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.04), 0 0 0 1.5px rgba(255, 255, 240, 0.8) inset;
+            cursor: pointer;
+            z-index: 20;
+            pointer-events: auto;
+            transition: transform 0.1s;
+        }
+
+        .floating-bubble:hover {
+            transform: scale(1.05);
+        }
+
+        .particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .tip-hint {
+            position: fixed;
+            bottom: 18px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #B45A2C;
+            background: rgba(255, 245, 230, 0.85);
+            backdrop-filter: blur(12px);
+            width: fit-content;
+            margin: 0 auto;
+            padding: 5px 20px;
+            border-radius: 60px;
+            pointer-events: none;
+            z-index: 45;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="top-nav">
+    <button class="back-home" onclick="goHome()"><i class="fas fa-home"></i> 返回主相册</button>
+</div>
+
+<div class="app-layout">
+    <!-- 左侧筛选栏 年份+月份 -->
+    <div class="filter-sidebar">
+        <div class="filter-title"><i class="fas fa-sliders-h"></i> 时光筛选器</div>
+        <div id="yearFilterContainer"></div>
+        <div class="reset-filter">
+            <button class="reset-btn" id="resetFilterBtn"><i class="fas fa-undo-alt"></i> 全部珍藏</button>
+        </div>
+    </div>
+
+    <!-- 右侧内容 -->
+    <div class="gaohui-container" id="gaohuiContainer"></div>
+</div>
+<div class="tip-hint">✨ 点击图片/视频/语音放大 | 仅限高会会员 ✨</div>
+<canvas id="particleCanvas" class="particle-canvas"></canvas>
+
+<script>
+    // ======================= 音频播放状态管理 =======================
+    // 存储每个音频的播放进度，实现关闭后重新打开从暂停位置继续播放
+    const audioPlaybackState = {};
+    
+    // 保存音频播放状态
+    function saveAudioState(audioSrc, currentTime) {
+        if (audioSrc && currentTime > 0) {
+            audioPlaybackState[audioSrc] = {
+                currentTime: currentTime,
+                timestamp: Date.now()
+            };
+        }
+    }
+    
+    // 获取音频播放状态
+    function getAudioState(audioSrc) {
+        return audioPlaybackState[audioSrc] || null;
+    }
+    // =============================================================
+    
+    // ======================= 模拟丰富数据：2024,2025,2026 每个月份下混合照片/视频/语音 =======================
+    // 为了体现功能的完整性，构造真实感数据，文件路径使用 gaohui/ 下模拟并带fallback占位。
+    const GAOHUI_BASE = "gaohui/";
+    
+    // 素材库名称映射
+    const mediaLibrary = [];
+    let itemId = 0;
+    const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    
+    // 辅助生成随机类型 图片/视频/语音
+    const types = ['image', 'video', 'audio'];
+    const typeNames = { image: '照片', video: '视频', audio: '语音' };
+    const iconMap = { image: 'fa-image', video: 'fa-video', audio: 'fa-microphone-alt' };
+    
+    // 为每个年份的每个月生成1~2个媒体，让筛选栏看起来丰盛 (2024,2025,2026)
+    for (let year of [2024, 2025, 2026]) {
+        for (let mIdx = 0; mIdx < months.length; mIdx++) {
+            const monthNum = mIdx + 1;
+            const monthName = months[mIdx];
+            // 随机生成1~2个素材
+            const itemCount = (year === 2026 && monthNum > 6) ? 1 : (Math.random() > 0.3 ? 2 : 1);
+            for (let k = 1; k <= itemCount; k++) {
+                const mediaType = types[Math.floor(Math.random() * types.length)];
+                let src = "";
+                let fallback = "";
+                const timestamp = `${year}${String(monthNum).padStart(2,'0')}`;
+                const uniqueId = `${year}_${monthNum}_${k}_${Math.random()}`;
+                
+                if (mediaType === 'image') {
+                    const picId = (year * monthNum * k) % 300 + 100;
+                    src = `${GAOHUI_BASE}gh_${year}_${monthNum}_${k}.jpg`;
+                    fallback = `https://picsum.photos/id/${picId}/400/400?random=${uniqueId}`;
+                } else if (mediaType === 'video') {
+                    src = `${GAOHUI_BASE}video_${year}_${monthNum}_${k}.mp4`;
+                    fallback = `https://placehold.co/400x400/FFC085/9B4A1A?text=🎬${year}.${monthNum}`;
+                } else { // audio
+                    src = `${GAOHUI_BASE}audio_${year}_${monthNum}_${k}.mp3`;
+                    fallback = `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${(year*monthNum+k)%8+1}.mp3`; // 有效演示音频url
+                }
+                
+                const caption = `🔒 ${year}.${monthNum} · ${typeNames[mediaType]} ${k}`;
+                mediaLibrary.push({
+                    id: itemId++,
+                    year: year,
+                    month: monthNum,
+                    monthName: monthName,
+                    type: mediaType,
+                    src: src,
+                    caption: caption,
+                    fallback: fallback,
+                    displayDate: `${year}年${monthNum}月`
+                });
+            }
+        }
+    }
+    // 额外添加一些确保每个月份都有可见内容，调整让总数量不过于稀疏，目前大概每年12~20个左右，完美。
+    
+    // 当前激活的筛选
+    let activeYear = null;
+    let activeMonth = null;
+    
+    // 粒子系统 (保留原功能)
+    let audioCtx = null;
+    let particles = [];
+    let particleCtx = null;
+    let animFrame = null;
+    let activeFloatingBubbles = [];
+    
+    function playPopSound() {
+        try {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.value = 960; gain.gain.value = 0.28;
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.26);
+            const noise = audioCtx.createScriptProcessor(512, 1, 1);
+            noise.onaudioprocess = (e) => { for (let i = 0; i < 512; i++) e.outputBuffer.getChannelData(0)[i] = (Math.random() - 0.5) * 0.2; noise.disconnect(); };
+            noise.connect(audioCtx.destination);
+            setTimeout(() => noise.disconnect(), 120);
+        } catch (e) { }
+    }
+    
+    function initParticleCanvas() { const c = document.getElementById('particleCanvas'); particleCtx = c.getContext('2d'); const resize = () => { c.width = innerWidth; c.height = innerHeight; }; window.addEventListener('resize', resize); resize(); }
+    function burstParticles(x, y) {
+        if (!particleCtx) initParticleCanvas();
+        const canvas = document.getElementById('particleCanvas'); if (!canvas) return;
+        for (let i = 0; i < 36; i++) {
+            const angle = Math.random() * Math.PI * 2, speed = 1.8 + Math.random() * 6;
+            const vx = Math.cos(angle) * speed, vy = Math.sin(angle) * speed;
+            const life = 0.7 + Math.random();
+            const colors = ['#FFB347', '#FFAA66', '#FFC48A', '#FFE0B0', '#FFB074', '#FFD580'];
+            particles.push({ x, y, vx, vy, life, maxLife: life, size: 3 + Math.random() * 8, color: colors[Math.floor(Math.random() * colors.length)] });
+        }
+        if (animFrame) cancelAnimationFrame(animFrame);
+        function animate() {
+            if (!particleCtx) return;
+            particleCtx.clearRect(0, 0, canvas.width, canvas.height);
+            let alive = false;
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx; p.y += p.vy; p.life -= 0.018;
+                if (p.life <= 0) { particles.splice(i, 1); continue; }
+                alive = true;
+                particleCtx.globalAlpha = Math.min(0.8, (p.life / p.maxLife) * 0.8);
+                particleCtx.fillStyle = p.color;
+                particleCtx.beginPath(); particleCtx.arc(p.x, p.y, p.size * (p.life / p.maxLife), 0, Math.PI * 2); particleCtx.fill();
+            }
+            if (alive) animFrame = requestAnimationFrame(animate);
+            else { cancelAnimationFrame(animFrame); animFrame = null; particleCtx.clearRect(0, 0, canvas.width, canvas.height); }
+        }
+        animFrame = requestAnimationFrame(animate);
+    }
+    
+    class FloatingBubble { constructor(el, x, y, size, sy, sx) { this.element = el; this.x = x; this.y = y; this.size = size; this.speedY = sy; this.speedX = sx; this.active = true; }
+        update() { if (!this.active) return; this.y -= this.speedY; this.x += this.speedX; if (this.y + this.size < 0 || this.y > innerHeight + 200 || this.x + this.size < -100 || this.x - this.size > innerWidth + 100) { this.remove(); return; } this.element.style.transform = `translate(${this.x}px, ${this.y}px)`; }
+        remove() { if (this.element && this.element.parentNode) this.element.remove(); this.active = false; const idx = activeFloatingBubbles.indexOf(this); if (idx !== -1) activeFloatingBubbles.splice(idx, 1); }
+    }
+    function createFloatingBubble() {
+        const size = 22 + Math.random() * 48; const startX = Math.random() * (innerWidth - size); const startY = innerHeight + 15 + Math.random() * 40;
+        const speedY = 0.25 + Math.random() * 0.45; const speedX = (Math.random() - 0.5) * 0.3;
+        const div = document.createElement('div'); div.className = 'floating-bubble'; div.style.width = `${size}px`; div.style.height = `${size}px`; div.style.left = '0px'; div.style.top = '0px'; div.style.position = 'fixed'; div.style.transform = `translate(${startX}px, ${startY}px)`;
+        div.addEventListener('click', (e) => { e.stopPropagation(); const r = div.getBoundingClientRect(); burstParticles(r.left + r.width / 2, r.top + r.height / 2); playPopSound(); div.style.transition = 'transform 0.1s, opacity 0.12s'; div.style.transform = `translate(${r.left}px, ${r.top}px) scale(0.1)`; div.style.opacity = '0'; setTimeout(() => { if (div.parentNode) div.remove(); const idx = activeFloatingBubbles.findIndex(b => b.element === div); if (idx !== -1) activeFloatingBubbles.splice(idx, 1); }, 130); });
+        document.body.appendChild(div); const obj = new FloatingBubble(div, startX, startY, size, speedY, speedX); activeFloatingBubbles.push(obj); return obj;
+    }
+    function updateFloatingBubbles() { for (let b of activeFloatingBubbles) b.update(); requestAnimationFrame(updateFloatingBubbles); }
+    function startBubbleGenerator() { setInterval(() => { if (activeFloatingBubbles.length < 28) createFloatingBubble(); }, 2200); }
+    
+    // 灯箱: 支持图片/视频/语音
+    function showMedia(item) {
+        let lb = document.getElementById('customLightbox');
+        if (!lb) {
+            lb = document.createElement('div'); lb.id = 'customLightbox'; lb.className = 'lightbox';
+            document.body.appendChild(lb);
+            lb.addEventListener('click', () => {
+                lb.classList.remove('active');
+                const videoEl = lb.querySelector('video');
+                if (videoEl) videoEl.pause();
+                const audioEl = lb.querySelector('audio');
+                if (audioEl) {
+                    // 保存音频当前播放位置，以便下次继续播放
+                    saveAudioState(audioEl.src, audioEl.currentTime);
+                    audioEl.pause();
+                }
+                lb.innerHTML = '';
+            });
+        }
+        lb.innerHTML = '';
+        if (item.type === 'video') {
+            const video = document.createElement('video');
+            video.src = item.src;
+            video.controls = true;
+            video.autoplay = true;
+            video.className = 'lightbox-media';
+            lb.appendChild(video);
+            video.play().catch(e => console.log);
+        } else if (item.type === 'audio') {
+            const wrapper = document.createElement('div');
+            wrapper.style.backgroundColor = '#2c1a0ecc';
+            wrapper.style.borderRadius = '48px';
+            wrapper.style.padding = '32px 48px';
+            wrapper.style.textAlign = 'center';
+            const title = document.createElement('h3');
+            title.innerText = item.caption;
+            title.style.color = '#FFD2A5';
+            title.style.marginBottom = '20px';
+            const audio = document.createElement('audio');
+            audio.src = item.src;
+            audio.controls = true;
+            audio.autoplay = true;
+            audio.style.width = '280px';
+            
+            // 恢复上次播放位置（如果有）
+            const savedState = getAudioState(item.src);
+            if (savedState && savedState.currentTime > 0) {
+                audio.addEventListener('loadedmetadata', function onLoaded() {
+                    audio.currentTime = savedState.currentTime;
+                    audio.removeEventListener('loadedmetadata', onLoaded);
+                });
+                // 如果已缓存，loadedmetadata可能已经触发，直接设置
+                if (audio.readyState >= 2) {
+                    audio.currentTime = savedState.currentTime;
+                }
+            }
+            
+            wrapper.appendChild(title);
+            wrapper.appendChild(audio);
+            const fallbackNote = document.createElement('p');
+            fallbackNote.style.fontSize = '0.75rem';
+            fallbackNote.style.color = '#FFC085';
+            fallbackNote.innerText = '🎧 高会专属语音 · 戴上耳机沉浸聆听';
+            wrapper.appendChild(fallbackNote);
+            lb.appendChild(wrapper);
+            audio.play().catch(e => console.log);
+        } else {
+            const img = document.createElement('img');
+            img.src = item.src;
+            img.className = 'lightbox-media';
+            img.onerror = () => { if (img.src !== item.fallback) img.src = item.fallback; };
+            lb.appendChild(img);
+        }
+        lb.classList.add('active');
+    }
+    
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
+    
+    // 根据筛选条件过滤数据
+    function getFilteredItems() {
+        return mediaLibrary.filter(item => {
+            if (activeYear !== null && item.year !== activeYear) return false;
+            if (activeMonth !== null && item.month !== activeMonth) return false;
+            return true;
+        });
+    }
+    
+    function renderGallery() {
+        const container = document.getElementById('gaohuiContainer');
+        if (!container) return;
+        const filtered = getFilteredItems();
+        if (filtered.length === 0) {
+            container.innerHTML = `<div style="text-align:center; padding: 60px 20px; background: rgba(255,240,215,0.6); border-radius: 48px;"><i class="fas fa-hourglass-half" style="font-size: 3rem; color:#E67E22;"></i><p style="margin-top: 16px; font-weight: 700;">此刻时空暂无珍藏，换个年份或月份吧 ✨</p></div><div class="counter-stats"><i class="fas fa-star"></i> 筛选结果 0 件 <i class="fas fa-star"></i></div>`;
+            return;
+        }
+        let html = `<div class="masonry-grid">`;
+        filtered.forEach((item) => {
+            const isVideo = item.type === 'video';
+            const isAudio = item.type === 'audio';
+            const isImage = item.type === 'image';
+            let mediaContent = '';
+            if (isImage) {
+                mediaContent = `<img class="card-img" src="${item.src}" onerror="this.src='${item.fallback}'" loading="lazy">`;
+            } else if (isVideo) {
+                mediaContent = `<video class="card-img" poster="https://placehold.co/400x400/FFE0B5/CC8444?text=🎬" onerror="this.onerror=null;this.closest('.photo-card')?.querySelector('img')?.setAttribute('src','${item.fallback}')">
+                                    <source src="${item.src}" type="video/mp4"></video>`;
+            } else {
+                // 语音特殊显示: 展示封面波形图标
+                mediaContent = `<div class="card-img" style="display: flex; align-items: center; justify-content: center; background: #FFDAB9; flex-direction: column;"><i class="fas fa-headphones" style="font-size: 3rem; color:#E67E22;"></i><span style="margin-top: 8px; font-weight: 700;">🎙️ 高会语音</span></div>`;
+            }
+            const badgeIcon = iconMap[item.type] || 'fa-crown';
+            html += `
+                <div class="photo-card" data-id="${item.id}">
+                    <div class="card-img-wrapper">
+                        ${mediaContent}
+                        ${isVideo ? `<div class="video-badge"><i class="fas fa-lock"></i> <i class="fas fa-video"></i> 视频</div>` : ''}
+                        ${isAudio ? `<div class="audio-badge"><i class="fas fa-lock"></i> <i class="fas fa-microphone-alt"></i> 语音</div>` : ''}
+                    </div>
+                    <div class="card-caption">
+                        <div class="caption-left"><i class="${badgeIcon}"></i> ${escapeHtml(item.caption)}</div>
+                        <div class="media-badge"><i class="far fa-calendar-alt"></i> ${item.displayDate}</div>
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div><div class="counter-stats"><i class="fas fa-star-of-life"></i> 高会限定 ${filtered.length} 件珍藏 <i class="fas fa-gem"></i></div>`;
+        container.innerHTML = html;
+        // 绑定点击卡片事件
+        const cards = document.querySelectorAll('.photo-card');
+        cards.forEach(card => {
+            const idxAttr = card.getAttribute('data-id');
+            const mediaItem = mediaLibrary.find(m => m.id == idxAttr);
+            if (mediaItem) {
+                card.addEventListener('click', (e) => { e.stopPropagation(); showMedia(mediaItem); });
+            }
+        });
+    }
+    
+    // 构建左侧年份+月份筛选UI
+    function buildFilterSidebar() {
+        const container = document.getElementById('yearFilterContainer');
+        const years = [2024, 2025, 2026];
+        let html = '';
+        years.forEach(year => {
+            const isYearActive = (activeYear === year);
+            html += `<div class="year-group">
+                        <button class="year-btn ${isYearActive ? 'active' : ''}" data-year="${year}">
+                            <span>📅 ${year}年</span> <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="month-list ${isYearActive ? 'open' : ''}" data-yearmonths="${year}">`;
+            for (let i = 0; i < months.length; i++) {
+                const monthNum = i + 1;
+                const hasMedia = mediaLibrary.some(m => m.year === year && m.month === monthNum);
+                if (!hasMedia) continue;
+                const isMonthActive = (activeYear === year && activeMonth === monthNum);
+                html += `<div class="month-chip ${isMonthActive ? 'active' : ''}" data-year="${year}" data-month="${monthNum}">${months[i]}</div>`;
+            }
+            html += `</div></div>`;
+        });
+        container.innerHTML = html;
+        
+        // 绑定年份按钮折叠及事件
+        document.querySelectorAll('.year-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const year = parseInt(btn.getAttribute('data-year'));
+                const monthListDiv = btn.parentElement.querySelector('.month-list');
+                monthListDiv.classList.toggle('open');
+                // 选中年份并清除月份筛选（可选用户体验）
+                activeYear = year;
+                activeMonth = null;
+                updateActiveStates();
+                renderGallery();
+            });
+        });
+        
+        // 月份筛选
+        document.querySelectorAll('.month-chip').forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const year = parseInt(chip.getAttribute('data-year'));
+                const month = parseInt(chip.getAttribute('data-month'));
+                activeYear = year;
+                activeMonth = month;
+                updateActiveStates();
+                renderGallery();
+            });
+        });
+        
+        document.getElementById('resetFilterBtn').addEventListener('click', () => {
+            activeYear = null;
+            activeMonth = null;
+            updateActiveStates();
+            renderGallery();
+        });
+    }
+    
+    function updateActiveStates() {
+        // 重新刷新侧边栏样式及折叠状态但不重建dom？为了简单，重新构建UI保留激活
+        buildFilterSidebar();  // 刷新样式
+        // 保持右侧筛选渲染同步
+    }
+    
+    function goHome() { window.location.href = 'gallery.html'; }
+    
+    function init() {
+        initParticleCanvas();
+        startBubbleGenerator();
+        updateFloatingBubbles();
+        buildFilterSidebar();
+        renderGallery();
+        const actAudio = () => { if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); document.removeEventListener('click', actAudio); };
+        document.addEventListener('click', actAudio);
+    }
+    init();
+</script>
+</body>
+</html>

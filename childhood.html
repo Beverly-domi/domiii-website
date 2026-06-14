@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>童年照 · 3D旋转展台 | 橙白镭射相册</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif; }
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+            font-size: 16px;
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #FFF7E8, #FFEFD6, #FFE4C4, #FFD9B5);
+            background-size: 200% 200%;
+            animation: softLaserShift 12s ease infinite alternate;
+            overflow-x: hidden;
+            position: relative;
+        }
+        @keyframes softLaserShift {
+            0% { background-position: 0% 0%; background: radial-gradient(circle at 20% 30%, #FFF7E8, #FFEFD6, #FFE4C4, #FFD9B5); }
+            100% { background-position: 100% 50%; background: radial-gradient(circle at 80% 70%, #FFFBF0, #FFEFDB, #FFE6CE, #FFDCB9); }
+        }
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(45deg, rgba(255,200,150,0.12) 0px, rgba(255,200,150,0.12) 2px, transparent 2px, transparent 10px);
+            pointer-events: none; z-index: 1;
+        }
+
+        /* 顶部导航栏 */
+        .top-nav {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center;
+            padding: 12px 20px;
+            background: rgba(255,245,230,0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #FFD9AE;
+        }
+        .back-home {
+            background: #FFB26B;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #6B2E00;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .back-home:active {
+            transform: scale(0.94);
+            background: #F2984B;
+        }
+
+        /* ===== 3D Carousel Stage (参考 CodePen: supah/xxJMbbg) ===== */
+        .carousel-stage {
+            position: relative;
+            width: 100%;
+            height: 80vh;
+            min-height: 480px;
+            perspective: 1200px;
+            overflow: hidden;
+            cursor: grab;
+            z-index: 10;
+        }
+        .carousel-stage:active {
+            cursor: grabbing;
+        }
+        .carousel {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        /* 3D Carousel Item — 参考 CodePen 的 .carousel-item 结构与CSS变量驱动动画 */
+        .carousel-item {
+            --width: clamp(220px, 52vw, 440px);
+            position: absolute;
+            width: var(--width);
+            height: var(--width);
+            left: 50%;
+            top: 45%;
+            margin-left: calc(var(--width) * -0.5);
+            margin-top: calc(var(--width) * -0.5);
+            z-index: var(--zIndex, 1);
+            transform:
+                translateX(calc(var(--delta, 0) * var(--spacing, 190px)))
+                translateY(calc(var(--absDelta, 0) * var(--absDelta, 0) * 8px))
+                rotate(calc(var(--delta, 0) * 10deg))
+                scale(var(--scale, 1));
+            opacity: var(--opacity, 1);
+            transition: transform 0.8s cubic-bezier(0, 0.02, 0, 1), opacity 0.8s ease;
+            cursor: pointer;
+            pointer-events: auto;
+            border-radius: 20px;
+        }
+        .carousel-box {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            background: #FFF8EF;
+            box-shadow:
+                0 20px 40px rgba(120, 60, 20, 0.2),
+                0 0 0 1px rgba(200, 150, 100, 0.35) inset,
+                0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+        .carousel-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        .carousel-item:hover .carousel-box img {
+            transform: scale(1.04);
+        }
+        .card-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px 12px 12px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.55));
+            color: #fff;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        /* 导航控件 */
+        .nav-controls {
+            position: relative;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: -10px;
+            padding-bottom: 20px;
+        }
+        .nav-btn {
+            background: #FFB87A;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 60px;
+            font-size: 1.4rem;
+            color: #6B2E00;
+            cursor: pointer;
+            transition: 0.1s;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-btn:active {
+            transform: scale(0.92);
+            background: #FFA051;
+        }
+        .counter {
+            font-size: 0.85rem;
+            color: #A55317;
+            background: rgba(255,245,230,0.7);
+            backdrop-filter: blur(8px);
+            padding: 6px 18px;
+            border-radius: 40px;
+            min-width: 55px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* 灯箱放大 */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .lightbox.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .lightbox-img {
+            max-width: 90vw;
+            max-height: 90vh;
+            border-radius: 32px;
+            box-shadow: 0 0 40px #FFB86B;
+        }
+
+        /* 飘浮小泡泡 */
+        .floating-bubble {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, rgba(255,250,235,0.6), rgba(255,240,215,0.4), rgba(255,230,190,0.3));
+            backdrop-filter: blur(3px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.04), 0 0 0 1.5px rgba(255,255,240,0.8) inset;
+            cursor: pointer;
+            z-index: 20;
+            pointer-events: auto;
+            transition: transform 0.1s;
+        }
+        .floating-bubble:hover {
+            transform: scale(1.05);
+        }
+        .particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .tip-hint {
+            position: fixed;
+            bottom: 18px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #B45A2C;
+            background: rgba(255,245,230,0.8);
+            backdrop-filter: blur(12px);
+            width: fit-content;
+            margin: 0 auto;
+            padding: 5px 20px;
+            border-radius: 60px;
+            pointer-events: none;
+            z-index: 45;
+            font-weight: 600;
+        }
+
+        /* 四角发光星星 */
+        .bg-star {
+            position: fixed;
+            z-index: 2;
+            pointer-events: none;
+            color: white;
+            animation: starTwinkle var(--dur) ease-in-out infinite alternate;
+            font-size: var(--size);
+            opacity: 0.8;
+            text-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.5), 0 0 50px rgba(255,255,255,0.3);
+        }
+        @keyframes starTwinkle {
+            0% { transform: scale(0.9) rotate(0deg); opacity: 0.4; text-shadow: 0 0 10px rgba(255,255,255,0.6), 0 0 25px rgba(255,255,255,0.3); }
+            100% { transform: scale(1.2) rotate(15deg); opacity: 1; text-shadow: 0 0 25px white, 0 0 50px rgba(255,255,255,0.7), 0 0 80px rgba(255,255,255,0.4); }
+        }
+
+        /* 右下角随机PNG */
+        .corner-png {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.3s;
+            pointer-events: auto;
+        }
+        .corner-png:hover { transform: scale(1.12) rotate(8deg); }
+    </style>
+</head>
+<body>
+<div class="top-nav">
+    <button class="back-home" onclick="goHome()"><i class="fas fa-home"></i> 返回主相册</button>
+</div>
+
+<!-- 3D Carousel Stage -->
+<div class="carousel-stage" id="carouselStage">
+    <div class="carousel" id="carousel"></div>
+</div>
+
+<!-- 导航控件 -->
+<div class="nav-controls">
+    <button class="nav-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+    <div class="counter" id="counter">1 / 34</div>
+    <button class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+</div>
+
+<div class="tip-hint">✨ 点击图片放大 · 滚轮/拖拽/按钮切换 ✨</div>
+<canvas id="particleCanvas" class="particle-canvas"></canvas>
+
+<!-- 灯箱 -->
+<div class="lightbox" id="customLightbox">
+    <img class="lightbox-img" id="lightboxImg" alt="放大">
+</div>
+
+<div id="bgStarsContainer"></div>
+<img id="cornerPng" class="corner-png" alt="小惊喜">
+
+<script>
+// ========================== 数据 ==========================
+const CHILDHOOD_BASE = "https://domiii.oss-cn-hangzhou.aliyuncs.com/childhood/";
+const childhoodPhotos = [];
+for (let i = 1; i <= 34; i++) {
+    childhoodPhotos.push({
+        src: CHILDHOOD_BASE + `童年${i}.jpg`,
+        caption: `🍬 童年时光 · 珍藏瞬间 ${i}`,
+        fallback: `https://picsum.photos/id/${(i*31+150)%400}/400/400`
+    });
+}
+
+// ========================== 音效 ==========================
+let audioCtx = null;
+function playSwooshSound() {
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(780, now);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+        osc.type = 'sine';
+        osc.start(); osc.stop(now + 0.22);
+    } catch(e) { console.warn("音效受限"); }
+}
+function playPopSound() {
+    try {
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.value = 960; gain.gain.value = 0.28;
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.26);
+        const noise = audioCtx.createScriptProcessor(512,1,1);
+        noise.onaudioprocess = (e) => { for(let i=0;i<512;i++) e.outputBuffer.getChannelData(0)[i] = (Math.random()-0.5)*0.2; noise.disconnect(); };
+        noise.connect(audioCtx.destination);
+        setTimeout(()=> noise.disconnect(), 120);
+    } catch(e) {}
+}
+
+// ========================== 粒子特效 ==========================
+let particleCtx = null;
+let particles = [];
+let animFrame = null;
+
+function initParticleCanvas() {
+    const c = document.getElementById('particleCanvas');
+    if (!c) return;
+    particleCtx = c.getContext('2d');
+    const resize = () => { c.width = innerWidth; c.height = innerHeight; };
+    window.addEventListener('resize', resize);
+    resize();
+}
+function burstParticles(x, y) {
+    if (!particleCtx) initParticleCanvas();
+    const canvas = document.getElementById('particleCanvas');
+    if (!canvas) return;
+    for (let i = 0; i < 38; i++) {
+        const angle = Math.random() * Math.PI * 2, speed = 1.8 + Math.random() * 6;
+        const vx = Math.cos(angle) * speed, vy = Math.sin(angle) * speed;
+        const life = 0.7 + Math.random();
+        const colors = ['#FFB347','#FFAA66','#FFC48A','#FFE0B0','#FFB074'];
+        particles.push({ x, y, vx, vy, life, maxLife: life, size: 3 + Math.random() * 8, color: colors[Math.floor(Math.random() * colors.length)] });
+    }
+    if (animFrame) cancelAnimationFrame(animFrame);
+    function animate() {
+        if (!particleCtx) return;
+        particleCtx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx; p.y += p.vy; p.life -= 0.018;
+            if (p.life <= 0) { particles.splice(i, 1); continue; }
+            alive = true;
+            particleCtx.globalAlpha = Math.min(0.8, (p.life / p.maxLife) * 0.8);
+            particleCtx.fillStyle = p.color;
+            particleCtx.beginPath(); particleCtx.arc(p.x, p.y, p.size * (p.life / p.maxLife), 0, Math.PI * 2); particleCtx.fill();
+        }
+        if (alive) animFrame = requestAnimationFrame(animate);
+        else { cancelAnimationFrame(animFrame); animFrame = null; particleCtx.clearRect(0, 0, canvas.width, canvas.height); }
+    }
+    animFrame = requestAnimationFrame(animate);
+}
+
+// ========================== 飘浮装饰气泡 ==========================
+let activeFloatingBubbles = [];
+
+class FloatingBubble {
+    constructor(el, x, y, size, sy, sx) { this.element = el; this.x = x; this.y = y; this.size = size; this.speedY = sy; this.speedX = sx; this.active = true; }
+    update() {
+        if (!this.active) return;
+        this.y -= this.speedY; this.x += this.speedX;
+        if (this.y + this.size < 0 || this.y > innerHeight + 200 || this.x + this.size < -100 || this.x - this.size > innerWidth + 100) { this.remove(); return; }
+        this.element.style.transform = `translate(${this.x}px, ${this.y}px)`;
+    }
+    remove() { if (this.element && this.element.parentNode) this.element.remove(); this.active = false; const idx = activeFloatingBubbles.indexOf(this); if (idx !== -1) activeFloatingBubbles.splice(idx, 1); }
+}
+function createFloatingBubble() {
+    const size = 22 + Math.random() * 48;
+    const startX = Math.random() * (innerWidth - size);
+    const startY = innerHeight + 15 + Math.random() * 40;
+    const speedY = 0.25 + Math.random() * 0.45;
+    const speedX = (Math.random() - 0.5) * 0.3;
+    const div = document.createElement('div');
+    div.className = 'floating-bubble';
+    div.style.width = `${size}px`;
+    div.style.height = `${size}px`;
+    div.style.position = 'fixed';
+    div.style.transform = `translate(${startX}px, ${startY}px)`;
+    div.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const r = div.getBoundingClientRect();
+        burstParticles(r.left + r.width / 2, r.top + r.height / 2);
+        playPopSound();
+        div.style.transition = 'transform 0.1s, opacity 0.12s';
+        div.style.transform = `translate(${r.left}px, ${r.top}px) scale(0.1)`;
+        div.style.opacity = '0';
+        setTimeout(() => {
+            if (div.parentNode) div.remove();
+            const idx = activeFloatingBubbles.findIndex(b => b.element === div);
+            if (idx !== -1) activeFloatingBubbles.splice(idx, 1);
+        }, 130);
+    });
+    document.body.appendChild(div);
+    const obj = new FloatingBubble(div, startX, startY, size, speedY, speedX);
+    activeFloatingBubbles.push(obj);
+    return obj;
+}
+function updateFloatingBubbles() { for (let b of activeFloatingBubbles) b.update(); requestAnimationFrame(updateFloatingBubbles); }
+function startBubbleGenerator() { setInterval(() => { if (activeFloatingBubbles.length < 28) createFloatingBubble(); }, 2200); }
+
+// ========================== 灯箱 ==========================
+function showLightbox(src) {
+    const lb = document.getElementById('customLightbox');
+    const imgEl = document.getElementById('lightboxImg');
+    if (!lb || !imgEl) return;
+    imgEl.src = src;
+    lb.classList.add('active');
+}
+document.getElementById('customLightbox').addEventListener('click', function() {
+    this.classList.remove('active');
+});
+
+// ========================== HTML转义 ==========================
+function escapeHtml(str) {
+    return String(str).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+}
+
+// ========================== 返回主相册 ==========================
+function goHome() { window.location.href = 'gallery.html'; }
+
+// ========================== ★★★ 3D Carousel 核心 (参考 CodePen: supah/xxJMbbg) ★★★ ==========================
+
+let progress = 50;
+let startX = 0;
+let active = 0;
+let isDown = false;
+let isAnimating = false;
+
+const speedWheel = 0.02;
+const speedDrag = -0.1;
+
+/* ---------- 渲染全部34张卡片 ---------- */
+function renderCarousel() {
+    const carousel = document.getElementById('carousel');
+    if (!carousel) return;
+    carousel.innerHTML = '';
+    childhoodPhotos.forEach((photo, i) => {
+        const div = document.createElement('div');
+        div.className = 'carousel-item';
+        div.innerHTML = `
+            <div class="carousel-box">
+                <img src="${photo.src}" onerror="this.src='${photo.fallback}'" alt="童年照" loading="lazy">
+                <div class="card-caption">${escapeHtml(photo.caption)}</div>
+            </div>
+        `;
+        div.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isAnimating) return;
+            if (i === active) {
+                // 点击当前激活的照片 → 灯箱放大
+                const img = div.querySelector('img');
+                showLightbox(img ? img.src : photo.src);
+            } else {
+                // 点击其他照片 → 跳转
+                isAnimating = true;
+                playSwooshSound();
+                progress = (i / childhoodPhotos.length) * 100 + 5;
+                animate();
+                setTimeout(() => { isAnimating = false; }, 800);
+            }
+        });
+        carousel.appendChild(div);
+    });
+}
+
+/* ---------- 更新每个item的CSS变量 (驱动3D布局) ---------- */
+const displayItems = (item, index, activeIndex) => {
+    const total = childhoodPhotos.length;
+    const delta = index - activeIndex;
+    const absDelta = Math.abs(delta);
+    const zIndex = total - absDelta;
+    const spacing = Math.min(190, window.innerWidth * 0.24);
+
+    item.style.setProperty('--zIndex', zIndex);
+    item.style.setProperty('--delta', delta);
+    item.style.setProperty('--absDelta', absDelta);
+    item.style.setProperty('--spacing', spacing + 'px');
+
+    const scale = Math.max(0.2, 1 - absDelta * 0.12);
+    const opacity = Math.max(0, 1 - absDelta * 0.16);
+    item.style.setProperty('--scale', scale);
+    item.style.setProperty('--opacity', opacity);
+
+    // 远离中心的卡片不可点击
+    const isClickable = absDelta <= 7;
+    item.style.pointerEvents = isClickable ? 'auto' : 'none';
+};
+
+/* ---------- 动画主循环 ---------- */
+const animate = () => {
+    progress = Math.max(0, Math.min(progress, 100));
+    active = Math.floor(progress / 100 * (childhoodPhotos.length - 1));
+
+    const $items = document.querySelectorAll('.carousel-item');
+    $items.forEach((item, i) => displayItems(item, i, active));
+
+    const counter = document.getElementById('counter');
+    if (counter) counter.textContent = `${active + 1} / ${childhoodPhotos.length}`;
+};
+
+/* ---------- 滚轮导航 ---------- */
+const handleWheel = (e) => {
+    e.preventDefault();
+    if (isAnimating) return;
+    progress += e.deltaY * speedWheel;
+    animate();
+};
+
+/* ---------- 拖拽导航 ---------- */
+const handleMouseDown = (e) => {
+    isDown = true;
+    startX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+};
+const handleMouseMove = (e) => {
+    if (!isDown) return;
+    const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+    progress += (x - startX) * speedDrag;
+    startX = x;
+    animate();
+};
+const handleMouseUp = () => { isDown = false; };
+
+/* ---------- 按钮导航 ---------- */
+function prevSlide() {
+    if (isAnimating) return;
+    isAnimating = true;
+    playSwooshSound();
+    progress -= 100 / childhoodPhotos.length;
+    animate();
+    setTimeout(() => { isAnimating = false; }, 800);
+}
+function nextSlide() {
+    if (isAnimating) return;
+    isAnimating = true;
+    playSwooshSound();
+    progress += 100 / childhoodPhotos.length;
+    animate();
+    setTimeout(() => { isAnimating = false; }, 800);
+}
+
+/* ---------- 窗口自适应 ---------- */
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => animate(), 100);
+});
+
+// ========================== 初始化 ==========================
+function init() {
+    // 渲染3D轮播
+    renderCarousel();
+    animate();
+
+    const stage = document.getElementById('carouselStage');
+    if (!stage) return;
+
+    // 滚轮事件
+    stage.addEventListener('wheel', handleWheel, { passive: false });
+
+    // 鼠标拖拽
+    stage.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    // 触摸拖拽
+    stage.addEventListener('touchstart', handleMouseDown, { passive: true });
+    window.addEventListener('touchmove', handleMouseMove, { passive: true });
+    window.addEventListener('touchend', handleMouseUp);
+
+    // 按钮
+    document.getElementById('prevBtn').addEventListener('click', prevSlide);
+    document.getElementById('nextBtn').addEventListener('click', nextSlide);
+
+    // 键盘快捷键
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') prevSlide();
+        if (e.key === 'ArrowRight') nextSlide();
+    });
+
+    // 装饰效果
+    initParticleCanvas();
+    startBubbleGenerator();
+    updateFloatingBubbles();
+
+    const actAudio = () => { if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); document.removeEventListener('click', actAudio); };
+    document.addEventListener('click', actAudio);
+}
+
+init();
+
+// ========================== 背景星星 & 角落PNG ==========================
+(function() {
+    const pngs = ['https://domiii.oss-cn-hangzhou.aliyuncs.com/pig_normal.png', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/pig_happy.png', 'https://domiii.oss-cn-hangzhou.aliyuncs.com/桃心猪.png'];
+    const el = document.getElementById('cornerPng');
+    if (el) {
+        el.src = pngs[Math.floor(Math.random() * pngs.length)];
+        el.addEventListener('click', function() {
+            const randomPhoto = childhoodPhotos[Math.floor(Math.random() * childhoodPhotos.length)];
+            showLightbox(randomPhoto.src);
+        });
+    }
+    const stars = ['✦', '✧', '★', '☆', '⋆'];
+    const container = document.getElementById('bgStarsContainer');
+    if (container) {
+        for (let i = 0; i < 30; i++) {
+            const s = document.createElement('div');
+            s.className = 'bg-star';
+            s.textContent = stars[i % stars.length];
+            const size = 1.2 + Math.random() * 2.2;
+            s.style.setProperty('--size', size + 'rem');
+            s.style.setProperty('--dur', (2 + Math.random() * 2) + 's');
+            s.style.left = Math.random() * 95 + '%';
+            s.style.top = Math.random() * 93 + '%';
+            s.style.animationDelay = (Math.random() * 3) + 's';
+            container.appendChild(s);
+        }
+    }
+})();
+</script>
+</body>
+</html>

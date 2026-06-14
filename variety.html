@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>橙色星球 · 惊喜物料库 | 每日随机宝藏</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+:root{
+  --primary:#FF952D;
+  --primary-light:#FFB866;
+  --primary-dark:#E67A00;
+  --pure-white:#FFFFFF;
+  --cream:#FFF9F0;
+  --dark:#3E2A1A;
+  --soft:#C27E4A;
+  --gold:#F5B042;
+  --card-bg:#FFFFFF;
+  --bg-soft:#FEF7E8;
+}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+body{
+  font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  font-size:16px;
+  background: linear-gradient(145deg, #FFF1E0 0%, #FFE8D4 100%);
+  min-height:100vh;
+  padding:1.5rem;
+  padding-top:5rem;
+  padding-bottom:3rem;
+  position: relative;
+}
+/* 背景装饰光晕，增加层次感但保持干净 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 20%, rgba(255,149,45,0.08) 0%, rgba(255,255,245,0) 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.material-container{
+  max-width:1300px;
+  margin:0 auto;
+  position: relative;
+  z-index: 2;
+}
+/* 顶部导航 */
+.top-nav{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background: rgba(255,255,245,0.96);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,149,45,0.25);
+  padding:.8rem 1.5rem;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:0.6rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+.nav-logo{
+  font-family:'Segoe UI','Microsoft YaHei',system-ui,-apple-system,sans-serif;
+  font-size:1.3rem;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.back-home{
+  background:#FF952D;
+  border:1px solid #E67A00;
+  color:white;
+  padding:6px 16px;
+  border-radius:40px;
+  font-size:.7rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.25s;
+  text-decoration:none;
+  box-shadow:0 2px 8px rgba(255,149,45,0.3);
+}
+.back-home:hover{
+  background:#E67A00;
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(255,149,45,0.4);
+}
+/* 惊喜物料卡 (每日随机) 纯白卡片质感 */
+.surprise-card{
+  background: var(--pure-white);
+  border-radius: 32px;
+  margin-bottom: 1.8rem;
+  padding: 1rem 1.5rem;
+  border: 1px solid rgba(255,149,45,0.25);
+  box-shadow: 0 12px 24px rgba(230,122,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  transition: all 0.2s;
+}
+.surprise-left{
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.surprise-icon{
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+  background: rgba(255,149,45,0.15);
+  width: 48px;
+  height: 48px;
+  border-radius: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.surprise-text{
+  display: flex;
+  flex-direction: column;
+}
+.surprise-label{
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  color: #E67A00;
+  font-weight: 700;
+  background: rgba(230,122,0,0.1);
+  display: inline-block;
+  width: fit-content;
+  padding: 0.2rem 0.8rem;
+  border-radius: 60px;
+  margin-bottom: 0.2rem;
+}
+.surprise-title{
+  font-weight: 800;
+  font-size: 1rem;
+  color: #2F241B;
+}
+.surprise-series{
+  font-size: 0.75rem;
+  color: #B45F2B;
+  margin-top: 0.15rem;
+}
+.surprise-action{
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}
+.btn-surprise{
+  background: var(--primary);
+  border: none;
+  color: white;
+  padding: 0.45rem 1rem;
+  border-radius: 60px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.btn-surprise-outline{
+  background: rgba(255,149,45,0.12);
+  border: 1px solid rgba(255,149,45,0.4);
+  color: var(--primary-dark);
+}
+.btn-surprise-outline:hover{
+  background: rgba(255,149,45,0.25);
+  transform: translateY(-2px);
+}
+.btn-surprise:hover{
+  transform: scale(0.98);
+  background: var(--primary-dark);
+  box-shadow: 0 6px 12px rgba(255,149,45,0.3);
+}
+.surprise-link{
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  color: white;
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border-radius: 60px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  transition: 0.2s;
+}
+.surprise-link i{
+  margin-right: 0.2rem;
+}
+.surprise-link:hover{
+  background: #E67A00;
+}
+/* 统计栏 + 搜索区 半透磨砂玻璃质感，但仍区分背景 */
+.stats-bar{
+  background: rgba(255,255,250,0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 60px;
+  padding:0.6rem 1.2rem;
+  margin-bottom:1.2rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:0.8rem;
+  border:1px solid rgba(255,149,45,0.2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+.total-count{
+  font-size:0.85rem;
+  color:#B8733E;
+  font-weight:500;
+}
+.total-count i{
+  color:var(--primary);
+  margin-right:0.3rem;
+}
+/* 搜索框 */
+.search-wrapper{
+  display:flex;
+  align-items:center;
+  background:rgba(255,245,235,0.8);
+  border-radius:60px;
+  padding:0.1rem 0.1rem 0.1rem 1rem;
+  border:1px solid rgba(255,149,45,0.3);
+  transition:0.2s;
+}
+.search-wrapper:focus-within{
+  background:white;
+  border-color:var(--primary);
+  box-shadow:0 0 0 2px rgba(255,149,45,0.2);
+}
+.search-wrapper i{
+  color:var(--primary);
+  font-size:0.9rem;
+  margin-right:0.4rem;
+}
+.search-input{
+  background:transparent;
+  border:none;
+  padding:0.5rem 0;
+  font-size:0.85rem;
+  min-width:180px;
+  outline:none;
+  font-family:inherit;
+  color:#3E2A1A;
+}
+.search-input::placeholder{
+  color:#C99E6E;
+  font-weight:300;
+}
+.clear-search{
+  background:rgba(210,120,50,0.15);
+  border:none;
+  border-radius:40px;
+  margin-left:0.2rem;
+  width:28px;
+  height:28px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#B45F2B;
+  transition:0.2s;
+}
+.clear-search:hover{
+  background:rgba(210,120,50,0.35);
+  color:#7A3E10;
+}
+/* 筛选栏 */
+.filter-bar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.6rem;
+  margin-bottom:1.5rem;
+  align-items:center;
+}
+.filter-chip{
+  background: rgba(255,255,245,0.9);
+  backdrop-filter: blur(4px);
+  padding:0.45rem 1.2rem;
+  border-radius:60px;
+  font-size:0.8rem;
+  font-weight:600;
+  color:#B45F2B;
+  cursor:pointer;
+  transition:0.2s;
+  border:1px solid rgba(255,149,45,0.25);
+  white-space:nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+.filter-chip.active{
+  background:var(--primary);
+  color:white;
+  border-color:transparent;
+  box-shadow:0 4px 12px rgba(255,149,45,0.25);
+}
+.filter-chip:hover:not(.active){
+  background:rgba(255,149,45,0.15);
+  transform:translateY(-2px);
+  border-color: rgba(255,149,45,0.4);
+}
+/* 物料网格 - 纯白卡片与背景明显区分 */
+.material-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:1.2rem;
+}
+.material-card{
+  background: var(--pure-white);
+  border-radius: 24px;
+  padding: 1rem 1.2rem;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(255,149,45,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.03);
+}
+.material-card:hover{
+  transform: translateY(-5px);
+  background: white;
+  box-shadow: 0 18px 28px rgba(230,122,0,0.12);
+  border-color: rgba(255,149,45,0.4);
+}
+.card-info{
+  width:100%;
+}
+.card-series{
+  font-size:0.7rem;
+  color:var(--primary);
+  font-weight:600;
+  background:rgba(255,149,45,0.1);
+  display:inline-block;
+  padding:0.2rem 0.7rem;
+  border-radius:40px;
+  margin-bottom:0.4rem;
+  letter-spacing:0.2px;
+}
+.card-name{
+  font-weight:700;
+  font-size:0.92rem;
+  color:#3E2A1A;
+  line-height:1.4;
+  margin-top:0.1rem;
+  word-break:break-word;
+}
+.card-link{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;
+  border:none;
+  padding:0.35rem 0.9rem;
+  border-radius:60px;
+  font-size:0.7rem;
+  font-weight:600;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:0.3rem;
+  transition:0.15s;
+  white-space:nowrap;
+  align-self: flex-start;
+}
+.card-link:hover{
+  transform:scale(1.02);
+  box-shadow:0 6px 12px rgba(255,149,45,0.3);
+}
+.empty-state{
+  text-align:center;
+  padding:3rem;
+  background: rgba(255,255,245,0.8);
+  backdrop-filter: blur(4px);
+  border-radius:48px;
+  color:#B8733E;
+  font-size:0.9rem;
+  border: 1px solid rgba(255,149,45,0.2);
+}
+.highlight {
+  background: #FFE4B5;
+  color: #A35100;
+  border-radius: 6px;
+  padding: 0 2px;
+  font-weight: 600;
+}
+.toast{
+  position:fixed;
+  top:70px;
+  left:50%;
+  transform:translateX(-50%) translateY(-20px);
+  background:rgba(30,20,15,0.92);
+  backdrop-filter:blur(12px);
+  color:#FFE0B2;
+  padding:0.6rem 1.4rem;
+  border-radius:40px;
+  font-size:0.85rem;
+  font-weight:500;
+  z-index:200;
+  opacity:0;
+  transition:0.25s ease;
+  pointer-events:none;
+  white-space:nowrap;
+  border:1px solid rgba(255,149,45,0.5);
+}
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+@keyframes floatHeart{
+  0%{transform:translateY(0) scale(0.6);opacity:1;}
+  100%{transform:translateY(-80px) scale(1.2);opacity:0;}
+}
+@media (max-width: 650px){
+  .material-grid{grid-template-columns:1fr;}
+  .filter-bar{overflow-x:auto;flex-wrap:nowrap;padding-bottom:0.3rem;}
+  .filter-chip{flex-shrink:0;}
+  .stats-bar{flex-direction:column;align-items:stretch;}
+  .search-wrapper{width:100%;}
+  .search-input{flex:1;}
+  .surprise-card{flex-direction:column;align-items:flex-start;}
+  .surprise-action{width:100%;justify-content:space-between;}
+}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+  <a href="wenjianjia.html" class="back-home" id="backToHomeBtn" style="margin-right:auto">🏠 返回主页</a>
+</div>
+
+<div class="material-container">
+  <!-- 惊喜物料卡片 / 每日随机或手动惊喜 -->
+  <div class="surprise-card" id="surpriseCard">
+    <div class="surprise-left">
+      <div class="surprise-icon">✨🎁</div>
+      <div class="surprise-text">
+        <span class="surprise-label"><i class="fas fa-calendar-alt"></i>今天想看什么样的小猪呢~</span>
+        <div class="surprise-title" id="surpriseTitle">加载中...</div>
+        <div class="surprise-series" id="surpriseSeries"></div>
+      </div>
+    </div>
+    <div class="surprise-action">
+      <button class="btn-surprise btn-surprise-outline" id="randomSurpriseBtn"><i class="fas fa-dice-d6"></i> 随机换一个</button>
+      <a href="#" id="surpriseLink" class="surprise-link" target="_blank"><i class="fab fa-bilibili"></i> 要去看小猪了 →</a>
+    </div>
+  </div>
+
+  <div class="stats-bar" id="statsBar">
+    <span class="total-count"><i class="fas fa-film"></i> 共 <span id="totalCount">0</span> 条物料</span>
+    <div class="search-wrapper">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchKeyword" class="search-input" placeholder="搜关键词: 运动会/考核/花絮/游戏..." autocomplete="off">
+      <button class="clear-search" id="clearSearchBtn" aria-label="清空"><i class="fas fa-times-circle"></i></button>
+    </div>
+  </div>
+  <div class="filter-bar" id="filterBar"></div>
+  <div class="material-grid" id="materialGrid"></div>
+</div>
+
+<div id="toastMsg" class="toast"></div>
+
+<script>
+// ======================== 完整物料数据 ========================
+const materialLibrary = [
+  { series: "《YES! SIR》系列", name: "《YES! SIR》01：今天不卡关", link: "https://b23.tv/ZE1bGdE" },
+  { series: "《YES! SIR》系列", name: "《YES! SIR》02：拳脚定乾坤", link: "https://b23.tv/LcujrgH" },
+  { series: "《YES! SIR》系列", name: "《YES! SIR》03：浪得起飞", link: "https://b23.tv/J9jqH9I" },
+  { series: "《YES! SIR》系列", name: "《YES！SIR》04:探头探脑侦探社（上）", link: "https://b23.tv/yZjw8KM" },
+  { series: "《YES! SIR》系列", name: "《YES！SIR》05:探头探脑侦探社（下）", link: "https://b23.tv/0RqlCoh" },
+  { series: "《YES! SIR》系列", name: "《YES！SIR》06:搭子即天堂（上）", link: "https://b23.tv/HHulzWE" },
+  { series: "《YES! SIR》系列", name: "《YES！SIR》07:搭子即天堂（下）", link: "https://b23.tv/X54sQmg" },
+  { series: "《YES! SIR》系列", name: "《YES！SIR》08:胆量即天堂", link: "https://b23.tv/MGu6RfU" },
+  { series: "《YES! SIR》系列", name: "《YES！SIR》09:《墨灵寻踪》", link: "https://b23.tv/JQptTfq" },
+  { series: "节日特辑", name: "【TF家族练习生】《4重奏团建日》01：十五的月亮十六圆", link: "https://www.bilibili.com/video/BV193PFzSEh4/" },
+  { series: "节日特辑", name: "【TF家族练习生】《4重奏团建日》02：愚人节特辑", link: "https://www.bilibili.com/video/BV1Vn97B3EfP/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》01：人生的第一份简历（训练实录)", link: "https://www.bilibili.com/video/BV1Tg4y1G7kG/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》02：嘿，一起来创建我的「个性标签」！（训练实录)", link: "https://www.bilibili.com/video/BV12L411U7H7" },
+  { series: "《星期五练习生》", name: "《星期五练习生》03：公式照拍摄现场花絮（训练实录)", link: "https://www.bilibili.com/video/BV1r54y1F7Mi" },
+  { series: "《星期五练习生》", name: "《星期五练习生》04：今天是去看演唱会的日子！（训练实录)", link: "https://www.bilibili.com/video/BV1DT411n7XP" },
+  { series: "《星期五练习生》", name: "《星期五练习生》05：春结野营会之「春结晚会」", link: "https://www.bilibili.com/video/BV1Km4y1C7n6" },
+  { series: "《星期五练习生》", name: "《星期五练习生》06：春结野营会之难忘的春游", link: "https://www.bilibili.com/video/BV1hc411N77w/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》07：同学，可以和你做同桌吗？（训练实录)", link: "https://www.bilibili.com/video/BV1cu411s7tX/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》08：儿童带儿童过儿童节（训练实录)", link: "https://www.bilibili.com/video/BV1PV4y1U7Xt" },
+  { series: "《星期五练习生》", name: "《星期五练习生》09：幼儿园一日助教体验（训练实录)", link: "https://www.bilibili.com/video/BV1iL411i7MR" },
+  { series: "《星期五练习生》", name: "《星期五练习生》10：谁是“伪装者”？（训练实录)", link: "https://www.bilibili.com/video/BV1mo4y1N7SX" },
+  { series: "《星期五练习生》", name: "《星期五练习生》11：端午节特辑（训练实录)", link: "https://www.bilibili.com/video/BV1Nc411u7iB" },
+  { series: "《星期五练习生》", name: "《星期五练习生》12：绿色暴汗之旅（训练实录)", link: "https://www.bilibili.com/video/BV1Eu411j7mp/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》13：甜“秘密”的任务（训练实录)", link: "https://www.bilibili.com/video/BV1LW4y1Z74h" },
+  { series: "《星期五练习生》", name: "《星期五练习生》14：清凉一\"吓\"之「消失的他」", link: "https://www.bilibili.com/video/BV1ZV4y147ph/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》15：清凉一\"吓\"之「夜访游乐园」（训练实录)", link: "https://www.bilibili.com/video/BV1MN411h7jG" },
+  { series: "《星期五练习生》", name: "《星期五练习生》16：我们去北京啦！", link: "https://www.bilibili.com/video/BV1Uj411B72U" },
+  { series: "《星期五练习生》", name: "《星期五练习生》17：飞翔体验券", link: "https://www.bilibili.com/video/BV1dp4y177A4" },
+  { series: "《星期五练习生》", name: "《星期五练习生》18：合宿特辑——是and不是end（上）", link: "https://www.bilibili.com/video/BV1hP41187a3" },
+  { series: "《星期五练习生》", name: "《星期五练习生》19：合宿特辑——是and不是end（下）", link: "https://www.bilibili.com/video/BV1bk4y1w736/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》20：oooooo的你（训练实录)", link: "https://www.bilibili.com/video/BV1vw411v7db/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》21：南国客栈诡事录（上）", link: "https://www.bilibili.com/video/BV1Lp4y1c7ag" },
+  { series: "《星期五练习生》", name: "《星期五练习生》22：南国客栈诡事录（下）", link: "https://www.bilibili.com/video/BV1YG411m7M3" },
+  { series: "《星期五练习生》", name: "《星期五练习生》23：间谍游戏（训练实录)", link: "https://www.bilibili.com/video/BV1Pw41167hv" },
+  { series: "《星期五练习生》", name: "《星期五练习生》24：突破极限的柔韧竞赛", link: "https://www.bilibili.com/video/BV1Bw411B7Zf" },
+  { series: "《星期五练习生》", name: "《星期五练习生》25：秋结野营会（上）", link: "https://www.bilibili.com/video/BV1VG411C7ux" },
+  { series: "《星期五练习生》", name: "《星期五练习生》26：秋结野营会（下）", link: "https://www.bilibili.com/video/BV1Mu4y177Jn" },
+  { series: "《星期五练习生》", name: "《星期五练习生》27：爱的抱抱（训练实录)", link: "https://www.bilibili.com/video/BV17u4y1N79D" },
+  { series: "《星期五练习生》", name: "《星期五练习生》28：决战吧！反射神经（训练实录)", link: "https://www.bilibili.com/video/BV1jw411K7dB" },
+  { series: "《星期五练习生》", name: "《星期五练习生》29：冬日养生大作战（训练实录)", link: "https://www.bilibili.com/video/BV1Yj411j7YS" },
+  { series: "《星期五练习生》", name: "《星期五练习生》30：下浩里美食地图（上）", link: "https://www.bilibili.com/video/BV1Qb4y1G79n" },
+  { series: "《星期五练习生》", name: "《星期五练习生》31：下浩里美食地图（中）", link: "https://www.bilibili.com/video/BV1nQ4y137R6" },
+  { series: "《星期五练习生》", name: "《星期五练习生》32：下浩里美食地图（下）", link: "https://www.bilibili.com/video/BV1Mg4y1r73p" },
+  { series: "《星期五练习生》", name: "《星期五练习生》33：游乐园竞赛（训练实录)", link: "https://www.bilibili.com/video/BV1ig4y1U7TY" },
+  { series: "《星期五练习生》", name: "《星期五练习生》34：新春茶话会（上）", link: "https://www.bilibili.com/video/BV1oz421R7k4/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》35：新春茶话会（下）", link: "https://www.bilibili.com/video/BV1cz421d7K9" },
+  { series: "《星期五练习生》", name: "《星期五练习生》35番外:是谁抢走了我的麦克风", link: "https://www.bilibili.com/video/BV1Qu4m1P7Wx" },
+  { series: "《星期五练习生》", name: "《星期五练习生》36：睡衣派对", link: "https://www.bilibili.com/video/BV1hF4m1M7ZT" },
+  { series: "《星期五练习生》", name: "《星期五练习生》37：我眼中的他", link: "https://www.bilibili.com/video/BV1kC411b7Ub" },
+  { series: "《星期五练习生》", name: "《星期五练习生》38:「嘻游记」进村第一天", link: "https://www.bilibili.com/video/BV17j421d7LV" },
+  { series: "《星期五练习生》", name: "《星期五练习生》39:「嘻游记」今天晚上不睡觉", link: "https://www.bilibili.com/video/BV1Mq421P7xZ" },
+  { series: "《星期五练习生》", name: "《星期五练习生》40:「嘻游记」小鸡小鱼小猪和小莓", link: "https://www.bilibili.com/video/BV1hx4y1Y7Xt" },
+  { series: "《星期五练习生》", name: "《星期五练习生》41:「嘻游记」噼里啪啦 噼里啪啦", link: "https://www.bilibili.com/video/BV1Lp421R7TU" },
+  { series: "《星期五练习生》", name: "《星期五练习生》42:「嘻游记」挖一条时空隧道", link: "https://www.bilibili.com/video/BV1VD421J7zq" },
+  { series: "《星期五练习生》", name: "《星期五练习生》43：最受欢迎的你（上）", link: "https://www.bilibili.com/video/BV1az421D73v" },
+  { series: "《星期五练习生》", name: "《星期五练习生》44：最受欢迎的你（下）", link: "https://www.bilibili.com/video/BV17M4m1o7BG" },
+  { series: "《星期五练习生》", name: "《星期五练习生》45：去见师兄啦！", link: "https://www.bilibili.com/video/BV1nw4m1D72Z" },
+  { series: "《星期五练习生》", name: "《星期五练习生》46：六一儿童汇演（上）", link: "https://www.bilibili.com/video/BV1cn4y197Kj" },
+  { series: "《星期五练习生》", name: "《星期五练习生》47：六一儿童汇演（下）", link: "https://www.bilibili.com/video/BV1u142117JB" },
+  { series: "《星期五练习生》", name: "《星期五练习生》48：吵吵闹闹大挑战（训练实录)", link: "https://www.bilibili.com/video/BV1SZ421u7d5" },
+  { series: "《星期五练习生》", name: "《星期五练习生》49：燃烧的团结之魂", link: "https://www.bilibili.com/video/BV1Jf421Q7Tz" },
+  { series: "《星期五练习生》", name: "《星期五练习生》50：穿越时空长廊（上）", link: "https://www.bilibili.com/video/BV1jf421Q7W1" },
+  { series: "《星期五练习生》", name: "《星期五练习生》51: 穿越时空长廊（下）", link: "https://www.bilibili.com/video/BV1k4421D7MK" },
+  { series: "《星期五练习生》", name: "《星期五练习生》52: 富翁囧囧囧", link: "https://www.bilibili.com/video/BV1im421G7mL" },
+  { series: "《星期五练习生》", name: "《星期五练习生》53：就问你服（福）不服（福）（训练实录)", link: "https://www.bilibili.com/video/BV12E4m1R7q5" },
+  { series: "《星期五练习生》", name: "《星期五练习生》54：澳门！我们来啦！", link: "https://www.bilibili.com/video/BV1W142187Np" },
+  { series: "《星期五练习生》", name: "《星期五练习生》55:「修渔期」先导片——神级转场", link: "https://www.bilibili.com/video/BV1j142187V2" },
+  { series: "《星期五练习生》", name: "《星期五练习生》56:「修渔期」EP01——村里来了群中小学生", link: "https://www.bilibili.com/video/BV1Ff421i7dA" },
+  { series: "《星期五练习生》", name: "《星期五练习生》57:「修渔期」EP02——新地图探索度？%", link: "https://www.bilibili.com/video/BV1dr421M7cD" },
+  { series: "《星期五练习生》", name: "《星期五练习生》58:「修渔期」EP03——突如其来的食材寻宝", link: "https://www.bilibili.com/video/BV13b421E7Qu" },
+  { series: "《星期五练习生》", name: "《星期五练习生》59:「修渔期」EP04——渔业研修日", link: "https://www.bilibili.com/video/BV16E421c7hb" },
+  { series: "《星期五练习生》", name: "《星期五练习生》60:「修渔期」EP05——泥潭大作战", link: "https://www.bilibili.com/video/BV1eQH9eWEPG" },
+  { series: "《星期五练习生》", name: "《星期五练习生》61:「修渔期」EP06—— 一日店长之意想不到的客人", link: "https://www.bilibili.com/video/BV1BL4bezEXN" },
+  { series: "《星期五练习生》", name: "《星期五练习生》62：中秋特辑", link: "https://www.bilibili.com/video/BV1hgteeGEzP" },
+  { series: "《星期五练习生》", name: "《星期五练习生》63:「修渔期」EP07—— 一日店长之意想不到的客人（下）", link: "https://www.bilibili.com/video/BV1iwtfe9EJu" },
+  { series: "《星期五练习生》", name: "《星期五练习生》64:「修渔期」EP08——即刻回家", link: "https://www.bilibili.com/video/BV1WPxFehECF" },
+  { series: "《星期五练习生》", name: "《星期五练习生》65:「修渔期」花絮篇", link: "https://www.bilibili.com/video/BV1VHxrecE7F" },
+  { series: "《星期五练习生》", name: "《星期五练习生》66：忙忙碌碌寻宝藏", link: "https://www.bilibili.com/video/BV1dQ4FeHEVY" },
+  { series: "《星期五练习生》", name: "《星期五练习生》67：大快朵颐", link: "https://www.bilibili.com/video/BV1UP2mYBEAo" },
+  { series: "《星期五练习生》", name: "《星期五练习生》68：Kampai!", link: "https://www.bilibili.com/video/BV17FC2YkEmc" },
+  { series: "《星期五练习生》", name: "《星期五练习生》69：怎么不算city walk呢", link: "https://www.bilibili.com/video/BV1aNyDYmEyx" },
+  { series: "《星期五练习生》", name: "《星期五练习生》70：mini秋季运动会（训练实录)", link: "https://www.bilibili.com/video/BV1KTSRYhE8C" },
+  { series: "《星期五练习生》", name: "《星期五练习生》71：与众不同的声乐挑战", link: "https://www.bilibili.com/video/BV1kUDoYPELh" },
+  { series: "《星期五练习生》", name: "《星期五练习生》72：感官大作战", link: "https://www.bilibili.com/video/BV12amRY4ELk" },
+  { series: "《星期五练习生》", name: "《星期五练习生》73：jio痛的僵尸", link: "https://www.bilibili.com/video/BV1fBBiYTE34" },
+  { series: "《星期五练习生》", name: "《星期五练习生》74：三分钟挑战", link: "https://www.bilibili.com/video/BV1pFzzY9Edo" },
+  { series: "《星期五练习生》", name: "《星期五练习生》75：气吞山河之战", link: "https://www.bilibili.com/video/BV1KMiBYUELc" },
+  { series: "《星期五练习生》", name: "《星期五练习生》76：新脑子转的就是快（训练实录)", link: "https://www.bilibili.com/video/BV1bJBLYfEJz" },
+  { series: "《星期五练习生》", name: "《星期五练习生》77：脑洞无极限", link: "https://www.bilibili.com/video/BV1j5k2YuESk" },
+  { series: "《星期五练习生》", name: "《星期五练习生》78：距离的神（训练实录)", link: "https://www.bilibili.com/video/BV1skCpYREdE/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》79：这个feel倍儿爽（花絮)", link: "https://www.bilibili.com/video/BV1hefHYKEDF" },
+  { series: "《星期五练习生》", name: "《星期五练习生》80：我这无人能敌的手气", link: "https://www.bilibili.com/video/BV1SDFoeNEgg" },
+  { series: "《星期五练习生》", name: "《星期五练习生》81：圆圆滚滚乐发财", link: "https://www.bilibili.com/video/BV1pJKjedEF2/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》82：谁是三寸不烂之舌", link: "https://www.bilibili.com/video/BV1hXAoeyETm" },
+  { series: "《星期五练习生》", name: "《星期五练习生》83：热火朝天的冬季集训（1）（训练实录)", link: "https://www.bilibili.com/video/BV1Rp9uY4ExU" },
+  { series: "《星期五练习生》", name: "《星期五练习生》84：热火朝天的冬季集训（2）（训练实录)", link: "https://www.bilibili.com/video/BV1cV91YgEiL" },
+  { series: "《星期五练习生》", name: "《星期五练习生》85：热火朝天的冬季集训（3）（训练实录)", link: "https://www.bilibili.com/video/BV1uQQzYAE2z" },
+  { series: "《星期五练习生》", name: "《星期五练习生》86：热火朝天的冬季集训（4）（训练实录)", link: "https://www.bilibili.com/video/BV15RXkYDEyf" },
+  { series: "《星期五练习生》", name: "《星期五练习生》87：教室争夺战", link: "https://www.bilibili.com/video/BV13YoXYnEMD/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》88：愚人节特辑——愚人节不愚人（才怪）", link: "https://www.bilibili.com/video/BV1h6ZbYHETM" },
+  { series: "《星期五练习生》", name: "《星期五练习生》89：甜度爆表（训练实录)", link: "https://www.bilibili.com/video/BV16WZ9YuEXi" },
+  { series: "《星期五练习生》", name: "《星期五练习生》90：18楼鹅鸭杀", link: "https://www.bilibili.com/video/BV1qsdUYjEtQ" },
+  { series: "《星期五练习生》", name: "《星期五练习生》91：黑暗使者", link: "https://www.bilibili.com/video/BV1jr5jz8Ehm" },
+  { series: "《星期五练习生》", name: "《星期五练习生》92：技能大搜索", link: "https://www.bilibili.com/video/BV1pcLJzEEbW" },
+  { series: "《星期五练习生》", name: "《星期五练习生》93：一起动动动", link: "https://www.bilibili.com/video/BV1nuGvz7EVH" },
+  { series: "《星期五练习生》", name: "《星期五练习生》94：调皮鬼跳一跳", link: "https://www.bilibili.com/video/BV1M955zCEFg" },
+  { series: "《星期五练习生》", name: "《星期五练习生》95：瞧我的小嘴巴", link: "https://www.bilibili.com/video/BV1Y6EtzeEXo" },
+  { series: "《星期五练习生》", name: "《星期五练习生》96：意想不到的脱敏训练", link: "https://www.bilibili.com/video/BV1vtjnzkEPc" },
+  { series: "《星期五练习生》", name: "《星期五练习生》97：甜咸之争", link: "https://www.bilibili.com/video/BV13H7nz6ExF" },
+  { series: "《星期五练习生》", name: "《星期五练习生》98：无间道（训练实录)", link: "https://www.bilibili.com/video/BV1HzTuzAEqC/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》99：降温大赛", link: "https://www.bilibili.com/video/BV1YAMuzDEJC/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》100：夏日派对", link: "https://www.bilibili.com/video/BV1yDKwzmERQ" },
+  { series: "《星期五练习生》", name: "《星期五练习生》101：3v3斗牛", link: "https://www.bilibili.com/video/BV1PjKBzmEQh" },
+  { series: "《星期五练习生》", name: "《星期五练习生》102：神奇的猜丁壳", link: "https://www.bilibili.com/video/BV167Hkz4ELh" },
+  { series: "《星期五练习生》", name: "《星期五练习生》103：人生就是冲刺（训练实录)", link: "https://www.bilibili.com/video/BV1UcW3zREpy/" },
+  { series: "《星期五练习生》", name: "《星期五练习生》114:今天不许好好唱（同事生日）", link: "https://www.bilibili.com/video/BV1BAq9B6Ej3" },
+  { series: "《星期五练习生》", name: "《星期五练习生》115：我们的“元”气值满了", link: "https://www.bilibili.com/video/BV1vtvQBZEf2" },
+  { series: "《星期五练习生》", name: "《星期五练习生》116：神的主理人（训练实录)", link: "https://www.bilibili.com/video/BV1vPiFB7Eap" },
+  { series: "《星期五练习生》", name: "《星期五练习生》117：直觉无限公司（训练实录)", link: "https://www.bilibili.com/video/BV1ztrKBXE6n" },
+  { series: "《星期五练习生》", name: "《星期五练习生》118：高雅人士局（训练实录)", link: "https://www.bilibili.com/video/BV1dFrkBmEDt" },
+  { series: "《星期五练习生》", name: "《星期五练习生》119：纸上谈兵（训练实录)", link: "https://www.bilibili.com/video/BV1hYzMBgEk5" },
+  { series: "《星期五练习生》", name: "《星期五练习生》120：抽象的狼人杀（训练实录)", link: "https://www.bilibili.com/video/BV1J36vBPEWr" },
+  { series: "《星期五练习生》", name: "《星期五练习生》121：奇葩铁人六项（训练实录)", link: "https://www.bilibili.com/video/BV1LuFrztERE" },
+  { series: "《星期五练习生》", name: "《星期五练习生》122：《厨神争霸》", link: "https://www.bilibili.com/video/BV1VvZTBRELU" },
+  { series: "《星期五练习生》", name: "《星期五练习生》123：《反差的LOVE》", link: "https://www.bilibili.com/video/BV1TXZrB3Eux" },
+  { series: "《新春荣耀大作战》", name: "《新春荣耀大作战》预告篇", link: "https://www.bilibili.com/video/BV19GZKBDEEM/" },
+  { series: "《新春荣耀大作战》", name: "《新春荣耀大作战》EP1", link: "https://www.bilibili.com/video/BV1DMZ3BfED2/" },
+  { series: "《新春荣耀大作战》", name: "《新春荣耀大作战》EP2", link: "https://www.bilibili.com/video/BV1uRZ1BxEwV" },
+  { series: "《PD的蛋生》", name: "《PD的蛋生》02：可怜的小猫", link: "https://www.bilibili.com/video/BV1yJyNY6E3g/" },
+  { series: "《PD的蛋生》", name: "《PD的蛋生》05：潮男 O O te de", link: "https://www.bilibili.com/video/BV1U7SMYTEBT/" },
+  { series: "《PD的蛋生》", name: "《PD的蛋生》09：“生”乐大师", link: "https://www.bilibili.com/video/BV19H6oYxEeo/" },
+  { series: "《PD的蛋生》", name: "《PD的蛋生》13：拳王争霸赛", link: "https://www.bilibili.com/video/BV1Hm9XYFEhF/" },
+  { series: "《PD的蛋生》", name: "《PD的蛋生》14：大馋小子萌", link: "https://www.bilibili.com/video/BV16bXsYyEm3/" },
+  { series: "《肆意少年-突围》", name: "《肆意少年-突围》预告片", link: "https://www.bilibili.com/video/BV1UR3EzmEJs/" },
+  { series: "《肆意少年-突围》", name: "《肆意少年-突围》先导片", link: "https://www.bilibili.com/video/BV11p3XzqEVG/" },
+  { series: "《肆意少年-突围》", name: "《肆意少年-突围》EP01", link: "https://www.bilibili.com/video/BV1xbugz2ERF/" },
+  { series: "《肆意少年-突围》", name: "《肆意少年-突围》EP02", link: "https://www.bilibili.com/video/BV1tUu1zSEwc/" },
+  { series: "《肆意少年-突围》", name: "《肆意少年-突围》EP03", link: "https://www.bilibili.com/video/BV11kbQz2Ev3/" },
+  { series: "《肆意少年-突围》", name: "《肆意少年-突围》EP04", link: "https://www.bilibili.com/video/BV1fJhpzdEM3/" },
+  { series: "《肆意少年-突围》", name: "《肆意少年-突围》EP05", link: "https://www.bilibili.com/video/BV1o8t6zwEZs/" },
+  { series: "《肆意少年-突围》", name: "《肆意少年-突围》EP06", link: "https://www.bilibili.com/video/BV1Whbnz9ETz/" },
+  { series: "《肆意夏令营》", name: "《肆意夏令营》EP02", link: "https://www.bilibili.com/video/BV1Fju8z4EaM/" },
+  { series: "《肆意夏令营》", name: "《肆意夏令营》EP03", link: "https://www.bilibili.com/video/BV1gUgHzxEJ7/" },
+  { series: "《肆意夏令营》", name: "《肆意夏令营》EP04", link: "https://www.bilibili.com/video/BV1H28dzWEVT/" },
+  { series: "《肆意夏令营》", name: "《肆意夏令营》EP06", link: "https://www.bilibili.com/video/BV11AtozREwi/" },
+  { series: "《肆意时光簿》", name: "《肆意时光簿》EP01", link: "https://www.bilibili.com/video/BV1oA3Cz8Evw/" },
+  { series: "《肆意时光簿》", name: "《肆意时光簿》EP02", link: "https://www.bilibili.com/video/BV1NjuizDEhj/" },
+  { series: "《肆意时光簿》", name: "《肆意时光簿》EP03", link: "https://www.bilibili.com/video/BV17fgVz2Ekd/" },
+  { series: "《肆意时光簿》", name: "《肆意时光簿》EP04", link: "https://www.bilibili.com/video/BV1yD8jz7Ew4/" },
+  { series: "《肆意时光簿》", name: "《肆意时光簿》EP05", link: "https://www.bilibili.com/video/BV1ugtgzeE6S/" },
+  { series: "《肆意时光簿》", name: "《肆意时光簿》EP07", link: "https://www.bilibili.com/video/BV1mJYpzCECp/" },
+  { series: "《肆意时光簿》", name: "《肆意时光簿》EP08", link: "https://www.bilibili.com/video/BV1TKeRzqEgu/" },
+  { series: "《2024TF家族夏日运动会》", name: "《2024TF家族夏日运动会》先导片", link: "https://www.bilibili.com/video/BV1FH4y1A74N/" },
+  { series: "《2024TF家族夏日运动会》", name: "《2024TF家族夏日运动会》DAY1", link: "https://www.bilibili.com/video/BV1H4421S7Fz/" },
+  { series: "《2024TF家族夏日运动会》", name: "《2024TF家族夏日运动会》DAY2", link: "https://www.bilibili.com/video/BV1yr421M7GZ/" },
+  { series: "《2024TF家族夏日运动会》", name: "《2024TF家族夏日运动会》纪录片", link: "https://www.bilibili.com/video/BV1gE421A7TY/" },
+  { series: "《2025TF家族夏日运动会》", name: "《2025TF家族夏日运动会》先导片", link: "https://www.bilibili.com/video/BV1iyuMzoEu7/" },
+  { series: "《2025TF家族夏日运动会》", name: "《2025TF家族夏日运动会》澳门集结篇", link: "https://www.bilibili.com/video/BV14R8Fz6ECf/" },
+  { series: "《2025TF家族夏日运动会》", name: "《2025TF家族夏日运动会》DAY1", link: "https://www.bilibili.com/video/BV1F68bzCE8t/" },
+  { series: "《2025TF家族夏日运动会》", name: "《2025TF家族夏日运动会》DAY2", link: "https://www.bilibili.com/video/BV17RhtzMEjk/" },
+  { series: "《2025TF家族夏日运动会》", name: "《2025TF家族夏日运动会》纪录片", link: "https://www.bilibili.com/video/BV13jtxz1E3t/" },
+  { series: "《冬夜童话集》", name: "《冬夜童话集》02", link: "https://www.bilibili.com/video/BV1sP6SYRE5r/" },
+  { series: "《冬夜童话集》", name: "《冬夜童话集》04", link: "https://www.bilibili.com/video/BV1jGrSY5EeH/" },
+  { series: "《冬夜童话集》", name: "《冬夜童话集》08", link: "https://www.bilibili.com/video/BV1JUc8e1EuM/" },
+  { series: "《关于你我所知道的一切》", name: "《关于你我所知道的一切》01", link: "https://www.bilibili.com/video/BV1dm4y1H7SW/" },
+  { series: "《关于你我所知道的一切》", name: "《关于你我所知道的一切》05", link: "https://www.bilibili.com/video/BV1hb4y1g7iz/" },
+  { series: "拍摄花絮（包括tlog）", name: "《非我不可》520特别COVER拍摄花絮", link: "https://www.bilibili.com/video/BV1As42137Lo/" },
+  { series: "拍摄花絮（包括tlog）", name: "《奔跑·当我们在此刻出发》拍摄花絮", link: "https://www.bilibili.com/video/BV12y411q7FH/" },
+  { series: "拍摄花絮（包括tlog）", name: "《万物时》拍摄花絮", link: "https://www.bilibili.com/video/BV14NtDeSEDt/" },
+  { series: "拍摄花絮（包括tlog）", name: "《关于我的if线》2025年台历拍摄花絮", link: "https://www.bilibili.com/video/BV1mBmBY7EWT/" },
+  { series: "拍摄花絮（包括tlog）", name: "《奔跑·当阳光降落在这里》拍摄花絮", link: "https://www.bilibili.com/video/BV1cjBjYDEQE/" },
+  { series: "拍摄花絮（包括tlog）", name: "《浪漫纯属虚构》Live版拍摄花絮", link: "https://www.bilibili.com/video/BV1YFcJeBE1Z/" },
+  { series: "拍摄花絮（包括tlog）", name: "《奔跑·给冬日的回信》拍摄花絮", link: "https://www.bilibili.com/video/BV1tRQDYfEYC/" },
+  { series: "拍摄花絮（包括tlog）", name: "《Steady》舞蹈拍摄花絮", link: "https://www.bilibili.com/video/BV1TFj8zXEwX/" },
+  { series: "拍摄花絮（包括tlog）", name: "《心动》录音花絮", link: "https://www.bilibili.com/video/BV1B6uJzFEBh/" },
+  { series: "拍摄花絮（包括tlog）", name: "《心动》MV花絮", link: "https://www.bilibili.com/video/BV1ZNudzfELp/" },
+  { series: "拍摄花絮（包括tlog）", name: "《肆意少年》见面会VCR花絮", link: "https://www.bilibili.com/video/BV1p8eMzeESb/" },
+  { series: "拍摄花絮（包括tlog）", name: "TF家族练习生2026台历拍摄花絮——《Game of Life》", link: "https://www.bilibili.com/video/BV1BasGzjEiB/" },
+  { series: "拍摄花絮（包括tlog）", name: "2026新年音乐会《荣耀》VCR拍摄花絮", link: "https://www.bilibili.com/video/BV1Kp6mB5EjA/" },
+  { series: "拍摄花絮（包括tlog）", name: "《TLOG》02：《马年串烧》拍摄花絮", link: "https://www.bilibili.com/video/BV16jfFBmENb/" },
+  { series: "拍摄花絮（包括tlog）", name: "《TLOG》04：2月短视频花絮", link: "https://www.bilibili.com/video/BV1cUAazDEaH/" },
+  { series: "拍摄花絮（包括tlog）", name: "《TLOG》05：《奔跑·LOVE LOVE LOVE》拍摄花絮", link: "https://www.bilibili.com/video/BV1b3AgziEpA/" },
+  { series: "拍摄花絮（包括tlog）", name: "《TLOG》06：3月短视频花絮", link: "https://www.bilibili.com/video/BV1q8XhBmEuF/" },
+  { series: "拍摄花絮（包括tlog）", name: "《TLOG》07：4月短视频花絮", link: "https://www.bilibili.com/video/BV15CZFBTEnF/" },
+  { series: "《考核实录》", name: "【TF家族练习生】3月考核实录（23年）", link: "https://www.bilibili.com/video/BV1PM4y1678k/" },
+  { series: "《考核实录》", name: "【TF家族练习生】6月考核实录（23年）", link: "https://www.bilibili.com/video/BV1fV4y1y7cn/" },
+  { series: "《考核实录》", name: "【TF家族练习生】8月考核实录（23年）", link: "https://www.bilibili.com/video/BV1Hm4y1M7W2/" },
+  { series: "《考核实录》", name: "【TF家族练习生】11月考核实录（23年）", link: "https://www.bilibili.com/video/BV1zc411D7Yi/" },
+  { series: "《考核实录》", name: "【TF家族练习生】4月考核实录（24年）", link: "https://www.bilibili.com/video/BV1zb421Y7v9/" },
+  { series: "《考核实录》", name: "【TF家族练习生】5月考核实录（24年）", link: "https://www.bilibili.com/video/BV1tf421m7AN/" },
+  { series: "《考核实录》", name: "【TF家族练习生】10月考核实录（24年）", link: "https://www.bilibili.com/video/BV1f7DsYNExB/" },
+  { series: "《考核实录》", name: "【TF家族练习生】10月考核实录（纯享版）（24年）", link: "https://www.bilibili.com/video/BV1KFDsYmEZ4/" },
+  { series: "《考核实录》", name: "【TF家族练习生】3月考核实录（25年）", link: "https://www.bilibili.com/video/BV1uYRBYTE9K/" },
+  { series: "《考核实录》", name: "【TF家族练习生】3月考核实录（纯享版）（25年）", link: "https://www.bilibili.com/video/BV1Y1RqYuEMa/" },
+  { series: "《考核实录》", name: "【TF家族练习生】11月考核实录- part2（25年）", link: "https://www.bilibili.com/video/BV1dZmcBEEsX/" },
+  { series: "《考核实录》", name: "【TF家族练习生】11月考核part2-纪录片（25年）", link: "https://www.bilibili.com/video/BV1uamvBNEBd/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 15-分组游戏大比拼（上）之你划我猜", link: "https://www.bilibili.com/video/BV1qY41167gz/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 16-分组游戏大比拼（下）之摸箱子挑战", link: "https://www.bilibili.com/video/BV15N411F7Be/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 17", link: "https://www.bilibili.com/video/BV1bu4y1q7nE/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 18", link: "https://www.bilibili.com/video/BV1C64y1P7S9/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 19", link: "https://www.bilibili.com/video/BV1NK4y1B7Cd/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 20", link: "https://www.bilibili.com/video/BV1Rb4y1A7gp/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 21", link: "https://www.bilibili.com/video/BV1At421H77v/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 22", link: "https://www.bilibili.com/video/BV1KZ421v7ao/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 23", link: "https://www.bilibili.com/video/BV1pt421j7rV/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 24", link: "https://www.bilibili.com/video/BV1ny411z7W3/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 25", link: "https://www.bilibili.com/video/BV1p1421r7hS/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 27", link: "https://www.bilibili.com/video/BV1kE421A7EW/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 28", link: "https://www.bilibili.com/video/BV1eHCRYbEct/" },
+  { series: "《TF家族练习生日常训练》2023", name: "【TF家族练习生】日常训练记录 29", link: "https://www.bilibili.com/video/BV14i1WYiE6v/" },
+  { series: "TF家族练习生快问快答", name: "【TF家族练习生】练习生们的快问快答", link: "https://www.bilibili.com/video/BV1MnsQemER8/" }
+];
+
+// ========== 惊喜物料逻辑 ==========
+let currentSurpriseItem = null;
+
+function getDailyRandomMaterial(forceNewRandom = false) {
+  const todayStr = new Date().toISOString().slice(0,10);
+  if (!forceNewRandom && window._storedDailySurprise && window._storedDailySurprise.date === todayStr) {
+    return window._storedDailySurprise.item;
+  }
+  let index;
+  if (forceNewRandom) {
+    index = Math.floor(Math.random() * materialLibrary.length);
+  } else {
+    let hash = 0;
+    for(let i=0;i<todayStr.length;i++) hash = ((hash<<5)-hash)+todayStr.charCodeAt(i);
+    index = Math.abs(hash % materialLibrary.length);
+  }
+  const surpriseItem = materialLibrary[index];
+  window._storedDailySurprise = { date: todayStr, item: surpriseItem };
+  return surpriseItem;
+}
+
+function updateSurpriseCard(item) {
+  const titleEl = document.getElementById('surpriseTitle');
+  const seriesEl = document.getElementById('surpriseSeries');
+  const linkEl = document.getElementById('surpriseLink');
+  if (!titleEl) return;
+  titleEl.innerText = item.name;
+  seriesEl.innerText = item.series;
+  linkEl.href = item.link;
+  currentSurpriseItem = item;
+}
+
+function randomSurpriseManually() {
+  const newItem = getDailyRandomMaterial(true);
+  updateSurpriseCard(newItem);
+  showToast('✨ 新惊喜掉落！今日幸运物料换新 ✨', 1500);
+}
+
+function initDailySurprise() {
+  const dailyItem = getDailyRandomMaterial(false);
+  updateSurpriseCard(dailyItem);
+}
+
+// ========== 搜索/系列筛选/高亮等常规逻辑 ==========
+let currentSeries = '';
+let searchKeyword = '';
+let seriesList = [];
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
+
+function highlightText(text, keyword) {
+  if (!keyword || keyword.trim() === '') return escapeHtml(text);
+  const escapedKeyword = escapeHtml(keyword);
+  const regex = new RegExp(`(${escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  return escapeHtml(text).replace(regex, `<span class="highlight">$1</span>`);
+}
+
+function getFilteredItems() {
+  let result = [...materialLibrary];
+  if (currentSeries !== '') {
+    result = result.filter(item => item.series === currentSeries);
+  }
+  if (searchKeyword.trim() !== '') {
+    const kw = searchKeyword.trim().toLowerCase();
+    result = result.filter(item => 
+      item.name.toLowerCase().includes(kw) || item.series.toLowerCase().includes(kw)
+    );
+  }
+  return result;
+}
+
+function renderMaterialGrid() {
+  const container = document.getElementById('materialGrid');
+  if (!container) return;
+  const filtered = getFilteredItems();
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-magnifying-glass"></i> 没有找到相关物料～</div>`;
+    return;
+  }
+  container.innerHTML = '';
+  filtered.forEach(item => {
+    const seriesHighlight = highlightText(item.series, searchKeyword);
+    const nameHighlight = highlightText(item.name, searchKeyword);
+    const card = document.createElement('div');
+    card.className = 'material-card';
+    card.innerHTML = `
+      <div class="card-info">
+        <div class="card-series">${seriesHighlight}</div>
+        <div class="card-name">${nameHighlight}</div>
+      </div>
+      <a href="${item.link}" target="_blank" class="card-link"><i class="fas fa-piggy-bank"></i> 要去看小猪了 →</a>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function updateStats() {
+  const totalSpan = document.getElementById('totalCount');
+  if (totalSpan) totalSpan.innerText = materialLibrary.length;
+  const statsText = document.querySelector('.total-count');
+  const filteredTotal = getFilteredItems().length;
+  if (filteredTotal !== materialLibrary.length && searchKeyword !== '') {
+    statsText.innerHTML = `<i class="fas fa-film"></i> 共 ${materialLibrary.length} 条物料 · 搜到 ${filteredTotal} 条`;
+  } else {
+    statsText.innerHTML = `<i class="fas fa-film"></i> 共 ${materialLibrary.length} 条物料`;
+  }
+}
+
+function initSeries() {
+  const set = new Set();
+  materialLibrary.forEach(item => set.add(item.series));
+  seriesList = Array.from(set).sort();
+}
+
+function renderFilterBar() {
+  const container = document.getElementById('filterBar');
+  if (!container) return;
+  container.innerHTML = '';
+  const allChip = document.createElement('div');
+  allChip.className = `filter-chip ${currentSeries === '' ? 'active' : ''}`;
+  allChip.textContent = '📺 全部';
+  allChip.onclick = () => {
+    currentSeries = '';
+    renderFilterBar();
+    renderMaterialGrid();
+    updateStats();
+  };
+  container.appendChild(allChip);
+  seriesList.forEach(series => {
+    const chip = document.createElement('div');
+    chip.className = `filter-chip ${currentSeries === series ? 'active' : ''}`;
+    chip.textContent = series;
+    chip.onclick = () => {
+      currentSeries = series;
+      renderFilterBar();
+      renderMaterialGrid();
+      updateStats();
+    };
+    container.appendChild(chip);
+  });
+}
+
+function bindSearchEvents() {
+  const searchInput = document.getElementById('searchKeyword');
+  const clearBtn = document.getElementById('clearSearchBtn');
+  if (!searchInput) return;
+  const performSearch = () => {
+    searchKeyword = searchInput.value;
+    renderMaterialGrid();
+    updateStats();
+    renderFilterBar();
+  };
+  searchInput.addEventListener('input', performSearch);
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      searchKeyword = '';
+      performSearch();
+      searchInput.focus();
+      showToast('已清空搜索词', 1000);
+    });
+  }
+}
+
+function showToast(msg, duration = 1800) {
+  const toast = document.getElementById('toastMsg');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), duration);
+}
+
+function bindBackButton() {
+  // 使用 a 标签直接 href 导航，无需 JS 干预
+}
+
+function bindSurpriseEvents() {
+  const randomBtn = document.getElementById('randomSurpriseBtn');
+  if (randomBtn) {
+    randomBtn.addEventListener('click', () => {
+      randomSurpriseManually();
+    });
+  }
+}
+
+function init() {
+  initSeries();
+  renderFilterBar();
+  renderMaterialGrid();
+  updateStats();
+  bindSearchEvents();
+  bindBackButton();
+  initDailySurprise();
+  bindSurpriseEvents();
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

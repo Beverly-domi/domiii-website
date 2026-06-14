@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>奕然 · 直拍档案馆 | 橙光集</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  background: linear-gradient(145deg, #FFF8F0 0%, #FFEFDF 40%, #FFE8D4 100%);
+  min-height: 100vh;
+  padding: 2rem;
+  padding-top: 6rem;
+  padding-bottom: 3rem;
+  color: #4A3420;
+  position: relative;
+}
+
+/* 柔和光晕背景 */
+.ambient-glow {
+  position: fixed;
+  top: -20%;
+  left: -20%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(255, 180, 100, 0.2) 0%, rgba(255, 220, 160, 0.05) 60%, transparent 90%);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.ambient-glow-right {
+  top: auto;
+  bottom: -20%;
+  left: auto;
+  right: -20%;
+  background: radial-gradient(circle, rgba(255, 160, 80, 0.15) 0%, rgba(255, 200, 140, 0.05) 60%, transparent 90%);
+}
+
+/* 漂浮粒子 - 柔和暖色 */
+.floating-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(255, 170, 90, 0.25);
+  border-radius: 50%;
+  animation: floatParticle linear infinite;
+  box-shadow: 0 0 6px rgba(255, 140, 50, 0.3);
+}
+
+@keyframes floatParticle {
+  0% {
+    transform: translateY(100vh) translateX(0) scale(1);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.5;
+  }
+  85% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-20vh) translateX(20px) scale(0.4);
+    opacity: 0;
+  }
+}
+
+/* 顶部导航 - 暖白玻璃 */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0.6rem 1.5rem;
+  background: rgba(255, 248, 240, 0.94);
+  backdrop-filter: blur(24px);
+  border-bottom: 2px solid rgba(255,149,45,0.25);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.back-home{
+  background:#FF952D;
+  border:1px solid #E67A00;
+  color:white;
+  padding:.35rem 1rem;
+  border-radius:40px;
+  font-size:.7rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.25s;
+  text-decoration:none;
+  box-shadow:0 2px 8px rgba(255,149,45,0.3);
+}
+.back-home:hover{
+  background:#E67A00;
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(255,149,45,0.4);
+}
+
+/* 主容器 - 双栏布局 */
+.fancam-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* 左侧筛选栏 - 独立卡片式 */
+.filter-sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 90px;
+  background: rgba(255, 250, 240, 0.75);
+  backdrop-filter: blur(16px);
+  border-radius: 32px;
+  padding: 1.2rem 0.8rem;
+  border: 1px solid rgba(230, 126, 34, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+}
+
+.filter-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #B87A4A;
+  padding: 0 0.8rem 0.8rem;
+  border-bottom: 1px solid rgba(200, 130, 70, 0.2);
+  margin-bottom: 0.8rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.filter-chip {
+  background: transparent;
+  padding: 0.55rem 0.9rem;
+  border-radius: 60px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #B56A2E;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-chip i {
+  width: 20px;
+  font-size: 0.8rem;
+  color: #D48A4A;
+}
+
+.filter-chip.active {
+  background: linear-gradient(135deg, #F5A623, #E67E22);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.25);
+}
+
+.filter-chip.active i {
+  color: #FFFFFF;
+}
+
+.filter-chip:hover:not(.active) {
+  background: rgba(230, 126, 34, 0.12);
+  color: #C46A2A;
+  transform: translateX(3px);
+}
+
+/* 右侧内容区 */
+.right-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 统计栏 */
+.stats-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(200, 130, 70, 0.25);
+}
+
+.stats-left {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #B5723A;
+  letter-spacing: 0.3px;
+}
+
+.stats-left i {
+  color: #E67E22;
+  margin-right: 6px;
+}
+
+.stats-right {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #D48A4A;
+  background: rgba(230, 126, 34, 0.08);
+  padding: 0.2rem 0.9rem;
+  border-radius: 40px;
+}
+
+/* 卡片网格 - 更具设计感的渐变卡片 */
+.fancam-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.fancam-card {
+  background: linear-gradient(135deg, rgba(255, 255, 245, 0.95) 0%, rgba(255, 248, 235, 0.95) 100%);
+  border-radius: 28px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  border: 1px solid rgba(230, 126, 34, 0.25);
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 12px 28px -8px rgba(100, 60, 20, 0.12);
+  backdrop-filter: blur(2px);
+}
+
+.fancam-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #F7B05E, #E67E22, #F7B05E);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.fancam-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.3), rgba(255, 180, 100, 0.1));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.fancam-card:hover {
+  transform: translateY(-8px);
+  background: linear-gradient(135deg, #FFFFFF, #FFF9F0);
+  border-color: rgba(230, 126, 34, 0.45);
+  box-shadow: 0 28px 40px -12px rgba(180, 100, 30, 0.25);
+}
+
+.fancam-card:hover::before {
+  opacity: 1;
+}
+
+.fancam-card:hover::after {
+  opacity: 1;
+}
+
+.card-info {
+  padding: 1.4rem 1.3rem 1.3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 650;
+  color: #4A2A10;
+  margin-bottom: 0.6rem;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: -0.2px;
+}
+
+.card-title i {
+  color: #E67E22;
+  font-size: 1rem;
+  background: rgba(230, 126, 34, 0.12);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.card-meta {
+  display: flex;
+  gap: 0.8rem;
+  font-size: 0.7rem;
+  color: #B8855A;
+  margin-top: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.meta-tag {
+  background: rgba(230, 126, 34, 0.12);
+  padding: 0.25rem 0.8rem;
+  border-radius: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: #C46A2A;
+  backdrop-filter: blur(4px);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 248, 240, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 40px;
+  color: #B87A4A;
+  font-size: 0.9rem;
+  border: 1px dashed rgba(230, 126, 34, 0.3);
+}
+
+/* 装饰小猪 */
+.piggy-deco {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 88;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(255, 245, 235, 0.8);
+  backdrop-filter: blur(12px);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(230, 126, 34, 0.4);
+  color: #E67E22;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.piggy-deco:hover {
+  transform: scale(1.05) rotate(5deg);
+  background: rgba(255, 235, 215, 0.9);
+  border-color: rgba(230, 126, 34, 0.7);
+  color: #D45A1A;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(255, 245, 235, 0.96);
+  backdrop-filter: blur(20px);
+  color: #B55A1A;
+  padding: 0.6rem 1.4rem;
+  border-radius: 60px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  z-index: 200;
+  opacity: 0;
+  transition: 0.2s ease;
+  pointer-events: none;
+  border: 1px solid rgba(230, 126, 34, 0.4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@keyframes floatHeartSimple {
+  0% {
+    transform: translateY(0) scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-70px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .fancam-container {
+    flex-direction: column;
+  }
+  .filter-sidebar {
+    width: 100%;
+    position: relative;
+    top: 0;
+    padding: 1rem;
+  }
+  .filter-group {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    padding: 0.4rem 1rem;
+  }
+}
+
+@media (max-width: 720px) {
+  body {
+    padding: 1.2rem;
+    padding-top: 5rem;
+  }
+  .fancam-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .toast {
+    white-space: normal;
+    width: 80%;
+    text-align: center;
+    bottom: 90px;
+  }
+  .piggy-deco {
+    bottom: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.4rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient-glow"></div>
+<div class="ambient-glow ambient-glow-right"></div>
+<div class="floating-particles" id="particleContainer"></div>
+
+<div class="top-nav">
+  <a href="wenjianjia.html" class="back-home" id="backToHomeBtn" style="margin-right:auto"><i class="fas fa-home"></i> 返回主页</a>
+</div>
+
+<div class="fancam-container">
+  <!-- 左侧筛选栏 -->
+  <aside class="filter-sidebar">
+    <div class="filter-header"><i class="fas fa-filter"></i> 筛选分类</div>
+    <div class="filter-group" id="filterGroup">
+      <!-- 动态生成：总选项 + 子选项 -->
+    </div>
+  </aside>
+
+  <!-- 右侧内容 -->
+  <div class="right-content">
+    <div class="stats-bar">
+      <div class="stats-left"><i class="fas fa-film"></i> <span id="totalCount">0</span> 支 · 直拍</div>
+      <div class="stats-right"><i class="fas fa-feather-alt"></i> LOVE</div>
+    </div>
+    <div class="fancam-grid" id="fancamGrid"></div>
+  </div>
+</div>
+
+<div class="piggy-deco" id="pigDeco">🍊</div>
+<div id="toastMsg" class="toast"></div>
+
+<script>
+// 柔和粒子
+function initParticles() {
+  const container = document.getElementById('particleContainer');
+  if (!container) return;
+  for (let i = 0; i < 48; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    const size = 3 + Math.random() * 9;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.animationDuration = `${9 + Math.random() * 18}s`;
+    particle.style.animationDelay = `${Math.random() * 20}s`;
+    particle.style.opacity = 0.25 + Math.random() * 0.4;
+    container.appendChild(particle);
+  }
+}
+
+// 直拍数据
+const fancamLibrary = [];
+
+const rawEntries = [
+  ["《末日留守者》", "Flammability奕爆-张奕然", "https://weibo.com/7898425141/R1YluuKvu"],
+  ["《末日留守者》", "常青瞳Lierre", "https://weibo.com/6421212496/QE0cGu0DT"],
+  ["《末日留守者》", "唯一真理·张奕然", "https://weibo.com/4089304366/R3lpnhfxL"],
+  ["《末日留守者》", "Radiant秋奕_张奕然", "https://weibo.com/9168301209/QFk9x3gaq"],
+  ["《末日留守者》", "奕启丨UniqueRencounter", "https://weibo.com/2598853857/QDH6EzLY5"],
+  ["《末日留守者》", "奕moji丨张奕然", "https://weibo.com/7982089501/QBoiEAa4S"],
+  ["《末日留守者》", "日暮里丨张奕然", "https://weibo.com/7530419338/QCtsz16gg"],
+  ["《末日留守者》", "Flashpoint液体小猪-张奕然", "https://weibo.com/7864034654/QCDmj3Iwn"],
+  ["《末日留守者》", "CreamPuff奶油泡芙_张奕然", "https://weibo.com/4034771200/QBnsC7HGp"],
+  ["《末日留守者》", "Flashpoint液体小猪-张奕然", "https://weibo.com/7864034654/QBrEr1z2D"],
+  ["《末日留守者》", "Flammability奕爆-张奕然", "https://weibo.com/7898425141/QBnr3tYYR"],
+  ["《末日留守者》", "奕颗玉米粒", "https://weibo.com/6243023467/QCiZjnkFV"],
+  ["《Yes Sir！》", "奕moji丨张奕然", "https://weibo.com/7982089501/QC1EH2FbU"],
+  ["《Yes Sir！》", "GrowingPain生長痛丨张奕然", "https://weibo.com/5620745827/QCbG64oJa"],
+  ["《Yes Sir！》", "奕moji丨张奕然", "https://weibo.com/7982089501/QBmRPtYK8"],
+  ["《Yes Sir！》", "然力引爆-张奕然", "https://weibo.com/6467503551/QBuIyCzlA"],
+  ["《Yes Sir！》", "CreamPuff奶油泡芙_张奕然", "https://weibo.com/4034771200/QBmQz9APn"],
+  ["《Yes Sir！》", "Nubility-张奕然", "https://weibo.com/6063437541/QC2asFOWZ"],
+  ["《Yes Sir！》", "唯一真理·张奕然", "https://weibo.com/4089304366/QBqcYcReI"],
+  ["《Yes Sir！》", "PiggyMuse_张奕然", "https://weibo.com/8221286774/QBssXojjo"],
+  ["《Yes Sir！》", "别捏我兜脸丨张奕然", "https://weibo.com/7747873322/QEJaUtO5U"],
+  ["《Yes Sir！》", "Ruhreimitomaten_", "https://weibo.com/7845400915/QD6MA3koq"],
+  ["《Get High》", "奕moji丨张奕然", "https://weibo.com/7982089501/QCi5Ga2jM"],
+  ["《Get High》", "日暮里丨张奕然", "https://weibo.com/7530419338/QBpxtkITq"],
+  ["《Get High》", "奕启丨UniqueRencounter", "https://weibo.com/2598853857/QCM0ODb71"],
+  ["《Get High》", "GrowingPain生長痛丨张奕然", "https://weibo.com/5620745827/QBPT282wi"],
+  ["《Get High》", "Oculus丨张奕然", "https://weibo.com/8383850812/QCVQIaZav"],
+  ["《Get High》", "奕moji丨张奕然", "https://weibo.com/7982089501/QBxYcC4ii"],
+  ["《Get High》", "CreamPuff奶油泡芙_张奕然", "https://weibo.com/4034771200/QBwnW9REn"],
+  ["《Get High》", "唯一真理·张奕然", "https://weibo.com/4089304366/QBHv1rl56"],
+  ["《Get High》", "PiggyMuse_张奕然", "https://weibo.com/8221286774/QBpNf7OcJ"],
+  ["《Get High》", "Radiant秋奕_张奕然", "https://weibo.com/9168301209/QEKDlsDs4"],
+  ["《Get High》", "Radiant秋奕_张奕然", "https://weibo.com/9168301209/R00Nanm3D"],
+  ["《OVERDRIVE》", "然力引爆-张奕然", "https://weibo.com/6467503551/QBqFNjQSL"],
+  ["《OVERDRIVE》", "奕moji丨张奕然", "https://weibo.com/7982089501/QBnfvnE9A"],
+  ["《OVERDRIVE》", "日暮里丨张奕然", "https://weibo.com/7530419338/QC8ax1FA5"],
+  ["《OVERDRIVE》", "奕启丨UniqueRencounter", "https://weibo.com/2598853857/QBuEfmlcW"],
+  ["《OVERDRIVE》", "然力引爆-张奕然", "https://weibo.com/6467503551/QBpQduSYK"],
+  ["《OVERDRIVE》", "Flammability奕爆-张奕然", "https://weibo.com/7898425141/QBot3hG9V"],
+  ["《OVERDRIVE》", "唯一真理·张奕然", "https://weibo.com/4089304366/QCaEdiRND"],
+  ["《612星球》", "奕moji丨张奕然", "https://weibo.com/7982089501/QCLTkBbPe"],
+  ["《612星球》", "日暮里丨张奕然", "https://weibo.com/7530419338/QBnCmfFNi"],
+  ["《612星球》", "Oculus丨张奕然", "https://weibo.com/8383850812/QBIwzBahm"],
+  ["《612星球》", "Flammability奕爆-张奕然", "https://weibo.com/7898425141/QCBxHbAHs"],
+  ["《612星球》", "别捏我兜脸丨张奕然", "https://weibo.com/7747873322/QCaN3umSU"],
+  ["《612星球》", "奕启丨UniqueRencounter", "https://weibo.com/2598853857/QBrLzwp9w"],
+  ["《612星球》", "GrowingPain生長痛丨张奕然", "https://weibo.com/5620745827/QClq3xF5B"],
+  ["《612星球》", "奕moji丨张奕然", "https://weibo.com/7982089501/QBomGw32R"],
+  ["《612星球》", "CreamPuff奶油泡芙_张奕然", "https://weibo.com/4034771200/QBn7WdGw0"],
+  ["《612星球》", "Flammability奕爆-张奕然", "https://weibo.com/7898425141/QBniO1uYz"],
+  ["《612星球》", "GrapeSorbet-", "https://weibo.com/8011168363/QBn7fA1GL"],
+  ["《612星球》", "唯一真理·张奕然", "https://weibo.com/4089304366/QCscDcfOT"],
+  ["《爱的城堡》", "日暮里丨张奕然", "https://weibo.com/7530419338/QBIEYxeX6"],
+  ["《爱的城堡》", "奕moji丨张奕然", "https://weibo.com/7982089501/QBR5GzktW"],
+  ["《爱的城堡》", "Flammability奕爆-张奕然", "https://weibo.com/7898425141/QCNafus1q"],
+  ["《爱的城堡》", "Flammability奕爆-张奕然", "https://weibo.com/7898425141/QBp95rzMm"],
+  ["《爱的城堡》", "CreamPuff奶油泡芙_张奕然", "https://weibo.com/4034771200/QBngoua54"],
+  ["《爱的城堡》", "Nubility-张奕然", "https://weibo.com/6063437541/QBJOeeaeW"],
+  ["《斗牛，要不要》", "奕moji丨张奕然", "https://weibo.com/7982089501/QCCNyl0fD"],
+  ["《斗牛，要不要》", "日暮里丨张奕然", "https://weibo.com/7530419338/QCbVgkJGm"],
+  ["《斗牛，要不要》", "GrowingPain生長痛丨张奕然", "https://weibo.com/5620745827/QCvy8wgES"],
+  ["《斗牛，要不要》", "CreamPuff奶油泡芙_张奕然", "https://weibo.com/4034771200/QBnEWuuLw"],
+  ["《斗牛，要不要》", "PiggyMuse_张奕然", "https://weibo.com/8221286774/QBy38mI6V"],
+  ["《斗牛，要不要》", "Flammability奕爆-张奕然", "https://weibo.com/7898425141/QBnW8DEXV"],
+  ["《一样的月光》", "常青瞳Lierre", "https://weibo.com/6421212496/QBQ2Xy0Cp"],
+  ["《一样的月光》", "GrapeSorbet-", "https://weibo.com/8011168363/QBnLs9aQ7"],
+  ["《一样的月光》", "PiggyMuse_张奕然", "https://weibo.com/8221286774/QBxGXnU4Q"],
+  ["《一样的月光》", "然力引爆-张奕然", "https://weibo.com/6467503551/QBzzhjxf6"],
+  ["《一样的月光》", "MoonlitOak_张奕然", "https://weibo.com/8447125486/QBpcUa9rQ"],
+  ["《一样的月光》", "奕启丨UniqueRencounter", "https://weibo.com/2598853857/QC3AVBfY3"],
+  ["《一样的月光》", "奕moji丨张奕然", "https://weibo.com/7982089501/QBojktmHv"],
+  ["《一样的月光》", "Oculus丨张奕然", "https://weibo.com/8383850812/QBpBFFoiw"],
+  ["《一样的月光》", "日暮里丨张奕然", "https://weibo.com/7530419338/QCMeTu2eW"],
+  ["《一样的月光》", "奕moji丨张奕然", "https://weibo.com/7982089501/QCJaj8JPR"],
+  ["《History》", "唯一真理·张奕然", "https://weibo.com/4089304366/QBFwZExeK"],
+  ["《History》", "Flashpoint液体小猪-张奕然", "https://weibo.com/7864034654/QC6kYzAsY"],
+  ["《History》", "CreamPuff奶油泡芙_张奕然", "https://weibo.com/4034771200/QBO00jvIB"],
+  ["《History》", "然力引爆-张奕然", "https://weibo.com/6467503551/QBzbSrwcB"],
+  ["《History》", "GrapeSorbet-", "https://weibo.com/8011168363/QBwJ18EOK"],
+  ["《History》", "Flammability奕爆-张奕然", "https://weibo.com/7898425141/QBwPwsd1U"],
+  ["《History》", "最小單位·張奕然", "https://weibo.com/4010153604/QBACRgFQ6"],
+  ["《History》", "奕moji丨张奕然", "https://weibo.com/7982089501/QBx0Qh1g7"],
+  ["《History》", "Oculus丨张奕然", "https://weibo.com/8383850812/QBzM1B0nH"],
+  ["《History》", "GrowingPain生長痛丨张奕然", "https://weibo.com/5620745827/QByZTgK8A"],
+  ["《History》", "别捏我兜脸丨张奕然", "https://weibo.com/7747873322/QCtFevtqB"],
+  ["《History》", "日暮里丨张奕然", "https://weibo.com/7530419338/QBxXY58yL"],
+  ["《History》", "人生海海丨张奕然", "https://weibo.com/6230450940/QBzpMxlQB"]
+];
+
+const uniqueMap = new Map();
+rawEntries.forEach(([stage, author, url]) => {
+  if (!url || url.trim() === "") return;
+  if (!uniqueMap.has(url)) {
+    uniqueMap.set(url, { style: stage, authorName: author, link: url, date: "站姐直拍" });
+  }
+});
+for (let item of uniqueMap.values()) fancamLibrary.push(item);
+
+let currentStyle = '';   // '' 表示全部
+let styleList = [];
+
+function initStyles() {
+  const set = new Set();
+  fancamLibrary.forEach(item => set.add(item.style));
+  styleList = Array.from(set).sort();
+}
+
+// 渲染左侧筛选栏：总选项 + 子选项
+function renderFilterSidebar() {
+  const container = document.getElementById('filterGroup');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  // 总选项（全部直拍）
+  const allChip = document.createElement('div');
+  allChip.className = `filter-chip ${currentStyle === '' ? 'active' : ''}`;
+  allChip.innerHTML = `<i class="fas fa-compass"></i> 全部直拍`;
+  allChip.onclick = () => {
+    currentStyle = '';
+    renderFilterSidebar();
+    renderFancamGrid();
+  };
+  container.appendChild(allChip);
+  
+  // 子选项（各个舞台分类）
+  styleList.forEach(style => {
+    const chip = document.createElement('div');
+    chip.className = `filter-chip ${currentStyle === style ? 'active' : ''}`;
+    chip.innerHTML = `<i class="fas fa-music"></i> ${style}`;
+    chip.onclick = () => {
+      currentStyle = style;
+      renderFilterSidebar();
+      renderFancamGrid();
+    };
+    container.appendChild(chip);
+  });
+}
+
+function renderFancamGrid() {
+  const container = document.getElementById('fancamGrid');
+  if (!container) return;
+  let filtered = currentStyle ? fancamLibrary.filter(item => item.style === currentStyle) : fancamLibrary;
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-camera"></i> 暂未收录 · 探索其他舞台</div>`;
+    return;
+  }
+  container.innerHTML = '';
+  filtered.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'fancam-card';
+    card.innerHTML = `
+      <div class="card-info">
+        <div class="card-title"><i class="fas fa-star"></i> ${escapeHtml(item.authorName)}</div>
+        <div class="card-meta">
+          <span class="meta-tag"><i class="fas fa-microphone-alt"></i> ${escapeHtml(item.style)}</span>
+          <span><i class="far fa-heart"></i> 直拍</span>
+        </div>
+      </div>
+    `;
+    card.addEventListener('click', () => { window.open(item.link, '_blank'); showToast('⟡ 跳转微博 · 观看直拍 ⟡'); });
+    container.appendChild(card);
+  });
+}
+
+function updateStats() { document.getElementById('totalCount').innerText = fancamLibrary.length; }
+function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;' }[m])); }
+function showToast(msg, d=1600) { const t = document.getElementById('toastMsg'); if(!t) return; t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), d); }
+
+function pigDecoEffect() {
+  const pig = document.getElementById('pigDeco');
+  if(!pig) return;
+  pig.addEventListener('click', (e) => {
+    e.stopPropagation();
+    for(let i=0;i<8;i++) {
+      const orb = document.createElement('div');
+      orb.innerText = ['🍊','🍑','✨','○','◌','✧'][Math.floor(Math.random()*6)];
+      orb.style.position = 'fixed';
+      orb.style.left = (e.clientX - 12 + (Math.random() - 0.5)*56) + 'px';
+      orb.style.top = (e.clientY - 12 + (Math.random() - 0.5)*32) + 'px';
+      orb.style.fontSize = '1rem';
+      orb.style.color = '#E67E22';
+      orb.style.pointerEvents = 'none';
+      orb.style.zIndex = '9999';
+      orb.style.animation = 'floatHeartSimple 0.8s ease-out forwards';
+      document.body.appendChild(orb);
+      setTimeout(() => orb.remove(), 800);
+    }
+    pig.style.transform = 'scale(1.12)';
+    setTimeout(() => pig.style.transform = '', 150);
+  });
+}
+
+// 返回主页：使用 a 标签直接 href 导航
+function bindBackButton() {
+  // 原生 <a> 标签处理导航，无需 JS 干预
+}
+
+function init() {
+  initStyles();
+  renderFilterSidebar();
+  renderFancamGrid();
+  updateStats();
+  pigDecoEffect();
+  bindBackButton();
+  initParticles();
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
