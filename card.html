@@ -21,6 +21,8 @@
   --sp-color-1: #ff6b6b;
   --sp-color-2: #ffd93d;
   --sp-color-3: #6bcbff;
+  --hidden-color: #1a0033;
+  --hidden-glow: #a855f7;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{
@@ -256,11 +258,13 @@ body::after{
 .show-card.rarity-SR{border-color:var(--sr-color)}
 .show-card.rarity-SSR{border-color:var(--ssr-color)}
 .show-card.rarity-SP{border-color:transparent;background-image:linear-gradient(#fff,#fff),linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff,#ff6b6b);background-origin:padding-box,border-box;background-clip:padding-box,border-box}
+.show-card.rarity-HIDDEN{border-color:transparent;background-image:linear-gradient(#1a1a2e,#1a1a2e),linear-gradient(135deg,#a855f7,#6366f1,#a855f7);background-origin:padding-box,border-box;background-clip:padding-box,border-box;box-shadow:0 0 40px rgba(168,85,247,0.4),0 0 80px rgba(99,102,241,0.2)}
 .show-card .rarity-N{color:var(--n-color)}
 .show-card .rarity-R{color:var(--r-color)}
 .show-card .rarity-SR{color:var(--sr-color)}
 .show-card .rarity-SSR{color:var(--ssr-color)}
 .show-card .rarity-SP{background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff);background-clip:text;-webkit-background-clip:text;color:transparent;font-weight:800}
+.show-card .rarity-HIDDEN{background:linear-gradient(135deg,#a855f7,#6366f1,#ec4899);background-clip:text;-webkit-background-clip:text;color:transparent;font-weight:900;font-size:15px;letter-spacing:2px}
 
 /* SP watermark */
 .sp-watermark{
@@ -373,6 +377,51 @@ body::after{
 @keyframes ringExpand{
   0%{opacity:0.8;transform:scale(0.8)}
   100%{opacity:0;transform:scale(1.3)}
+}
+
+/* HIDDEN: 暗紫色+金色光雨 + 全屏暗闪 */
+.effect-HIDDEN .glow-ring{
+  position:absolute;inset:-24px;border-radius:40px;
+  box-shadow:0 0 120px var(--hidden-glow),0 0 200px rgba(168,85,247,0.3),inset 0 0 80px rgba(99,102,241,0.2);
+  animation:hiddenGlow 1.6s ease infinite;
+}
+@keyframes hiddenGlow{
+  0%,100%{opacity:0.5;filter:brightness(1)}
+  50%{opacity:1;filter:brightness(1.5)}
+}
+.effect-HIDDEN .dark-spark{
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:#e2b0ff;box-shadow:0 0 6px #a855f7,0 0 12px #6366f1;
+  animation:darkSparkUp 2.5s ease-in forwards;
+}
+@keyframes darkSparkUp{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-250px) scale(0.2)}
+}
+.effect-HIDDEN .hidden-text{
+  position:absolute;top:-36px;left:50%;transform:translateX(-50%);
+  font-size:22px;font-weight:900;white-space:nowrap;
+  background:linear-gradient(135deg,#c084fc,#818cf8,#f472b6,#c084fc);
+  background-size:300% auto;background-clip:text;-webkit-background-clip:text;color:transparent;
+  animation:rainbowSweep 1.2s linear infinite;
+  filter:drop-shadow(0 0 12px rgba(168,85,247,0.5));
+}
+.effect-HIDDEN .hidden-burst{
+  position:absolute;inset:-40px;border-radius:50%;
+  border:3px solid transparent;
+  border-image:linear-gradient(135deg,#a855f7,#6366f1,#ec4899,#a855f7) 1;
+  animation:ringExpand 1.8s ease forwards;
+}
+/* 全屏暗闪覆盖层 */
+.hidden-screen-flash{
+  position:fixed;inset:0;z-index:9998;
+  background:radial-gradient(circle at 50% 50%,rgba(168,85,247,0.3),rgba(0,0,0,0.9));
+  animation:hiddenFlash 0.8s ease forwards;pointer-events:none;
+}
+@keyframes hiddenFlash{
+  0%{opacity:0}
+  30%{opacity:1}
+  100%{opacity:0}
 }
 
 /* ===== Draw Buttons ===== */
@@ -524,11 +573,13 @@ body::after{
 .collection-card .cc-rarity.SR{color:var(--sr-color)}
 .collection-card .cc-rarity.SSR{color:var(--ssr-color)}
 .collection-card .cc-rarity.SP{background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff);background-clip:text;-webkit-background-clip:text;color:transparent}
+.collection-card .cc-rarity.HIDDEN{background:linear-gradient(135deg,#a855f7,#6366f1,#ec4899);background-clip:text;-webkit-background-clip:text;color:transparent;font-weight:800}
 .collection-card.rarity-N{border-color:rgba(158,158,158,0.2)}
 .collection-card.rarity-R{border-color:rgba(66,165,245,0.2)}
 .collection-card.rarity-SR{border-color:rgba(171,71,188,0.2)}
 .collection-card.rarity-SSR{border-color:rgba(255,215,0,0.2)}
 .collection-card.rarity-SP{border-color:rgba(255,107,107,0.3)}
+.collection-card.rarity-HIDDEN{border-color:rgba(168,85,247,0.4);box-shadow:0 0 12px rgba(168,85,247,0.2)}
 .empty-collection{
   grid-column:1/-1;text-align:center;padding:40px 20px;
   color:var(--text-muted);font-size:15px;
@@ -856,11 +907,39 @@ const ALL_CARDS = [
   // SP (2 cards, uses SP1-SP2) - 2%
   { id:'sp1', name:'宇宙奇迹 · 瑟琪', rarity:'SP', img:'https://img.heliar.top/file/1781480093885_SP1-compressed.jpeg', series:'limited' },
   { id:'sp2', name:'无限可能 · 未来', rarity:'SP', img:'https://img.heliar.top/file/1781480093977_SP2-compressed-compressed.jpeg', series:'limited' },
+  // N 新卡 (5 cards)
+  { id:'n11', name:'清晨露珠 · 晶莹', rarity:'N', img:'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg', series:'daily' },
+  { id:'n12', name:'午后阳光 · 慵懒', rarity:'N', img:'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg', series:'daily' },
+  { id:'n13', name:'林间轻语 · 自然', rarity:'N', img:'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg', series:'daily' },
+  { id:'n14', name:'街角咖啡 · 闲适', rarity:'N', img:'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg', series:'daily' },
+  { id:'n15', name:'暮光微醺 · 温柔', rarity:'N', img:'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg', series:'daily' },
+  // R 新卡 (5 cards)
+  { id:'r10', name:'雨中旋律 · 浪漫', rarity:'R', img:'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg', series:'stage' },
+  { id:'r11', name:'光影交错 · 迷幻', rarity:'R', img:'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg', series:'stage' },
+  { id:'r12', name:'微风私语 · 清新', rarity:'R', img:'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg', series:'daily' },
+  { id:'r13', name:'雪地足迹 · 纯净', rarity:'R', img:'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg', series:'daily' },
+  { id:'r17', name:'夜色迷梦 · 深邃', rarity:'R', img:'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg', series:'stage' },
+  // SSR 新卡 (5 cards)
+  { id:'ssr9', name:'破晓之光 · 觉醒', rarity:'SSR', img:'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg', series:'fantasy' },
+  { id:'ssr10', name:'银河彼岸 · 彼岸花', rarity:'SSR', img:'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg', series:'fantasy' },
+  { id:'ssr11', name:'繁星诗篇 · 永恒', rarity:'SSR', img:'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg', series:'fantasy' },
+  { id:'ssr12', name:'月轮共鸣 · 引力', rarity:'SSR', img:'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg', series:'fantasy' },
+  { id:'ssr13', name:'星尘回忆 · 溯源', rarity:'SSR', img:'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg', series:'fantasy' },
+  // SP 新卡 (5 cards)
+  { id:'sp3', name:'彩虹尽头 · 奇迹', rarity:'SP', img:'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg', series:'limited' },
+  { id:'sp4', name:'命运之舞 · 交织', rarity:'SP', img:'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg', series:'limited' },
+  { id:'sp5', name:'光年之外 · 约定', rarity:'SP', img:'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg', series:'limited' },
+  { id:'sp6', name:'时空回响 · 共鸣', rarity:'SP', img:'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg', series:'limited' },
+  { id:'sp7', name:'永恒誓言 · 不朽', rarity:'SP', img:'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg', series:'limited' },
+  // HIDDEN (3 cards) - 0.01%抽中率
+  { id:'h1', name:'✦ 隐藏 · 禁断の扉 ✦', rarity:'HIDDEN', img:'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg', series:'hidden' },
+  { id:'h2', name:'✦ 隐藏 · 幻影の翼 ✦', rarity:'HIDDEN', img:'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg', series:'hidden' },
+  { id:'h3', name:'✦ 隐藏 · 真実の光 ✦', rarity:'HIDDEN', img:'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg', series:'hidden' },
 ];
 
-const RARITY_ORDER = ['N','R','SR','SSR','SP'];
-const RARITY_COLORS = { N:'#9e9e9e', R:'#42a5f5', SR:'#ab47bc', SSR:'#ffd700', SP:'linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff)' };
-const RARITY_LABELS = { N:'N·Normal', R:'R·Rare', SR:'SR·Super Rare', SSR:'SSR·Super Super Rare', SP:'SP·Special' };
+const RARITY_ORDER = ['N','R','SR','SSR','SP','HIDDEN'];
+const RARITY_COLORS = { N:'#9e9e9e', R:'#42a5f5', SR:'#ab47bc', SSR:'#ffd700', SP:'linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcbff)', HIDDEN:'linear-gradient(135deg,#a855f7,#6366f1,#ec4899)' };
+const RARITY_LABELS = { N:'N·Normal', R:'R·Rare', SR:'SR·Super Rare', SSR:'SSR·Super Super Rare', SP:'SP·Special', HIDDEN:'✦ 隐藏 ✦' };
 const COST_PER_DRAW = 10;
 const COST_PER_TEN = 100;
 const DAILY_REWARD = 20;
@@ -920,6 +999,9 @@ function rollRarity() {
   const roll = Math.random();
   let cum = 0;
 
+  cum += 0.0001; // HIDDEN 0.01%
+  if (roll < cum) return 'HIDDEN';
+
   cum += spChance;
   if (roll < cum) return 'SP';
 
@@ -953,8 +1035,8 @@ function drawSingle(noAnimation) {
   const rarity = rollRarity();
   const card = pickCard(rarity);
 
-  // Track consecutive no SSR/SP
-  if (rarity === 'SSR' || rarity === 'SP') {
+  // Track consecutive no SSR/SP/HIDDEN
+  if (rarity === 'SSR' || rarity === 'SP' || rarity === 'HIDDEN') {
     state.consecutiveNoSSR = 0;
   } else {
     state.consecutiveNoSSR++;
@@ -966,6 +1048,13 @@ function drawSingle(noAnimation) {
     state.coins += 50;
     state.spDuplicateCount++;
     showToast('🌟 重复SP自动分解！获得50🪙 + 称号「欧皇降临」');
+  }
+
+  // Check duplicate HIDDEN
+  const isDuplicateHidden = (rarity === 'HIDDEN') && state.ownedCards.some(oc => oc.cardId === card.id);
+  if (isDuplicateHidden) {
+    state.coins += 200;
+    showToast('💎 重复隐藏自动分解！获得200🪙 + 称号「天命之人」');
   }
 
   state.ownedCards.push({ cardId: card.id, timestamp: Date.now() });
@@ -998,9 +1087,9 @@ function drawTen() {
     const rarity = rollRarity();
     const card = pickCard(rarity);
 
-    if (rarity === 'SR' || rarity === 'SSR' || rarity === 'SP') hasSRPlus = true;
+    if (rarity === 'SR' || rarity === 'SSR' || rarity === 'SP' || rarity === 'HIDDEN') hasSRPlus = true;
 
-    if (rarity === 'SSR' || rarity === 'SP') {
+    if (rarity === 'SSR' || rarity === 'SP' || rarity === 'HIDDEN') {
       state.consecutiveNoSSR = 0;
     } else {
       state.consecutiveNoSSR++;
@@ -1012,6 +1101,13 @@ function drawTen() {
       state.coins += 50;
       state.spDuplicateCount++;
       showToast('🌟 重复SP自动分解！获得50🪙 + 称号「欧皇降临」');
+    }
+
+    // Check duplicate HIDDEN
+    const isDuplicateHidden = (rarity === 'HIDDEN') && state.ownedCards.some(oc => oc.cardId === card.id);
+    if (isDuplicateHidden) {
+      state.coins += 200;
+      showToast('💎 重复隐藏自动分解！获得200🪙 + 称号「天命之人」');
     }
 
     state.ownedCards.push({ cardId: card.id, timestamp: Date.now() });
@@ -1057,7 +1153,7 @@ function startDrawAnimation(card) {
 
   // Reset states
   reveal.classList.remove('show');
-  showCard.classList.remove('rarity-N','rarity-R','rarity-SR','rarity-SSR','rarity-SP');
+  showCard.classList.remove('rarity-N','rarity-R','rarity-SR','rarity-SSR','rarity-SP','rarity-HIDDEN');
   loading.classList.remove('show');
   clearEffects();
   pack.classList.remove('hidden');
@@ -1225,6 +1321,42 @@ function showRarityEffects(rarity) {
       document.getElementById('app').classList.remove('screen-shake');
     }, 600);
   }
+  else if (rarity === 'HIDDEN') {
+    container.classList.add('effect-HIDDEN');
+    // Glow ring
+    const ring = document.createElement('div');
+    ring.className = 'glow-ring';
+    container.appendChild(ring);
+    // Hidden burst ring
+    const burst = document.createElement('div');
+    burst.className = 'hidden-burst';
+    container.appendChild(burst);
+    // Hidden text
+    const text = document.createElement('div');
+    text.className = 'hidden-text';
+    text.textContent = '✦ SECRET ✦';
+    container.appendChild(text);
+    // Dark spark particles
+    for (let i = 0; i < 40; i++) {
+      const s = document.createElement('div');
+      s.className = 'dark-spark';
+      s.style.left = (Math.random() * 100) + '%';
+      s.style.top = (40 + Math.random() * 60) + '%';
+      s.style.animationDelay = (Math.random() * 1.5) + 's';
+      s.style.animationDuration = (2 + Math.random() * 2) + 's';
+      container.appendChild(s);
+    }
+    // Full-screen dark flash
+    const flash = document.createElement('div');
+    flash.className = 'hidden-screen-flash';
+    document.body.appendChild(flash);
+    setTimeout(() => { if (flash.parentNode) flash.remove(); }, 900);
+    // Screen shake
+    document.getElementById('app').classList.add('screen-shake');
+    setTimeout(() => {
+      document.getElementById('app').classList.remove('screen-shake');
+    }, 800);
+  }
 }
 
 function clearEffects() {
@@ -1309,8 +1441,9 @@ function showTenResults(cards) {
     setupCardFront(card);
     showRarityEffects(card.rarity);
 
-    if (card.rarity === 'SSR') showToast('✨ SSR 闪耀登场！', 800);
-    else if (card.rarity === 'SP') showToast('🌟 SP 限定出现！', 1000);
+if (card.rarity === 'SSR') showToast('✨ SSR 闪耀登场！', 800);
+else if (card.rarity === 'SP') showToast('🌟 SP 限定出现！', 1000);
+else if (card.rarity === 'HIDDEN') showToast('💎 隐藏卡降临！！天命之人！！', 1500);
 
     idx++;
 
