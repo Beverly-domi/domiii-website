@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>合成大然然</title>
+<style>
+/* ============================================================
+   全局样式 - 修改颜色在这里
+   ============================================================ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;touch-action:none;
+  /* ★ 背景渐变: 橙→白 ★ */
+  background:linear-gradient(180deg,#ffb347 0%,#ffe0b2 30%,#fff8f0 70%,#ffffff 100%);
+  font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
+  user-select:none;-webkit-user-select:none;
+}
+
+/* ============================================================
+   游戏画布 - 全屏居中
+   ============================================================ */
+#gameCanvas{
+  display:block;position:absolute;top:0;left:50%;transform:translateX(-50%);
+  /* 宽高由JS动态计算 */
+}
+
+/* ============================================================
+   地面区域 - ★ 深棕色 #8B4513, 高度为游戏区10% ★
+   ============================================================ */
+#groundOverlay{
+  position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;
+  /* ★ 地面颜色在这里改 ★ */
+  background:linear-gradient(180deg,#8B4513 0%,#6B3410 50%,#5C2D0E 100%);
+  border-top:3px solid #a0522d;
+}
+
+/* ============================================================
+   标题 - ★ 合成大然然 ★
+   ============================================================ */
+#gameTitle{
+  position:absolute;left:50%;transform:translateX(-50%);
+  /* ★ 标题文字在这里改 ★ */
+  color:#2c1810;font-weight:900;letter-spacing:2px;
+  text-shadow:0 2px 8px rgba(255,179,71,0.5);
+  pointer-events:none;z-index:10;
+}
+
+/* ============================================================
+   左上角关闭按钮
+   ============================================================ */
+#closeBtn{
+  position:absolute;z-index:20;cursor:pointer;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(0,0,0,0.08);border:2px solid rgba(0,0,0,0.12);
+  display:flex;align-items:center;justify-content:center;
+  color:#2c1810;font-size:20px;font-weight:700;
+  transition:all 0.2s;
+}
+#closeBtn:hover{background:rgba(0,0,0,0.15);transform:scale(1.05)}
+#closeBtn:active{transform:scale(0.95)}
+
+/* ============================================================
+   右上角自定义按钮 - 上黄下蓝 ★
+   ============================================================ */
+#customBtn{
+  position:absolute;z-index:20;cursor:pointer;
+  border-radius:12px;overflow:hidden;
+  border:2px solid rgba(0,0,0,0.1);
+  box-shadow:0 3px 12px rgba(0,0,0,0.12);
+  transition:all 0.2s;
+}
+#customBtn:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,0,0,0.18)}
+#customBtn:active{transform:scale(0.96)}
+#customBtn .custom-top{
+  /* ★ 上半部分: 黄色 ★ */
+  background:linear-gradient(180deg,#ffd54f,#ffb300);
+  height:50%;display:flex;align-items:center;justify-content:center;
+}
+#customBtn .custom-bottom{
+  /* ★ 下半部分: 蓝色 ★ */
+  background:linear-gradient(180deg,#42a5f5,#1e88e5);
+  height:50%;display:flex;align-items:center;justify-content:center;
+}
+#customBtn .custom-text{
+  color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;
+  text-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* ============================================================
+   下一球预览指示器
+   ============================================================ */
+#nextBallHint{
+  position:absolute;z-index:5;pointer-events:none;
+  border-radius:50%;border:2px dashed rgba(0,0,0,0.15);
+  animation:hintPulse 1.2s ease-in-out infinite;
+}
+@keyframes hintPulse{
+  0%,100%{opacity:0.4;transform:translate(-50%,-50%) scale(0.9)}
+  50%{opacity:0.8;transform:translate(-50%,-50%) scale(1.05)}
+}
+
+/* ============================================================
+   合并特效粒子
+   ============================================================ */
+.merge-particle{
+  position:absolute;pointer-events:none;z-index:15;
+  border-radius:50%;animation:particleBurst 0.6s ease-out forwards;
+}
+@keyframes particleBurst{
+  0%{opacity:1;transform:translate(0,0) scale(1)}
+  100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}
+}
+
+/* ============================================================
+   游戏结束弹窗
+   ============================================================ */
+#gameOverModal{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.4s;
+}
+#gameOverModal.show{opacity:1;pointer-events:auto}
+.modal-card{
+  background:#fff;border-radius:24px;padding:32px 28px;
+  text-align:center;max-width:340px;width:85%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.35);
+  animation:modalPop 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+@keyframes modalPop{
+  0%{transform:scale(0.7);opacity:0}
+  100%{transform:scale(1);opacity:1}
+}
+.modal-card h2{font-size:24px;color:#e65100;margin-bottom:8px}
+.modal-card .result{font-size:18px;color:#2c1810;margin-bottom:6px}
+.modal-card .score-line{font-size:14px;color:#8a6e4e;margin-bottom:20px}
+.modal-card button{
+  background:linear-gradient(135deg,#ff952d,#e67a00);color:#fff;border:none;
+  padding:12px 36px;border-radius:40px;font-size:16px;font-weight:700;
+  cursor:pointer;box-shadow:0 4px 16px rgba(255,149,45,0.35);
+  transition:all 0.2s;font-family:inherit;
+}
+.modal-card button:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,149,45,0.45)}
+.modal-card button:active{transform:scale(0.96)}
+
+/* ============================================================
+   隐藏文件上传input
+   ============================================================ */
+#fileInput{display:none}
+
+/* ============================================================
+   提示文字
+   ============================================================ */
+#hintText{
+  position:absolute;left:50%;transform:translateX(-50%);
+  color:rgba(44,24,16,0.4);font-size:12px;
+  pointer-events:none;z-index:5;transition:opacity 0.5s;
+}
+</style>
+</head>
+<body>
+
+<!-- 画布 -->
+<canvas id="gameCanvas"></canvas>
+
+<!-- 地面覆盖层 -->
+<div id="groundOverlay"></div>
+
+<!-- 标题 -->
+<div id="gameTitle">合成大然然</div>
+
+<!-- 左上关闭按钮 -->
+<div id="closeBtn" title="返回">✕</div>
+
+<!-- 右上自定义按钮 -->
+<div id="customBtn">
+  <div class="custom-top"><span class="custom-text">前往</span></div>
+  <div class="custom-bottom"><span class="custom-text">自定义</span></div>
+</div>
+
+<!-- 隐藏文件上传 -->
+<input type="file" id="fileInput" accept="image/*">
+
+<!-- 下一球预览 -->
+<div id="nextBallHint"></div>
+
+<!-- 提示文字 -->
+<div id="hintText">点击 / 空格 投放</div>
+
+<!-- 游戏结束弹窗 -->
+<div id="gameOverModal">
+  <div class="modal-card">
+    <h2>🎮 游戏结束</h2>
+    <div class="result" id="resultText"></div>
+    <div class="score-line" id="scoreText"></div>
+    <button id="restartBtn">🔄 再来一次</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ★ 配置区 - 修改游戏参数在这里 ★
+// ============================================================
+const CONFIG = {
+  // ★ 等级数量（默认5级）★
+  LEVELS: 5,
+
+  // ★ 各等级半径比例（相对于基础半径）★
+  // 等级0最小，等级4最大
+  LEVEL_RADIUS_SCALE: [1.0, 1.4, 2.0, 2.8, 4.0],
+
+  // ★ 基础半径（会根据屏幕宽度自动缩放）★
+  BASE_RADIUS: 22,
+
+  // ★ 物理参数 ★
+  GRAVITY: 980,        // 重力加速度 px/s²
+  RESTITUTION: 0.2,    // 弹性系数 (0=完全非弹性, 1=完全弹性)
+  GROUND_FRICTION: 0.6,// 地面摩擦
+  WALL_BOUNCE: 0.3,    // 墙壁反弹系数
+  BALL_FRICTION: 0.95, // 空中水平速度衰减/帧
+
+  // ★ 地面颜色 ★
+  GROUND_COLOR: '#8B4513',
+
+  // ★ 警戒线位置（距顶部百分比）★
+  DANGER_LINE_PCT: 0.18,
+
+  // ★ 游戏结束超时（秒）★
+  GAME_OVER_DURATION: 2.5,
+
+  // ★ 下落球的等级随机权重（低等级概率高）★
+  SPAWN_WEIGHTS: [0.55, 0.30, 0.10, 0.04, 0.01],
+
+  // ★ 最大球数限制 ★
+  MAX_BALLS: 50,
+
+  // ★ 合并冷却时间 (ms) - 防止同帧反复合并 ★
+  MERGE_COOLDOWN: 100,
+
+  // ★ 自定义头像裁剪尺寸 ★
+  CROP_SIZE: 512,
+};
+
+// ★ 默认头像图片（5个等级，对应5张图）★
+// 使用 img.heliar.top 上的现有图片
+const DEFAULT_IMAGES = [
+  'https://img.heliar.top/file/1781480061726_R1-compressed-compressed.jpeg',   // 等级0
+  'https://img.heliar.top/file/1781480084882_R11-compressed-compressed.jpeg',  // 等级1
+  'https://img.heliar.top/file/1781480095384_SR1-compressed-compressed.jpeg',  // 等级2
+  'https://img.heliar.top/file/1781480154957_SSR1-compressed-compressed.jpeg', // 等级3
+  'https://img.heliar.top/file/1781480093885_SP1-compressed.jpeg',             // 等级4
+];
+
+// ============================================================
+// 全局状态
+// ============================================================
+let canvas, ctx;
+let balls = [];           // 场上所有球
+let gameRunning = true;
+let gameOver = false;
+let score = 0;            // 总分
+let maxLevelReached = 0;  // 最高合成等级
+let highestLevelName = '0级';
+
+// 画布尺寸
+let canvasWidth, canvasHeight;
+let groundLevel;          // 地面Y坐标
+let dangerLine;           // 警戒线Y坐标
+let baseRadius;           // 当前屏幕的基础半径
+
+// 输入状态
+let pointerX = 0;         // 鼠标/触摸X坐标
+let pointerActive = false;// 是否有指针在屏幕上
+let previewLevel = 0;     // 预览球的等级
+
+// 图片缓存
+let ballImages = [];      // 每个等级的图片 (Image对象)
+let usingCustomImages = false;
+
+// 合并冷却追踪
+let mergeTimestamps = new Map(); // ball id → 上次合并时间
+
+// ============================================================
+// 初始化：加载图片
+// ============================================================
+function loadDefaultImages() {
+  ballImages = [];
+  let loaded = 0;
+  for (let i = 0; i < CONFIG.LEVELS; i++) {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => { loaded++; };
+    img.onerror = () => {
+      // 加载失败用纯色占位
+      img._fallback = true;
+      loaded++;
+    };
+    img.src = DEFAULT_IMAGES[i];
+    ballImages.push(img);
+  }
+}
+
+// 从localStorage加载自定义头像
+function loadCustomImages() {
+  try {
+    const saved = localStorage.getItem('daranran_custom_avatar');
+    if (!saved) return false;
+    const data = JSON.parse(saved);
+    if (!data || !data.base64) return false;
+
+    ballImages = [];
+    for (let i = 0; i < CONFIG.LEVELS; i++) {
+      const img = new Image();
+      img.src = data.base64; // 共用同一张图，渲染时缩放到对应等级尺寸
+      ballImages.push(img);
+    }
+    usingCustomImages = true;
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+// ============================================================
+// 自定义头像上传
+// ============================================================
+function handleAvatarUpload(file) {
+  if (!file || !file.type.startsWith('image/')) {
+    alert('请选择图片文件');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      // 裁剪为正方形圆形
+      const size = Math.min(img.width, img.height);
+      const sx = (img.width - size) / 2;
+      const sy = (img.height - size) / 2;
+
+      const cropCanvas = document.createElement('canvas');
+      cropCanvas.width = CONFIG.CROP_SIZE;
+      cropCanvas.height = CONFIG.CROP_SIZE;
+      const cctx = cropCanvas.getContext('2d');
+
+      // 绘制圆形裁剪
+      cctx.beginPath();
+      cctx.arc(CONFIG.CROP_SIZE/2, CONFIG.CROP_SIZE/2, CONFIG.CROP_SIZE/2, 0, Math.PI*2);
+      cctx.clip();
+      cctx.drawImage(img, sx, sy, size, size, 0, 0, CONFIG.CROP_SIZE, CONFIG.CROP_SIZE);
+
+      const base64 = cropCanvas.toDataURL('image/png');
+
+      // 保存到localStorage
+      localStorage.setItem('daranran_custom_avatar', JSON.stringify({ base64, timestamp: Date.now() }));
+
+      // 重新加载
+      loadCustomImages();
+      showToast('✅ 自定义头像已保存！刷新页面即可使用');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Toast提示
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+    background:rgba(0,0,0,0.85);color:#fff;padding:10px 24px;border-radius:24px;
+    font-size:14px;font-weight:600;z-index:999;pointer-events:none;
+    opacity:0;transition:all 0.35s cubic-bezier(0.22,1,0.36,1);
+    white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.3);
+  `;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+  });
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(-20px)';
+    setTimeout(() => toast.remove(), 400);
+  }, 1500);
+}
+
+// ============================================================
+// Ball 类
+// ============================================================
+class Ball {
+  constructor(x, y, level, vx = 0, vy = 0) {
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+    this.level = level;           // 0-4 (CONFIG.LEVELS-1)
+    this.radius = baseRadius * CONFIG.LEVEL_RADIUS_SCALE[level];
+    this.id = Date.now() + Math.random();
+    this.onGround = false;
+    this.mergeCooldownUntil = 0;  // 合并冷却结束时间
+    this.dangerTimer = 0;         // 在警戒线上方的持续时间
+  }
+}
+
+// ============================================================
+// 创建新球（投放）
+// ============================================================
+function spawnBall() {
+  if (!gameRunning || gameOver) return;
+  if (balls.length >= CONFIG.MAX_BALLS) return;
+
+  // 随机选择等级（按权重）
+  const roll = Math.random();
+  let cum = 0;
+  let level = 0;
+  for (let i = 0; i < CONFIG.SPAWN_WEIGHTS.length; i++) {
+    cum += CONFIG.SPAWN_WEIGHTS[i];
+    if (roll < cum) { level = i; break; }
+  }
+
+  const radius = baseRadius * CONFIG.LEVEL_RADIUS_SCALE[level];
+  // X坐标：指针位置，限制在墙内
+  let x = Math.max(radius + 2, Math.min(canvasWidth - radius - 2, pointerX));
+  let y = dangerLine - radius - 5; // 从警戒线上方投放
+
+  const ball = new Ball(x, y, level, 0, 0);
+  balls.push(ball);
+
+  // 生成下一个预览等级
+  previewLevel = randomPreviewLevel();
+  updatePreviewHint();
+}
+
+function randomPreviewLevel() {
+  const roll = Math.random();
+  let cum = 0;
+  for (let i = 0; i < CONFIG.SPAWN_WEIGHTS.length; i++) {
+    cum += CONFIG.SPAWN_WEIGHTS[i];
+    if (roll < cum) return i;
+  }
+  return 0;
+}
+
+// ============================================================
+// 合并两个球
+// ============================================================
+function mergeBalls(a, b) {
+  const now = performance.now();
+
+  // 冷却检查
+  if (a.mergeCooldownUntil > now || b.mergeCooldownUntil > now) return false;
+  if (a.level !== b.level) return false;
+  if (a.level >= CONFIG.LEVELS - 1) return false; // 最高级不能再合
+
+  // 移除两个球
+  balls = balls.filter(ball => ball !== a && ball !== b);
+
+  // 计算新球位置（中点）
+  const newX = (a.x + b.x) / 2;
+  const newY = (a.y + b.y) / 2;
+  const newLevel = a.level + 1;
+
+  // 创建新球
+  const newBall = new Ball(newX, newY, newLevel,
+    (a.vx + b.vx) * 0.3,
+    (a.vy + b.vy) * 0.3 - 120 // 轻微上弹
+  );
+  newBall.mergeCooldownUntil = now + CONFIG.MERGE_COOLDOWN;
+  balls.push(newBall);
+
+  // 更新分数和最高等级
+  score += (newLevel + 1) * 10;
+  if (newLevel > maxLevelReached) {
+    maxLevelReached = newLevel;
+    highestLevelName = getLevelName(newLevel);
+  }
+
+  // 生成合并特效
+  spawnMergeParticles(newX, newY, newLevel);
+
+  // 显示合并提示
+  showMergeToast(newLevel);
+
+  // 连锁合并检查（新球可能与相邻同等级球继续合并）
+  setTimeout(() => checkChainMerge(newBall), 50);
+
+  return true;
+}
+
+function getLevelName(level) {
+  const names = ['初级然然', '进阶然然', '高级然然', '超级然然', '终极然然'];
+  return names[level] || (level + '级张奕然');
+}
+
+function showMergeToast(level) {
+  const name = getLevelName(level);
+  const el = document.createElement('div');
+  el.textContent = `✨ ${name} ✨`;
+  el.style.cssText = `
+    position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) scale(0);
+    color:#fff;font-size:${18 + level*4}px;font-weight:900;z-index:50;
+    text-shadow:0 0 20px rgba(255,179,71,0.8),0 0 40px rgba(255,149,45,0.5);
+    pointer-events:none;white-space:nowrap;
+    animation:mergeToast 1s cubic-bezier(0.22,1,0.36,1) forwards;
+  `;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1100);
+}
+
+// 动态注入合并toast动画
+const mergeToastStyle = document.createElement('style');
+mergeToastStyle.textContent = `
+  @keyframes mergeToast{
+    0%{transform:translate(-50%,-50%) scale(0);opacity:0}
+    30%{transform:translate(-50%,-50%) scale(1.3);opacity:1}
+    100%{transform:translate(-50%,-50%) scale(1);opacity:0}
+  }
+`;
+document.head.appendChild(mergeToastStyle);
+
+// 连锁合并检查
+function checkChainMerge(ball) {
+  if (!balls.includes(ball)) return;
+  for (const other of balls) {
+    if (other === ball) continue;
+    if (other.level !== ball.level) continue;
+
+    const dx = ball.x - other.x;
+    const dy = ball.y - other.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const touchDist = ball.radius + other.radius;
+
+    if (dist < touchDist * 0.95) {
+      if (mergeBalls(ball, other)) return;
+    }
+  }
+}
+
+// 合并粒子特效
+function spawnMergeParticles(x, y, level) {
+  const colors = ['#ff952d','#ffb347','#ffe0b2','#fff','#ffd54f','#ffab00'];
+  const count = 12 + level * 6;
+
+  for (let i = 0; i < count; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'merge-particle';
+    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.3;
+    const dist = 30 + level * 20 + Math.random() * 40;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    const size = 3 + Math.random() * (4 + level * 2);
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    particle.style.cssText = `
+      left:${x}px;top:${y}px;
+      width:${size}px;height:${size}px;
+      background:${color};
+      --dx:${dx}px;--dy:${dy}px;
+      animation-duration:${0.4 + Math.random()*0.4}s;
+    `;
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 800);
+  }
+}
+
+// 更新预览提示
+function updatePreviewHint() {
+  const hint = document.getElementById('nextBallHint');
+  const r = baseRadius * CONFIG.LEVEL_RADIUS_SCALE[previewLevel];
+  hint.style.width = (r*2) + 'px';
+  hint.style.height = (r*2) + 'px';
+}
+
+// ============================================================
+// 物理更新
+// ============================================================
+let lastTime = performance.now();
+
+function updatePhysics() {
+  const now = performance.now();
+  let dt = (now - lastTime) / 1000;
+  lastTime = now;
+
+  // 防止大帧跳跃
+  if (dt > 0.1) dt = 0.1;
+  // 子步进提高稳定性
+  const subSteps = 3;
+  const subDt = dt / subSteps;
+
+  for (let s = 0; s < subSteps; s++) {
+    // 重力
+    for (const ball of balls) {
+      ball.vy += CONFIG.GRAVITY * subDt;
+      ball.vx *= CONFIG.BALL_FRICTION;
+    }
+
+    // 移动
+    for (const ball of balls) {
+      ball.x += ball.vx * subDt;
+      ball.y += ball.vy * subDt;
+    }
+
+    // 边界碰撞
+    for (const ball of balls) {
+      // 左右墙
+      if (ball.x - ball.radius < 0) {
+        ball.x = ball.radius;
+        ball.vx = Math.abs(ball.vx) * CONFIG.WALL_BOUNCE;
+      }
+      if (ball.x + ball.radius > canvasWidth) {
+        ball.x = canvasWidth - ball.radius;
+        ball.vx = -Math.abs(ball.vx) * CONFIG.WALL_BOUNCE;
+      }
+
+      // 地面
+      if (ball.y + ball.radius > groundLevel) {
+        ball.y = groundLevel - ball.radius;
+        if (ball.vy > 0) {
+          ball.vy = -ball.vy * CONFIG.RESTITUTION;
+          ball.vx *= CONFIG.GROUND_FRICTION;
+        }
+        ball.onGround = true;
+      }
+      // 天花板
+      if (ball.y - ball.radius < 0) {
+        ball.y = ball.radius;
+        ball.vy = Math.abs(ball.vy) * CONFIG.RESTITUTION;
+      }
+    }
+
+    // 球间碰撞 & 合并检测
+    for (let i = 0; i < balls.length; i++) {
+      for (let j = i + 1; j < balls.length; j++) {
+        const a = balls[i];
+        const b = balls[j];
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const minDist = a.radius + b.radius;
+
+        if (dist < minDist && dist > 0.001) {
+          // 同等级 → 尝试合并
+          if (a.level === b.level && a.level < CONFIG.LEVELS - 1) {
+            if (mergeBalls(a, b)) {
+              // 合并成功，跳出内层循环
+              break;
+            }
+          }
+
+          // 不同等级 → 物理分离
+          const overlap = minDist - dist;
+          const nx = dx / dist;
+          const ny = dy / dist;
+
+          // 按质量反比分配位移
+          const massA = a.radius * a.radius;
+          const massB = b.radius * b.radius;
+          const totalMass = massA + massB;
+
+          a.x -= nx * overlap * (massB / totalMass);
+          a.y -= ny * overlap * (massB / totalMass);
+          b.x += nx * overlap * (massA / totalMass);
+          b.y += ny * overlap * (massA / totalMass);
+
+          // 速度交换
+          const dvx = b.vx - a.vx;
+          const dvy = b.vy - a.vy;
+          const dvDotN = dvx * nx + dvy * ny;
+          if (dvDotN > 0) {
+            const impulse = dvDotN * CONFIG.RESTITUTION;
+            a.vx += impulse * nx * (massB / totalMass);
+            a.vy += impulse * ny * (massB / totalMass);
+            b.vx -= impulse * nx * (massA / totalMass);
+            b.vy -= impulse * ny * (massA / totalMass);
+          }
+        }
+      }
+    }
+
+    // 停止微小运动
+    for (const ball of balls) {
+      if (ball.onGround && Math.abs(ball.vy) < 10 && Math.abs(ball.vx) < 5) {
+        ball.vy = 0;
+        ball.vx *= 0.8;
+      }
+      ball.onGround = false;
+    }
+  }
+
+  // 游戏结束检测
+  checkGameOver();
+}
+
+function checkGameOver() {
+  if (gameOver) return;
+
+  let anyAbove = false;
+  for (const ball of balls) {
+    if (ball.y - ball.radius < dangerLine) {
+      ball.dangerTimer += (performance.now() - lastTime) / 1000;
+      if (ball.dangerTimer > CONFIG.GAME_OVER_DURATION) {
+        anyAbove = true;
+      }
+    } else {
+      ball.dangerTimer = 0;
+    }
+  }
+
+  if (anyAbove) {
+    triggerGameOver();
+  }
+}
+
+function triggerGameOver() {
+  gameOver = true;
+  gameRunning = false;
+
+  const modal = document.getElementById('gameOverModal');
+  document.getElementById('resultText').textContent =
+    `你合成到了第 ${maxLevelReached + 1} 级张奕然！`;
+  document.getElementById('scoreText').textContent =
+    `总分: ${score} 分 | 最高: ${highestLevelName}`;
+  modal.classList.add('show');
+}
+
+function restartGame() {
+  balls = [];
+  score = 0;
+  maxLevelReached = 0;
+  highestLevelName = '0级';
+  gameOver = false;
+  gameRunning = true;
+  lastTime = performance.now();
+  previewLevel = randomPreviewLevel();
+  updatePreviewHint();
+  mergeTimestamps.clear();
+
+  document.getElementById('gameOverModal').classList.remove('show');
+}
+
+// ============================================================
+// 渲染
+// ============================================================
+function render() {
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+  // 地面
+  ctx.fillStyle = CONFIG.GROUND_COLOR;
+  ctx.fillRect(0, groundLevel, canvasWidth, canvasHeight - groundLevel);
+  // 地面纹理线
+  ctx.strokeStyle = '#a0522d';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, groundLevel);
+  ctx.lineTo(canvasWidth, groundLevel);
+  ctx.stroke();
+
+  // 警戒线（虚线）
+  ctx.setLineDash([8, 12]);
+  ctx.strokeStyle = 'rgba(220,38,38,0.35)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, dangerLine);
+  ctx.lineTo(canvasWidth, dangerLine);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 渲染所有球
+  for (const ball of balls) {
+    renderBall(ball);
+  }
+
+  // 预览球（跟随指针）
+  if (gameRunning && !gameOver && pointerActive) {
+    const previewR = baseRadius * CONFIG.LEVEL_RADIUS_SCALE[previewLevel];
+    const px = Math.max(previewR + 2, Math.min(canvasWidth - previewR - 2, pointerX));
+    const py = dangerLine - previewR - 5;
+
+    ctx.globalAlpha = 0.5;
+    renderBallAt(px, py, previewR, previewLevel);
+    ctx.globalAlpha = 1;
+
+    // 虚线引导
+    ctx.setLineDash([4, 8]);
+    ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(px, py + previewR);
+    ctx.lineTo(px, groundLevel);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // 地面装饰文字
+  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.font = `${Math.max(12, baseRadius*0.5)}px "PingFang SC","Microsoft YaHei",sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.fillText('合成大然然', canvasWidth/2, groundLevel + (canvasHeight-groundLevel)*0.6);
+  ctx.textAlign = 'start';
+
+  // 分数显示
+  ctx.fillStyle = 'rgba(44,24,16,0.5)';
+  ctx.font = `${Math.max(11, baseRadius*0.45)}px "PingFang SC","Microsoft YaHei",sans-serif`;
+  ctx.fillText(`分数: ${score}`, 10, canvasHeight - 8);
+  ctx.textAlign = 'end';
+  ctx.fillText(`最高: ${highestLevelName}`, canvasWidth - 10, canvasHeight - 8);
+  ctx.textAlign = 'start';
+}
+
+function renderBall(ball) {
+  renderBallAt(ball.x, ball.y, ball.radius, ball.level);
+}
+
+function renderBallAt(x, y, r, level) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+
+  // 绘制图片或默认色
+  const img = ballImages[level];
+  if (img && img.complete && !img._fallback) {
+    ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
+  } else {
+    // 回退：渐变色圆
+    const colors = ['#ffb347','#ff952d','#ff6f00','#e65100','#bf360c'];
+    const grad = ctx.createRadialGradient(x-r*0.3, y-r*0.3, r*0.1, x, y, r);
+    grad.addColorStop(0, '#fff');
+    grad.addColorStop(0.4, colors[level] || '#ff952d');
+    grad.addColorStop(1, '#8d4004');
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+
+  // 边框
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.lineWidth = Math.max(1.5, r * 0.06);
+  ctx.stroke();
+
+  // 高光
+  const hlGrad = ctx.createRadialGradient(x-r*0.25, y-r*0.35, r*0.05, x, y, r);
+  hlGrad.addColorStop(0, 'rgba(255,255,255,0.35)');
+  hlGrad.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = hlGrad;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+// ============================================================
+// 输入处理
+// ============================================================
+function setupInput() {
+  // 鼠标
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    pointerX = (e.clientX - rect.left) * (canvasWidth / rect.width);
+    pointerActive = true;
+  });
+  canvas.addEventListener('mouseleave', () => { pointerActive = false; });
+  canvas.addEventListener('click', (e) => {
+    if (!gameRunning || gameOver) return;
+    const rect = canvas.getBoundingClientRect();
+    pointerX = (e.clientX - rect.left) * (canvasWidth / rect.width);
+    spawnBall();
+  });
+
+  // 触摸
+  canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    pointerX = (e.touches[0].clientX - rect.left) * (canvasWidth / rect.width);
+    pointerActive = true;
+  }, { passive: false });
+  canvas.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    if (!gameRunning || gameOver) return;
+    spawnBall();
+  }, { passive: false });
+  canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    pointerX = (e.touches[0].clientX - rect.left) * (canvasWidth / rect.width);
+    pointerActive = true;
+  }, { passive: false });
+
+  // 键盘
+  document.addEventListener('keydown', (e) => {
+    if (!gameRunning || gameOver) return;
+
+    const step = canvasWidth * 0.04;
+    switch(e.key) {
+      case 'ArrowLeft':
+      case 'a':
+        pointerX = Math.max(0, pointerX - step);
+        pointerActive = true;
+        e.preventDefault();
+        break;
+      case 'ArrowRight':
+      case 'd':
+        pointerX = Math.min(canvasWidth, pointerX + step);
+        pointerActive = true;
+        e.preventDefault();
+        break;
+      case ' ':
+      case 'ArrowDown':
+        spawnBall();
+        e.preventDefault();
+        break;
+    }
+  });
+}
+
+// ============================================================
+// 响应式布局
+// ============================================================
+function resize() {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // 游戏区：宽最大500px（手机满宽，电脑居中限宽）
+  canvasWidth = Math.min(vw, 500);
+  canvasHeight = vh - 10; // 留10px边距
+
+  // 基础半径根据屏幕宽度缩放
+  baseRadius = Math.max(16, Math.min(28, canvasWidth * 0.055));
+
+  // 地面位置：从底部算10%
+  groundLevel = canvasHeight * 0.90;
+
+  // 警戒线：距顶部18%
+  dangerLine = canvasHeight * CONFIG.DANGER_LINE_PCT;
+
+  // Canvas尺寸
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+  canvas.style.width = canvasWidth + 'px';
+  canvas.style.height = canvasHeight + 'px';
+
+  // 地面覆盖层
+  const ground = document.getElementById('groundOverlay');
+  ground.style.width = canvasWidth + 'px';
+  ground.style.height = (canvasHeight - groundLevel) + 'px';
+  ground.style.top = groundLevel + 'px';
+
+  // 标题
+  const title = document.getElementById('gameTitle');
+  const titleSize = Math.max(20, Math.min(32, canvasWidth * 0.064));
+  title.style.fontSize = titleSize + 'px';
+  title.style.top = Math.max(10, dangerLine * 0.25) + 'px';
+
+  // 关闭按钮
+  const closeBtn = document.getElementById('closeBtn');
+  closeBtn.style.top = Math.max(8, dangerLine * 0.15) + 'px';
+  closeBtn.style.left = Math.max(8, (vw - canvasWidth)/2 + 8) + 'px';
+
+  // 自定义按钮
+  const customBtn = document.getElementById('customBtn');
+  const btnW = Math.max(56, canvasWidth * 0.14);
+  const btnH = Math.max(44, dangerLine * 0.56);
+  customBtn.style.width = btnW + 'px';
+  customBtn.style.height = btnH + 'px';
+  customBtn.style.top = Math.max(6, dangerLine * 0.08) + 'px';
+  customBtn.style.right = Math.max(8, (vw - canvasWidth)/2 + 8) + 'px';
+
+  // 提示文字
+  const hint = document.getElementById('hintText');
+  hint.style.top = (dangerLine + 8) + 'px';
+  hint.style.fontSize = Math.max(10, baseRadius * 0.5) + 'px';
+
+  // 更新预览
+  updatePreviewHint();
+
+  // 更新球的半径（重构所有球）
+  for (const ball of balls) {
+    ball.radius = baseRadius * CONFIG.LEVEL_RADIUS_SCALE[ball.level];
+  }
+}
+
+// ============================================================
+// 主循环
+// ============================================================
+function gameLoop() {
+  if (gameRunning && !gameOver) {
+    updatePhysics();
+  }
+  render();
+  requestAnimationFrame(gameLoop);
+}
+
+// ============================================================
+// 初始化
+// ============================================================
+function init() {
+  canvas = document.getElementById('gameCanvas');
+  ctx = canvas.getContext('2d');
+
+  // 加载图片
+  if (!loadCustomImages()) {
+    loadDefaultImages();
+  }
+
+  // 响应式布局
+  resize();
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', () => setTimeout(resize, 300));
+
+  // 输入
+  setupInput();
+
+  // 关闭按钮
+  document.getElementById('closeBtn').addEventListener('click', () => {
+    window.location.href = 'wenjianjia.html';
+  });
+
+  // 自定义按钮
+  document.getElementById('customBtn').addEventListener('click', () => {
+    document.getElementById('fileInput').click();
+  });
+  document.getElementById('fileInput').addEventListener('change', (e) => {
+    if (e.target.files[0]) handleAvatarUpload(e.target.files[0]);
+  });
+
+  // 重新开始
+  document.getElementById('restartBtn').addEventListener('click', restartGame);
+
+  // 初始预览
+  previewLevel = randomPreviewLevel();
+  updatePreviewHint();
+  pointerX = canvasWidth / 2;
+  pointerActive = true;
+
+  // 开始循环
+  lastTime = performance.now();
+  requestAnimationFrame(gameLoop);
+}
+
+// 启动
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
