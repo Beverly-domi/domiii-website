@@ -64,33 +64,6 @@ html,body{width:100%;height:100%;overflow:hidden;touch-action:none;
 #closeBtn:active{transform:scale(0.95)}
 
 /* ============================================================
-   右上角自定义按钮 - 上黄下蓝 ★
-   ============================================================ */
-#customBtn{
-  position:absolute;z-index:20;cursor:pointer;
-  border-radius:12px;overflow:hidden;
-  border:2px solid rgba(0,0,0,0.1);
-  box-shadow:0 3px 12px rgba(0,0,0,0.12);
-  transition:all 0.2s;
-}
-#customBtn:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,0,0,0.18)}
-#customBtn:active{transform:scale(0.96)}
-#customBtn .custom-top{
-  /* ★ 上半部分: 黄色 ★ */
-  background:linear-gradient(180deg,#ffd54f,#ffb300);
-  height:50%;display:flex;align-items:center;justify-content:center;
-}
-#customBtn .custom-bottom{
-  /* ★ 下半部分: 蓝色 ★ */
-  background:linear-gradient(180deg,#42a5f5,#1e88e5);
-  height:50%;display:flex;align-items:center;justify-content:center;
-}
-#customBtn .custom-text{
-  color:#fff;font-size:12px;font-weight:700;letter-spacing:1px;
-  text-shadow:0 1px 2px rgba(0,0,0,0.3);
-}
-
-/* ============================================================
    下一球预览指示器
    ============================================================ */
 #nextBallHint{
@@ -148,11 +121,6 @@ html,body{width:100%;height:100%;overflow:hidden;touch-action:none;
 .modal-card button:active{transform:scale(0.96)}
 
 /* ============================================================
-   隐藏文件上传input
-   ============================================================ */
-#fileInput{display:none}
-
-/* ============================================================
    提示文字
    ============================================================ */
 #hintText{
@@ -175,15 +143,6 @@ html,body{width:100%;height:100%;overflow:hidden;touch-action:none;
 
 <!-- 左上关闭按钮 -->
 <div id="closeBtn" title="返回">✕</div>
-
-<!-- 右上自定义按钮 -->
-<div id="customBtn">
-  <div class="custom-top"><span class="custom-text">前往</span></div>
-  <div class="custom-bottom"><span class="custom-text">自定义</span></div>
-</div>
-
-<!-- 隐藏文件上传 -->
-<input type="file" id="fileInput" accept="image/*">
 
 <!-- 下一球预览 -->
 <div id="nextBallHint"></div>
@@ -218,10 +177,11 @@ const CONFIG = {
 
   // ★ 物理参数 ★
   GRAVITY: 980,        // 重力加速度 px/s²
-  RESTITUTION: 0.2,    // 弹性系数 (0=完全非弹性, 1=完全弹性)
-  GROUND_FRICTION: 0.6,// 地面摩擦
-  WALL_BOUNCE: 0.3,    // 墙壁反弹系数
-  BALL_FRICTION: 0.95, // 空中水平速度衰减/帧
+  RESTITUTION: 0.05,   // 弹性系数 (0=完全非弹性, 1=完全弹性)
+  GROUND_FRICTION: 0.82,// 地面摩擦（越大越快停）
+  WALL_BOUNCE: 0.15,   // 墙壁反弹系数
+  BALL_FRICTION: 0.93, // 空中水平速度衰减/帧
+  AIR_DAMPING: 0.998,  // 全局速度阻尼
 
   // ★ 地面颜色 ★
   GROUND_COLOR: '#f5f5f0',
@@ -240,9 +200,6 @@ const CONFIG = {
 
   // ★ 合并冷却时间 (ms) - 防止同帧反复合并 ★
   MERGE_COOLDOWN: 100,
-
-  // ★ 自定义头像裁剪尺寸 ★
-  CROP_SIZE: 512,
 };
 
 // ★ 默认头像图片（5个等级，对应5张图）★
@@ -279,7 +236,6 @@ let previewLevel = 0;     // 预览球的等级
 
 // 图片缓存
 let ballImages = [];      // 每个等级的图片 (Image对象)
-let usingCustomImages = false;
 
 // 合并冷却追踪
 let mergeTimestamps = new Map(); // ball id → 上次合并时间
@@ -303,93 +259,6 @@ function loadDefaultImages() {
     ballImages.push(img);
   }
 }
-
-// 从localStorage加载自定义头像
-function loadCustomImages() {
-  try {
-    const saved = localStorage.getItem('daranran_custom_avatar');
-    if (!saved) return false;
-    const data = JSON.parse(saved);
-    if (!data || !data.base64) return false;
-
-    ballImages = [];
-    for (let i = 0; i < CONFIG.LEVELS; i++) {
-      const img = new Image();
-      img.src = data.base64; // 共用同一张图，渲染时缩放到对应等级尺寸
-      ballImages.push(img);
-    }
-    usingCustomImages = true;
-    return true;
-  } catch(e) {
-    return false;
-  }
-}
-
-// ============================================================
-// 自定义头像上传
-// ============================================================
-function handleAvatarUpload(file) {
-  if (!file || !file.type.startsWith('image/')) {
-    alert('请选择图片文件');
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      // 裁剪为正方形圆形
-      const size = Math.min(img.width, img.height);
-      const sx = (img.width - size) / 2;
-      const sy = (img.height - size) / 2;
-
-      const cropCanvas = document.createElement('canvas');
-      cropCanvas.width = CONFIG.CROP_SIZE;
-      cropCanvas.height = CONFIG.CROP_SIZE;
-      const cctx = cropCanvas.getContext('2d');
-
-      // 绘制圆形裁剪
-      cctx.beginPath();
-      cctx.arc(CONFIG.CROP_SIZE/2, CONFIG.CROP_SIZE/2, CONFIG.CROP_SIZE/2, 0, Math.PI*2);
-      cctx.clip();
-      cctx.drawImage(img, sx, sy, size, size, 0, 0, CONFIG.CROP_SIZE, CONFIG.CROP_SIZE);
-
-      const base64 = cropCanvas.toDataURL('image/png');
-
-      // 保存到localStorage
-      localStorage.setItem('daranran_custom_avatar', JSON.stringify({ base64, timestamp: Date.now() }));
-
-      // 重新加载
-      loadCustomImages();
-      showToast('✅ 自定义头像已保存！刷新页面即可使用');
-    };
-    img.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-// Toast提示
-function showToast(msg) {
-  const toast = document.createElement('div');
-  toast.style.cssText = `
-    position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
-    background:rgba(0,0,0,0.85);color:#fff;padding:10px 24px;border-radius:24px;
-    font-size:14px;font-weight:600;z-index:999;pointer-events:none;
-    opacity:0;transition:all 0.35s cubic-bezier(0.22,1,0.36,1);
-    white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.3);
-  `;
-  document.body.appendChild(toast);
-  requestAnimationFrame(() => {
-    toast.style.opacity = '1';
-    toast.style.transform = 'translateX(-50%) translateY(0)';
-  });
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(-50%) translateY(-20px)';
-    setTimeout(() => toast.remove(), 400);
-  }, 1500);
-}
-
 // ============================================================
 // Ball 类
 // ============================================================
@@ -589,15 +458,17 @@ function updatePhysics() {
 
   // 防止大帧跳跃
   if (dt > 0.1) dt = 0.1;
-  // 子步进提高稳定性
-  const subSteps = 3;
+  // 子步进提高稳定性（更多子步=更丝滑）
+  const subSteps = 5;
   const subDt = dt / subSteps;
 
   for (let s = 0; s < subSteps; s++) {
-    // 重力
+    // 重力 + 阻尼
     for (const ball of balls) {
       ball.vy += CONFIG.GRAVITY * subDt;
       ball.vx *= CONFIG.BALL_FRICTION;
+      ball.vx *= CONFIG.AIR_DAMPING;
+      ball.vy *= CONFIG.AIR_DAMPING;
     }
 
     // 移动
@@ -668,6 +539,11 @@ function updatePhysics() {
           b.x += nx * overlap * (massA / totalMass);
           b.y += ny * overlap * (massA / totalMass);
 
+          // 双方都在地面附近 → 只分离不交换速度（不互相排斥）
+          const onGroundA = a.y + a.radius >= groundLevel - 3;
+          const onGroundB = b.y + b.radius >= groundLevel - 3;
+          if (onGroundA && onGroundB) continue;
+
           // 速度交换
           const dvx = b.vx - a.vx;
           const dvy = b.vy - a.vy;
@@ -683,11 +559,11 @@ function updatePhysics() {
       }
     }
 
-    // 停止微小运动
+    // 停止微小运动（更积极的静置）
     for (const ball of balls) {
-      if (ball.onGround && Math.abs(ball.vy) < 10 && Math.abs(ball.vx) < 5) {
+      if (ball.onGround && Math.abs(ball.vy) < 15 && Math.abs(ball.vx) < 8) {
         ball.vy = 0;
-        ball.vx *= 0.8;
+        ball.vx *= 0.65;
       }
       ball.onGround = false;
     }
@@ -979,15 +855,6 @@ function resize() {
   closeBtn.style.top = Math.max(8, dangerLine * 0.15) + 'px';
   closeBtn.style.left = Math.max(8, (vw - canvasWidth)/2 + 8) + 'px';
 
-  // 自定义按钮
-  const customBtn = document.getElementById('customBtn');
-  const btnW = Math.max(56, canvasWidth * 0.14);
-  const btnH = Math.max(44, dangerLine * 0.56);
-  customBtn.style.width = btnW + 'px';
-  customBtn.style.height = btnH + 'px';
-  customBtn.style.top = Math.max(6, dangerLine * 0.08) + 'px';
-  customBtn.style.right = Math.max(8, (vw - canvasWidth)/2 + 8) + 'px';
-
   // 提示文字
   const hint = document.getElementById('hintText');
   hint.style.top = (dangerLine + 8) + 'px';
@@ -1020,10 +887,8 @@ function init() {
   canvas = document.getElementById('gameCanvas');
   ctx = canvas.getContext('2d');
 
-  // 加载图片
-  if (!loadCustomImages()) {
-    loadDefaultImages();
-  }
+  // 加载默认素材图片
+  loadDefaultImages();
 
   // 响应式布局
   resize();
@@ -1036,14 +901,6 @@ function init() {
   // 关闭按钮
   document.getElementById('closeBtn').addEventListener('click', () => {
     window.location.href = 'wenjianjia.html';
-  });
-
-  // 自定义按钮
-  document.getElementById('customBtn').addEventListener('click', () => {
-    document.getElementById('fileInput').click();
-  });
-  document.getElementById('fileInput').addEventListener('change', (e) => {
-    if (e.target.files[0]) handleAvatarUpload(e.target.files[0]);
   });
 
   // 重新开始
