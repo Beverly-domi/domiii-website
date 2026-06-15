@@ -457,11 +457,12 @@
             drawFruitOnCanvas(nextCtx, 28, 28, previewFruit, 56);
         }
         
-        // 物理与合并逻辑 (底部防抖动)
+        // 物理与合并逻辑（碰撞时立即合并，不同等级只分离不弹跳）
         function updatePhysics(){
             if(gameOver) return;
-            const GRAVITY = 0.38, BOUNCE = 0.18, AIR_DRAG = 0.997, ITER = 4;
+            const GRAVITY = 0.38, BOUNCE = 0.12, AIR_DRAG = 0.998, ITER = 3;
             for(let iter=0; iter<ITER; iter++){
+                // Phase 1: 移动+边界
                 for(let i=0; i<fruits.length; i++){
                     let a = fruits[i];
                     a.vy += GRAVITY;
@@ -469,78 +470,51 @@
                     a.vy *= AIR_DRAG;
                     a.x += a.vx;
                     a.y += a.vy;
-                    if(a.x - a.radius < LEFT_WALL){ a.x = LEFT_WALL + a.radius; a.vx = -a.vx * BOUNCE; }
-                    if(a.x + a.radius > RIGHT_WALL){ a.x = RIGHT_WALL - a.radius; a.vx = -a.vx * BOUNCE; }
+                    if(a.x - a.radius < LEFT_WALL){ a.x = LEFT_WALL + a.radius; a.vx = Math.abs(a.vx) * BOUNCE; }
+                    if(a.x + a.radius > RIGHT_WALL){ a.x = RIGHT_WALL - a.radius; a.vx = -Math.abs(a.vx) * BOUNCE; }
                     if(a.y + a.radius >= GROUND_Y){
                         a.y = GROUND_Y - a.radius;
-                        if(Math.abs(a.vy) > 1.5) {
-                            a.vy = -a.vy * BOUNCE;
-                        } else {
-                            a.vy = 0;
-                            a.vx *= 0.85;
-                        }
+                        if(Math.abs(a.vy) > 2) { a.vy = -a.vy * BOUNCE; }
+                        else { a.vy = 0; a.vx *= 0.92; }
                     }
                     if(a.y - a.radius < 0){ a.y = a.radius; if(a.vy < 0) a.vy = -a.vy * 0.3; }
                 }
-                // 球间碰撞（地面附近只分离不互推）
-                for(let i=0; i<fruits.length; i++){
-                    for(let j=i+1; j<fruits.length; j++){
-                        let f1 = fruits[i], f2 = fruits[j];
-                        let dx = f1.x - f2.x, dy = f1.y - f2.y;
-                        let dist = Math.hypot(dx, dy);
-                        let minDist = f1.radius + f2.radius;
-                        if(dist < minDist && dist > 0.01){
-                            let overlap = minDist - dist;
-                            let nx = dx/dist, ny = dy/dist;
-                            let moveX = nx * overlap * 0.5;
-                            let moveY = ny * overlap * 0.5;
-                            f1.x -= moveX; f1.y -= moveY;
-                            f2.x += moveX; f2.y += moveY;
-                            // 双方都在地面附近 → 只分离，不弹开
-                            if(f1.y + f1.radius > GROUND_Y - 5 && f2.y + f2.radius > GROUND_Y - 5) continue;
-                            let vrelx = f1.vx - f2.vx, vrely = f1.vy - f2.vy;
-                            let e = 0.3;
-                            let imp = (1+e)*(vrelx*nx+vrely*ny) / ((1/f1.mass)+(1/f2.mass));
-                            if(imp > 0 || imp < 0) { // always apply
-                                f1.vx -= imp * nx / f1.mass;
-                                f1.vy -= imp * ny / f1.mass;
-                                f2.vx += imp * nx / f2.mass;
-                                f2.vy += imp * ny / f2.mass;
+                // Phase 2: 碰撞检测 + 直接合并
+                let restart = true;
+                while(restart){
+                    restart = false;
+                    for(let i=0; i<fruits.length; i++){
+                        for(let j=i+1; j<fruits.length; j++){
+                            let f1 = fruits[i], f2 = fruits[j];
+                            let dx = f1.x - f2.x, dy = f1.y - f2.y;
+                            let dist = Math.hypot(dx, dy);
+                            let minDist = f1.radius + f2.radius;
+                            if(dist < minDist && dist > 0.01){
+                                // 同等级且非最高 → 立即合并
+                                if(f1.level === f2.level && f1.level < 8){
+                                    let newLv = f1.level + 1;
+                                    let newX = (f1.x + f2.x)/2;
+                                    let newY = (f1.y + f2.y)/2;
+                                    fruits.splice(j,1);
+                                    fruits.splice(i,1);
+                                    fruits.push(createFruitWithImage(newLv, newX, newY, 0, -1));
+                                    score += newLv * 12;
+                                    updateScoreUI();
+                                    restart = true;
+                                    break;
+                                }
+                                // 不同等级 → 轻柔分离（不交换速度）
+                                let overlap = minDist - dist;
+                                let nx = dx/dist, ny = dy/dist;
+                                let push = overlap * 0.35;
+                                f1.x += nx * push; f1.y += ny * push;
+                                f2.x -= nx * push; f2.y -= ny * push;
                             }
                         }
+                        if(restart) break;
                     }
                 }
             }
-        }
-        
-        // 合并相同等级 (合成更高级水果，全新图片)
-        function mergeCheck(){
-            let merged = false;
-            for(let i=0; i<fruits.length; i++){
-                for(let j=i+1; j<fruits.length; j++){
-                    let a = fruits[i], b = fruits[j];
-                    if(a && b && a.level === b.level && a.level < 8){
-                        let dist = Math.hypot(a.x - b.x, a.y - b.y);
-                        if(dist < a.radius + b.radius + 2){
-                            let newLv = a.level + 1;
-                            let newX = (a.x + b.x)/2;
-                            let newY = (a.y + b.y)/2;
-                            let newVx = (a.vx + b.vx)/2;
-                            let newVy = (a.vy + b.vy)/2;
-                            fruits.splice(j,1);
-                            fruits.splice(i,1);
-                            let newFruit = createFruitWithImage(newLv, newX, newY, newVx, newVy);
-                            fruits.push(newFruit);
-                            score += newLv * 12;
-                            updateScoreUI();
-                            merged = true;
-                            break;
-                        }
-                    }
-                }
-                if(merged) break;
-            }
-            if(merged) mergeCheck();
         }
         
         function checkGameOver(){
@@ -567,9 +541,7 @@
             let newF = createFruitWithImage(nextLevel, releaseX, 48, 0, 0.2);
             fruits.push(newF);
             generateNext();
-            for(let i=0;i<4;i++) updatePhysics();
-            mergeCheck();
-            updatePhysics();
+            for(let i=0;i<6;i++) updatePhysics();
             if(checkGameOver()){ drawGame(); return false; }
             drawGame();
             return true;
@@ -597,7 +569,6 @@
         function physicsLoop(){
             if(!gameOver){
                 updatePhysics();
-                mergeCheck();
                 checkGameOver();
                 drawGame();
             } else { drawGame(); }
