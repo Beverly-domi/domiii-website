@@ -457,12 +457,12 @@
             drawFruitOnCanvas(nextCtx, 28, 28, previewFruit, 56);
         }
         
-        // 物理与合并逻辑（碰撞时立即合并，不同等级只分离不弹跳）
+        // 物理与合并逻辑
         function updatePhysics(){
             if(gameOver) return;
-            const GRAVITY = 0.38, BOUNCE = 0.12, AIR_DRAG = 0.998, ITER = 3;
+            const GRAVITY = 0.38, BOUNCE = 0.55, AIR_DRAG = 0.995, ITER = 6;
             for(let iter=0; iter<ITER; iter++){
-                // Phase 1: 移动+边界
+                // 移动 + 边界
                 for(let i=0; i<fruits.length; i++){
                     let a = fruits[i];
                     a.vy += GRAVITY;
@@ -474,44 +474,51 @@
                     if(a.x + a.radius > RIGHT_WALL){ a.x = RIGHT_WALL - a.radius; a.vx = -Math.abs(a.vx) * BOUNCE; }
                     if(a.y + a.radius >= GROUND_Y){
                         a.y = GROUND_Y - a.radius;
-                        if(Math.abs(a.vy) > 2) { a.vy = -a.vy * BOUNCE; }
-                        else { a.vy = 0; a.vx *= 0.92; }
+                        if(Math.abs(a.vy) > 1.5) a.vy = -a.vy * BOUNCE;
+                        else { a.vy = 0; a.vx *= 0.88; }
                     }
-                    if(a.y - a.radius < 0){ a.y = a.radius; if(a.vy < 0) a.vy = -a.vy * 0.3; }
+                    if(a.y - a.radius < 0){ a.y = a.radius; if(a.vy < 0) a.vy = -a.vy * 0.5; }
                 }
-                // Phase 2: 碰撞检测 + 直接合并
-                let restart = true;
-                while(restart){
-                    restart = false;
-                    for(let i=0; i<fruits.length; i++){
-                        for(let j=i+1; j<fruits.length; j++){
-                            let f1 = fruits[i], f2 = fruits[j];
-                            let dx = f1.x - f2.x, dy = f1.y - f2.y;
-                            let dist = Math.hypot(dx, dy);
-                            let minDist = f1.radius + f2.radius;
-                            if(dist < minDist && dist > 0.01){
-                                // 同等级且非最高 → 立即合并
-                                if(f1.level === f2.level && f1.level < 8){
-                                    let newLv = f1.level + 1;
-                                    let newX = (f1.x + f2.x)/2;
-                                    let newY = (f1.y + f2.y)/2;
-                                    fruits.splice(j,1);
-                                    fruits.splice(i,1);
-                                    fruits.push(createFruitWithImage(newLv, newX, newY, 0, -1));
-                                    score += newLv * 12;
-                                    updateScoreUI();
-                                    restart = true;
-                                    break;
-                                }
-                                // 不同等级 → 轻柔分离（不交换速度）
-                                let overlap = minDist - dist;
-                                let nx = dx/dist, ny = dy/dist;
-                                let push = overlap * 0.35;
-                                f1.x += nx * push; f1.y += ny * push;
-                                f2.x -= nx * push; f2.y -= ny * push;
+                // 碰撞检测：同等级合并，不同等级速度冲量交换（稳定不抖）
+                for(let i=0; i<fruits.length; i++){
+                    for(let j=i+1; j<fruits.length; j++){
+                        let f1 = fruits[i], f2 = fruits[j];
+                        if(!f1 || !f2) continue;
+                        let dx = f1.x - f2.x, dy = f1.y - f2.y;
+                        let dist = Math.hypot(dx, dy);
+                        let minDist = f1.radius + f2.radius;
+                        if(dist < minDist && dist > 0.001){
+                            // 同等级 → 立即合并（不等后续检测）
+                            if(f1.level === f2.level && f1.level < 8){
+                                let newLv = f1.level + 1;
+                                let newX = (f1.x + f2.x)/2;
+                                let newY = (f1.y + f2.y)/2;
+                                fruits.splice(j,1);
+                                fruits.splice(i,1);
+                                fruits.push(createFruitWithImage(newLv, newX, newY, 0, -1));
+                                score += newLv * 12;
+                                updateScoreUI();
+                                i = -1; // 数组变了，从头重新扫描
+                                break;
+                            }
+                            // 不同等级：位置分离 + 速度冲量（只有靠近时才有冲量）
+                            let overlap = minDist - dist;
+                            let nx = dx/dist, ny = dy/dist;
+                            let sep = overlap * 0.5;
+                            let massSum = f1.mass + f2.mass;
+                            f1.x += nx * sep * (f2.mass/massSum);
+                            f1.y += ny * sep * (f2.mass/massSum);
+                            f2.x -= nx * sep * (f1.mass/massSum);
+                            f2.y -= ny * sep * (f1.mass/massSum);
+                            let relV = (f1.vx - f2.vx)*nx + (f1.vy - f2.vy)*ny;
+                            if(relV > 0){
+                                let imp = 1.55 * relV / ((1/f1.mass)+(1/f2.mass));
+                                f1.vx -= imp * nx / f1.mass;
+                                f1.vy -= imp * ny / f1.mass;
+                                f2.vx += imp * nx / f2.mass;
+                                f2.vy += imp * ny / f2.mass;
                             }
                         }
-                        if(restart) break;
                     }
                 }
             }
