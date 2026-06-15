@@ -280,7 +280,7 @@ body{
 }
 .ts.sv{opacity:1;transform:translateX(-50%) translateY(0)}
 
-@media(max-width:620px){.pm{padding:.8rem .4rem;border-radius:28px;margin:.2rem auto 0}}
+@media(max-width:620px){.pm{padding:.8rem .4rem;border-radius:28px;margin:.2rem auto 0}.pm{padding:0.5rem 0.3rem;border-radius:0} .bd{gap:4px}}
 /* ===== Cross-page Navigation FAB ===== */
 .nf{
   position:fixed;bottom:24px;right:24px;z-index:50;
@@ -495,8 +495,9 @@ function addCoins(amt) {
     }
   }
   function calcS(c){
-    const g=(c-1)*8,mw=Math.min(window.innerWidth-32,680),av=mw-g;
-    return Math.max(46,Math.min(Math.floor(av/c),120));
+    const g=(c-1)*6,mw=Math.min(window.innerWidth-24,680),av=mw-g;
+    const minSize = window.innerWidth <= 620 ? 38 : 46;
+    return Math.max(minSize,Math.min(Math.floor(av/c),120));
   }
 
   function bd2(){
@@ -531,6 +532,9 @@ function addCoins(amt) {
     mo.classList.remove('sv');cf.innerHTML='';
     const cfg=gc2(lv),cols=cfg.c,sz=calcS(cols);
     document.documentElement.style.setProperty('--cw',sz+'px');
+    // 手机端缩小卡片间距
+    const gap = window.innerWidth <= 620 ? (cols <= 4 ? 6 : 4) : 8;
+    document.documentElement.style.setProperty('--cg',gap+'px');
     bd.style.gridTemplateColumns='repeat('+cols+',1fr)';
     dk.forEach((d,i)=>{
       const el=document.createElement('div');
@@ -630,7 +634,7 @@ function addCoins(amt) {
   rs.onclick=()=>{winStreak=0;restart();};rp.onclick=()=>{winStreak=0;restart();};
   hm.onclick=()=>{window.location.href='wenjianjia.html'};
   dcs.forEach(c=>c.onclick=()=>setLv(c.dataset.lv));
-  window.addEventListener('resize',()=>{const c=gc2(lv).cols;document.documentElement.style.setProperty('--cw',calcS(c)+'px')});
+  window.addEventListener('resize',()=>{const c=gc2(lv).cols;document.documentElement.style.setProperty('--cw',calcS(c)+'px');const g=window.innerWidth<=620?(c<=4?6:4):8;document.documentElement.style.setProperty('--cg',g+'px')});
   document.addEventListener('keydown',e=>{if((e.key==='r'||e.key==='R')&&!e.ctrlKey&&!e.metaKey)restart();if(e.key==='1')setLv('easy');else if(e.key==='2')setLv('medium');else if(e.key==='3')setLv('hard')});
 
   // Init coin display
