@@ -935,6 +935,33 @@ const ALL_CARDS = [
   { id:'h1', name:'✦ 隐藏 ✦', rarity:'HIDDEN', img:'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg', series:'hidden' },
   { id:'h2', name:'✦ 隐藏 ✦', rarity:'HIDDEN', img:'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg', series:'hidden' },
   { id:'h3', name:'✦ 隐藏 ✦', rarity:'HIDDEN', img:'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg', series:'hidden' },
+  // === 第二批新卡（21张）===
+  // SP (5 cards)
+  { id:'sp8', name:'星轨交叠 · 宿命', rarity:'SP', img:'https://img.heliar.top/file/1781508513066_SP8-compressed.jpeg', series:'limited' },
+  { id:'sp9', name:'极光幻境 · 迷踪', rarity:'SP', img:'https://img.heliar.top/file/1781508521181_SP9-compressed.jpeg', series:'limited' },
+  { id:'sp10', name:'琉璃梦境 · 斑斓', rarity:'SP', img:'https://img.heliar.top/file/1781508517575_SP10-compressed.jpeg', series:'limited' },
+  { id:'sp11', name:'星河之约 · 誓约', rarity:'SP', img:'https://img.heliar.top/file/1781508519850_SP11-compressed.jpeg', series:'limited' },
+  { id:'sp12', name:'终焉之花 · 绽放', rarity:'SP', img:'https://img.heliar.top/file/1781508524763_SP12-compressed.jpeg', series:'limited' },
+  // SSR (5 cards)
+  { id:'ssr14', name:'天命之冕 · 加冕', rarity:'SSR', img:'https://img.heliar.top/file/1781508582635_SSR14-compressed.jpeg', series:'fantasy' },
+  { id:'ssr15', name:'轮回之镜 · 映照', rarity:'SSR', img:'https://img.heliar.top/file/1781508484906_SSR15-compressed.jpeg', series:'fantasy' },
+  { id:'ssr16', name:'永恒之翼 · 翱翔', rarity:'SSR', img:'https://img.heliar.top/file/1781508490532_SSR16-compressed.jpeg', series:'fantasy' },
+  { id:'ssr17', name:'创世之诗 · 颂歌', rarity:'SSR', img:'https://img.heliar.top/file/1781508492349_SSR17-compressed.jpeg', series:'fantasy' },
+  { id:'ssr18', name:'终焉审判 · 裁决', rarity:'SSR', img:'https://img.heliar.top/file/1781508496152_SSR18-compressed.jpeg', series:'fantasy' },
+  // SR (4 cards)
+  { id:'sr14', name:'幻影舞者 · 穿梭', rarity:'SR', img:'https://img.heliar.top/file/1781508528498_SR14-compressed.jpeg', series:'stage' },
+  { id:'sr15', name:'月光奏鸣 · 夜曲', rarity:'SR', img:'https://img.heliar.top/file/1781508525625_SR15-compressed.jpeg', series:'stage' },
+  { id:'sr16', name:'花海漫步 · 芬芳', rarity:'SR', img:'https://img.heliar.top/file/1781508527349_SR16-compressed.jpeg', series:'fantasy' },
+  { id:'sr17', name:'星光诗篇 · 璀璨', rarity:'SR', img:'https://img.heliar.top/file/1781508534879_SR17-compressed.jpeg', series:'fantasy' },
+  // N (5 cards)
+  { id:'n16', name:'晨曦微露 · 初醒', rarity:'N', img:'https://img.heliar.top/file/1781508501234_N16-compressed.jpeg', series:'daily' },
+  { id:'n17', name:'暖茶氤氲 · 悠然', rarity:'N', img:'https://img.heliar.top/file/1781508487005_N17-compressed.jpeg', series:'daily' },
+  { id:'n18', name:'书窗剪影 · 静谧', rarity:'N', img:'https://img.heliar.top/file/1781508513478_N18-compressed.jpeg', series:'daily' },
+  { id:'n19', name:'街灯微光 · 归途', rarity:'N', img:'https://img.heliar.top/file/1781508515766_N19-compressed.jpeg', series:'daily' },
+  { id:'n20', name:'晴空纸鹤 · 祈愿', rarity:'N', img:'https://img.heliar.top/file/1781508514997_N20-compressed.jpeg', series:'daily' },
+  // HIDDEN (2 cards)
+  { id:'h4', name:'✦ 隐藏 ✦', rarity:'HIDDEN', img:'https://img.heliar.top/file/1781508496687_隐藏4-compressed.jpeg', series:'hidden' },
+  { id:'h5', name:'✦ 隐藏 ✦', rarity:'HIDDEN', img:'https://img.heliar.top/file/1781508501538_隐藏5-compressed.jpeg', series:'hidden' },
 ];
 
 const RARITY_ORDER = ['N','R','SR','SSR','SP','HIDDEN'];
@@ -979,44 +1006,25 @@ function saveState() {
 // GACHA LOGIC
 // ======================================================================
 function rollRarity() {
-  let spChance = 0.002; // base 0.2%
-
-  // Pity: 10 consecutive draws without SSR/SP
-  if (state.consecutiveNoSSR >= 10) {
-    spChance = 0.02;
-  }
-
-  // Hidden star boost
-  if (state.hiddenStarBoost) {
-    spChance += 0.01;
-    state.hiddenStarBoost = false;
-  }
-
-  // Lucky time: on the hour
-  const now = new Date();
-  if (now.getMinutes() === 0 && now.getSeconds() < 60) {
-    spChance *= 2;
-  }
-
   const roll = Math.random();
   let cum = 0;
 
-  cum += 0.0001; // HIDDEN 0.01%
+  cum += 0.005; // HIDDEN 0.5%
   if (roll < cum) return 'HIDDEN';
 
-  cum += spChance;
+  cum += 0.044; // SP 4.4%
   if (roll < cum) return 'SP';
 
-  cum += 0.02; // SSR 2%
+  cum += 0.073; // SSR 7.3%
   if (roll < cum) return 'SSR';
 
-  cum += 0.15; // SR 15%
+  cum += 0.196; // SR 19.6%
   if (roll < cum) return 'SR';
 
-  cum += 0.30; // R 30%
+  cum += 0.293; // R 29.3%
   if (roll < cum) return 'R';
 
-  return 'N'; // N = remainder ~52.8%
+  return 'N'; // N = remainder ~39.2%
 }
 
 function pickCard(rarity) {
