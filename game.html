@@ -441,6 +441,31 @@ const PHOTOS = [
   'https://img.heliar.top/file/1781481415304_game54-compressed-compressed.jpeg',
   'https://img.heliar.top/file/1781481419787_game53-compressed-compressed.jpeg',
   'https://img.heliar.top/file/1781481420963_game56-compressed-compressed.jpeg',
+
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
 ];
 // ================================================================
 // Shared coin system (same localStorage key as card.html)
@@ -506,7 +531,32 @@ function addCoins(amt) {
   function bd2(){
     const cfg=gc2(lv);tp=cfg.p;tt.textContent=tp;
     const sel=sh([...PHOTOS]).slice(0,tp);
-    const dk=[];
+    const dk=[
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];
     sel.forEach((src,i)=>{dk.push({id:i,src});dk.push({id:i,src})});
     // 全随机洗牌
     sh(dk);
@@ -515,7 +565,32 @@ function addCoins(amt) {
       if(dk[i].id===dk[i+1].id){
         for(let j=i+2;j<dk.length;j++){
           if(dk[j].id!==dk[i].id){
-            [dk[i+1],dk[j]]=[dk[j],dk[i+1]];
+            [dk[i+1],dk[j]]=[dk[j],dk[i+1]
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];
             break;
           }
         }
@@ -530,7 +605,57 @@ function addCoins(amt) {
 
   function render(){
     const dk=bd2();bd.innerHTML='';
-    cards=[];flipped=[];mp=0;moves=0;locked=false;done=false;started=false;
+    cards=[
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];flipped=[
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];mp=0;moves=0;locked=false;done=false;started=false;
     mv.textContent='0';mt.textContent='0';tStop();sec=0;tm.textContent='00:00';
     mo.classList.remove('sv');cf.innerHTML='';
     const cfg=gc2(lv),cols=cfg.c,sz=calcS(cols);
@@ -556,20 +681,95 @@ function addCoins(amt) {
   }
 
   function onClick(i){
-    const el=cards[i];
+    const el=cards[i
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];
     if(locked||done||el.classList.contains('fl')||el.classList.contains('mt')||flipped.length>=2)return;
     if(!started){started=true;tStart()}
     el.classList.add('fl');flipped.push(el);
     if(flipped.length===2){
       moves++;mv.textContent=moves;locked=true;
-      const a=flipped[0],b=flipped[1];
+      const a=flipped[0],b=flipped[1
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];
       if(a.dataset.id===b.dataset.id)mtch(a,b);else nmtch(a,b);
     }
   }
 
   function mtch(a,b){
     s1();a.classList.add('mt');b.classList.add('mt');
-    mp++;mt.textContent=mp;flipped=[];locked=false;
+    mp++;mt.textContent=mp;flipped=[
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];locked=false;
     sp(a);sp(b);
     if(mp===tp){
     done=true;tStop();s3();
@@ -590,11 +790,111 @@ function addCoins(amt) {
 
   function sp(c){
     const r=c.getBoundingClientRect();
-    const es=['✨','🌟','💫'];const cl=['#FF952D','#FFB866','#E67A00','#FFD700'];
+    const es=['✨','🌟','💫'
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];const cl=['#FF952D','#FFB866','#E67A00','#FFD700'
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];
     for(let j=0;j<3;j++){
       const p=document.createElement('div');
-      p.style.cssText='position:fixed;pointer-events:none;z-index:999;font-size:'+(.6+Math.random()*.4)+'rem;left:'+(r.left+Math.random()*r.width)+'px;top:'+(r.top+Math.random()*r.height)+'px;animation:mf .7s ease-out forwards;color:'+cl[Math.floor(Math.random()*cl.length)];
-      p.textContent=es[Math.floor(Math.random()*es.length)];
+      p.style.cssText='position:fixed;pointer-events:none;z-index:999;font-size:'+(.6+Math.random()*.4)+'rem;left:'+(r.left+Math.random()*r.width)+'px;top:'+(r.top+Math.random()*r.height)+'px;animation:mf .7s ease-out forwards;color:'+cl[Math.floor(Math.random()*cl.length)
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];
+      p.textContent=es[Math.floor(Math.random()*es.length)
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];
       document.body.appendChild(p);setTimeout(()=>p.remove(),700);
     }
   }
@@ -602,7 +902,32 @@ function addCoins(amt) {
   function nmtch(a,b){
     s2();xx(a);xx(b);
     a.classList.add('sh');b.classList.add('sh');
-    setTimeout(()=>{a.classList.remove('fl','sh');b.classList.remove('fl','sh');flipped=[];locked=false},1200);
+    setTimeout(()=>{a.classList.remove('fl','sh');b.classList.remove('fl','sh');flipped=[
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];locked=false},1200);
   }
 
   function xx(c){
@@ -614,10 +939,60 @@ function addCoins(amt) {
   }
 
   function lnch(){
-    const es=['🧡','✨','🌟','🍊','💫','🐷','🎉','🥳'];
+    const es=['🧡','✨','🌟','🍊','💫','🐷','🎉','🥳'
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];
     for(let i=0;i<40;i++){
       const el=document.createElement('div');el.className='cp';
-      el.textContent=es[Math.floor(Math.random()*es.length)];
+      el.textContent=es[Math.floor(Math.random()*es.length)
+  // === 新增卡片 ===
+  'https://img.heliar.top/file/1781485310514_n11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485328142_n12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485331167_n13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485330955_n14-compressed.jpeg',
+  'https://img.heliar.top/file/1781485342825_n15-compressed.jpeg',
+  'https://img.heliar.top/file/1781485372941_R10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485336920_R11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485360151_R12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485384737_R13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485368529_R17-compressed.jpeg',
+  'https://img.heliar.top/file/1781485412974_SSR9-compressed.jpeg',
+  'https://img.heliar.top/file/1781485418312_SSR10-compressed.jpeg',
+  'https://img.heliar.top/file/1781485413100_SSR11-compressed.jpeg',
+  'https://img.heliar.top/file/1781485428031_SSR12-compressed.jpeg',
+  'https://img.heliar.top/file/1781485430314_SSR13-compressed.jpeg',
+  'https://img.heliar.top/file/1781485378822_SP3-compressed.jpeg',
+  'https://img.heliar.top/file/1781485385912_SP4-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405573_SP5-compressed.jpeg',
+  'https://img.heliar.top/file/1781485405810_SP6-compressed.jpeg',
+  'https://img.heliar.top/file/1781485396764_SP7-compressed.jpeg',
+  'https://img.heliar.top/file/1781485435573_隐藏1-compressed.jpeg',
+  'https://img.heliar.top/file/1781485437489_隐藏2-compressed.jpeg',
+  'https://img.heliar.top/file/1781485439786_隐藏3-compressed.jpeg',
+];
       el.style.left=Math.random()*100+'%';
       el.style.fontSize=(8+Math.random()*14)+'px';
       el.style.animationDuration=(3+Math.random()*4)+'s';
