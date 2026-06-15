@@ -125,7 +125,7 @@ body{
 /* ===== CARD BACK - CSS图案 + 中心emoji文字 ===== */
 .bk{
   background:linear-gradient(145deg,#fdf6ed 0%,#f8ecdc 40%,#f5e6d2 100%);
-  border:2px solid var(--pp);box-shadow:var(--sc);z-index:2;
+  border:1px solid var(--pp);box-shadow:var(--sc);z-index:2;
   transition:box-shadow .3s;
   display:flex;align-items:center;justify-content:center;
 }
@@ -197,21 +197,21 @@ body{
 
 /* ===== CARD FRONT - 纯照片 ===== */
 .ft{
-  background:#fff;border:2px solid var(--pp);
+  background:#fff;border:1px solid var(--pp);
   transform:rotateY(180deg);box-shadow:var(--sc);
-  padding:3px;
+  padding:1px;
 }
-.fw{width:100%;height:100%;border-radius:calc(var(--rp) - 3px);overflow:hidden;background:#FFF5EE}
+.fw{width:100%;height:100%;border-radius:calc(var(--rp) - 2px);overflow:hidden;background:#FFF5EE}
 .fw img{width:100%;height:100%;object-fit:cover;display:block}
 .cd.mt .ft{
   border-color:var(--p);
-  box-shadow:0 0 0 3px var(--pp),0 0 20px var(--pg),var(--sc);
+  box-shadow:0 0 0 2px var(--pp),0 0 15px var(--pg),var(--sc);
   animation:mg .8s var(--es);
 }
 @keyframes mg{
   0%{box-shadow:0 0 0 0 var(--pg),0 0 0 var(--pg)}
-  40%{box-shadow:0 0 0 5px var(--pg),0 0 25px var(--pg)}
-  100%{box-shadow:0 0 0 3px var(--pp),0 0 20px var(--pg),var(--sc)}
+  40%{box-shadow:0 0 0 4px var(--pg),0 0 20px var(--pg)}
+  100%{box-shadow:0 0 0 2px var(--pp),0 0 15px var(--pg),var(--sc)}
 }
 .cd.sh{animation:sk .4s ease}
 @keyframes sk{
