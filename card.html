@@ -1027,11 +1027,13 @@ function pickCard(rarity) {
 
 function drawSingle(noAnimation) {
   if (state.coins < COST_PER_DRAW) {
+    sfxError();
     showToast('🪙 应援币不足！领取每日奖励或攒攒再来吧');
     return null;
   }
 
   state.coins -= COST_PER_DRAW;
+  sfxWhoosh();
   state.totalDraws++;
 
   const rarity = rollRarity();
@@ -1047,6 +1049,7 @@ function drawSingle(noAnimation) {
   // Check duplicate - all rarities
   const isDuplicate = state.ownedCards.some(oc => oc.cardId === card.id);
   if (isDuplicate) {
+    sfxDuplicate();
     const refund = DUPLICATE_REFUND[card.rarity] || 0;
     state.coins += refund;
     if (card.rarity === 'SP') state.spDuplicateCount++;
@@ -1066,11 +1069,13 @@ function drawSingle(noAnimation) {
 
 function drawTen() {
   if (state.coins < COST_PER_TEN) {
+    sfxError();
     showToast('🪙 应援币不足！需要100🪙进行十连抽');
     return;
   }
 
   state.coins -= COST_PER_TEN;
+  sfxWhoosh();
   saveState();
   updateCoinDisplay();
 
@@ -1094,6 +1099,7 @@ function drawTen() {
     // Check duplicate - all rarities
     const isDuplicate = state.ownedCards.some(oc => oc.cardId === card.id);
     if (isDuplicate) {
+      sfxDuplicate();
       const refund = DUPLICATE_REFUND[card.rarity] || 0;
       state.coins += refund;
       if (card.rarity === 'SP') state.spDuplicateCount++;
@@ -1184,6 +1190,9 @@ function startDrawAnimation(card) {
   slideCard.style.transition = 'none';
   slideCard.style.opacity = '1';
 
+  // 卡包打开音效
+  sfxPackOpen();
+
   // Use requestAnimationFrame for smooth start
   requestAnimationFrame(() => {
     slideCard.style.transition = 'transform 1s cubic-bezier(0.22,0.85,0.35,1), opacity 0.5s ease';
@@ -1200,6 +1209,9 @@ function startDrawAnimation(card) {
     // Show reveal area with card photo directly
     reveal.classList.add('show');
     setupCardFront(card);
+
+    // 稀有度揭示音效
+    sfxReveal(card.rarity);
 
     // Effects start immediately
     showRarityEffects(card.rarity);
@@ -1413,6 +1425,12 @@ function showTenResults(cards) {
     }
 
     const card = cards[idx];
+
+    // 每个卡出现音效
+    sfxTenPull(idx);
+    if (idx === cards.length - 1 || card.rarity === 'SSR' || card.rarity === 'SP' || card.rarity === 'HIDDEN') {
+      setTimeout(() => sfxReveal(card.rarity), 100);
+    }
 
     // Slide card in
     const sc = createSlideCard(card.img);
@@ -1800,6 +1818,128 @@ function showToast(msg, duration) {
 }
 
 // ======================================================================
+// 音效系统 🎵
+// ======================================================================
+let sfxCtx = null;
+function getSfxCtx() {
+  if (!sfxCtx) try { sfxCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  return sfxCtx;
+}
+
+function playNote(freq, dur, type, vol, delay) {
+  try {
+    const ctx = getSfxCtx(); if (!ctx) return;
+    const osc = ctx.createOscillator(), gain = ctx.createGain();
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime + (delay||0));
+    gain.gain.setValueAtTime(vol||0.07, ctx.currentTime + (delay||0));
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (delay||0) + dur);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + (delay||0));
+    osc.stop(ctx.currentTime + (delay||0) + dur);
+  } catch(e) {}
+}
+
+function playNoise(dur, vol) {
+  try {
+    const ctx = getSfxCtx(); if (!ctx) return;
+    const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate*dur), ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random()*2-1) * Math.pow(1 - i/d.length, 1.5);
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(vol||0.04, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    src.connect(g); g.connect(ctx.destination); src.start();
+  } catch(e) {}
+}
+
+/* 抽卡滑入 - 咻 */
+function sfxWhoosh() {
+  playNoise(0.1, 0.04);
+  playNote(350, 0.06, 'sine', 0.03);
+  setTimeout(() => playNote(600, 0.05, 'sine', 0.02), 30);
+}
+
+/* 单抽包打开 - 嘭 */
+function sfxPackOpen() {
+  playNote(220, 0.06, 'sawtooth', 0.03);
+  setTimeout(() => playNote(330, 0.05, 'sawtooth', 0.02), 30);
+  setTimeout(() => playNoise(0.06, 0.05), 20);
+}
+
+/* 十连 - 一连串快速咻 */
+function sfxTenPull(i) {
+  const freq = 400 + i * 20;
+  playNote(freq, 0.04, 'sine', 0.025, i * 0.06);
+  if (i % 3 === 0) playNoise(0.04, 0.02);
+}
+
+/* 稀有度揭示音效 */
+function sfxReveal(rarity) {
+  const v = 0.065;
+  switch(rarity) {
+    case 'N':
+      playNote(660, 0.12, 'triangle', v);
+      break;
+    case 'R':
+      playNote(523, 0.08, 'triangle', v);
+      setTimeout(() => playNote(659, 0.1, 'triangle', v), 70);
+      break;
+    case 'SR':
+      playNote(440, 0.06, 'square', v*0.4);
+      setTimeout(() => playNote(554, 0.06, 'square', v*0.4), 55);
+      setTimeout(() => playNote(740, 0.15, 'square', v*0.4), 110);
+      playNoise(0.06, 0.02);
+      break;
+    case 'SSR':
+      playNote(523, 0.1, 'sine', v);
+      setTimeout(() => playNote(659, 0.1, 'sine', v), 80);
+      setTimeout(() => playNote(784, 0.1, 'sine', v), 160);
+      setTimeout(() => playNote(1047, 0.3, 'sine', v*1.3), 260);
+      setTimeout(() => playNoise(0.2, 0.025), 200);
+      break;
+    case 'SP':
+      [330, 440, 554, 659].forEach((f,i) =>
+        setTimeout(() => playNote(f, 0.08, 'sine', v*0.55), i*70)
+      );
+      setTimeout(() => playNote(880, 0.3, 'sawtooth', v*0.25), 280);
+      setTimeout(() => playNoise(0.3, 0.03), 200);
+      break;
+    case 'HIDDEN':
+      for (let i = 0; i < 6; i++)
+        setTimeout(() => playNote(200 + i*50, 0.12, 'sine', v*0.5), i*90);
+      setTimeout(() => { playNote(700, 0.4, 'sine', v*0.9); playNoise(0.5, 0.04); }, 550);
+      break;
+  }
+}
+
+/* 硬币不足 */
+function sfxError() {
+  playNote(200, 0.12, 'sawtooth', 0.04);
+  setTimeout(() => playNote(160, 0.18, 'sawtooth', 0.03), 100);
+}
+
+/* 重复 */
+function sfxDuplicate() {
+  playNote(440, 0.06, 'triangle', 0.035);
+  setTimeout(() => playNote(350, 0.08, 'triangle', 0.025), 60);
+}
+
+/* 按钮点击 */
+function sfxClick() {
+  playNote(800, 0.04, 'sine', 0.02);
+}
+
+/* 通关/胜利 */
+function sfxWin() {
+  [523, 659, 784, 1047].forEach((f,i) =>
+    setTimeout(() => playNote(f, 0.2, 'sine', 0.07), i*120)
+  );
+  setTimeout(() => playNoise(0.3, 0.03), 360);
+}
+
+// ======================================================================
 // INIT
 // ======================================================================
 function init() {
@@ -1814,12 +1954,15 @@ function init() {
   // Check lucky time every 10 seconds
   setInterval(checkLuckyTime, 10000);
 
+  // 入口小音效
+  setTimeout(sfxWin, 300);
+
   // Event listeners
-  document.getElementById('drawBtn').addEventListener('click', () => drawSingle(false));
-  document.getElementById('drawTenBtn').addEventListener('click', drawTen);
-  document.getElementById('dailyBtn').addEventListener('click', claimDaily);
-  document.getElementById('galleryBtn').addEventListener('click', openGallery);
-  document.getElementById('galleryClose').addEventListener('click', closeGallery);
+  document.getElementById('drawBtn').addEventListener('click', () => { sfxClick(); drawSingle(false); });
+  document.getElementById('drawTenBtn').addEventListener('click', () => { sfxClick(); drawTen(); });
+  document.getElementById('dailyBtn').addEventListener('click', () => { sfxClick(); claimDaily(); });
+  document.getElementById('galleryBtn').addEventListener('click', () => { sfxClick(); openGallery(); });
+  document.getElementById('galleryClose').addEventListener('click', () => { sfxClick(); closeGallery(); });
   document.getElementById('galleryOverlay').addEventListener('click', (e) => {
     if (e.target === e.currentTarget) closeGallery();
   });
@@ -1830,7 +1973,7 @@ function init() {
     if (!card) return;
     const cardId = card.dataset.cardId;
     const cardData = ALL_CARDS.find(c => c.id === cardId);
-    if (cardData) openCardZoom(cardData);
+    if (cardData) { sfxClick(); openCardZoom(cardData); }
   });
   document.getElementById('cardZoomClose').addEventListener('click', closeCardZoom);
   document.getElementById('cardZoomOverlay').addEventListener('click', (e) => {

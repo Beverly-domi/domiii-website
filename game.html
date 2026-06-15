@@ -450,23 +450,69 @@ function updateCoinDisplay() {
     toastTimer=setTimeout(()=>tsDiv.classList.remove('sv'),dur);
   }
 
-  // 简陋音效（WebAudio）
+  // ===== 🎵 趣味音效系统 =====
   let audioCtx=null;
   function getAudioCtx(){ if(!audioCtx) try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} return audioCtx; }
-  function playTone(freq,dur,type='sine',vol=0.08){
+  function playTone(freq,dur,type,vol,delay){
     try{
       const ctx=getAudioCtx(); if(!ctx) return;
+      const d=delay||0;
       const osc=ctx.createOscillator(), gain=ctx.createGain();
-      osc.type=type; osc.frequency.value=freq;
-      gain.gain.setValueAtTime(vol,ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+      osc.type=type||'sine'; osc.frequency.setValueAtTime(freq,ctx.currentTime+d);
+      gain.gain.setValueAtTime(vol||0.07,ctx.currentTime+d);
+      gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+d+dur);
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime); osc.stop(ctx.currentTime+dur);
+      osc.start(ctx.currentTime+d); osc.stop(ctx.currentTime+d+dur);
     }catch(e){}
   }
-  function successSound(){ playTone(880,0.14,'sine',0.07); setTimeout(()=>playTone(1100,0.16,'sine',0.05),80); }
-  function failSound(){ playTone(300,0.16,'triangle',0.05); setTimeout(()=>playTone(240,0.18,'triangle',0.04),80); }
-  function winJingle(){ [0,100,200,300].forEach((d,i)=>setTimeout(()=>playTone(660+i*110,0.18,'sine',0.05),d)); }
+  function playNoise(dur,vol,delay){
+    try{
+      const ctx=getAudioCtx(); if(!ctx) return;
+      const d=delay||0;
+      const buf=ctx.createBuffer(1,Math.floor(ctx.sampleRate*dur),ctx.sampleRate);
+      const data=buf.getChannelData(0);
+      for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,1.5);
+      const src=ctx.createBufferSource(); src.buffer=buf;
+      const g=ctx.createGain();
+      g.gain.setValueAtTime(vol||0.04,ctx.currentTime+d);
+      g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+d+dur);
+      src.connect(g); g.connect(ctx.destination); src.start(ctx.currentTime+d);
+    }catch(e){}
+  }
+
+  // 翻牌音效 - 轻快的"咻"
+  function flipSound(){ playNoise(0.04,0.04); playTone(700,0.04,'sine',0.025); }
+
+  // 配对成功 - 欢快上行音
+  function successSound(){
+    playTone(660,0.08,'sine',0.06);
+    setTimeout(()=>playTone(880,0.08,'sine',0.06),60);
+    setTimeout(()=>playTone(1100,0.12,'sine',0.07),120);
+    setTimeout(()=>playNoise(0.08,0.025),100);
+  }
+
+  // 配对失败 - 滑稽下行"呜哇"
+  function failSound(){
+    playTone(400,0.1,'sawtooth',0.035);
+    setTimeout(()=>playTone(330,0.1,'sawtooth',0.03),80);
+    setTimeout(()=>playTone(260,0.15,'sawtooth',0.025),160);
+    setTimeout(()=>playNoise(0.06,0.02),80);
+  }
+
+  // 通关 - 完整小旋律
+  function winJingle(){
+    const notes=[523,659,784,880,1047];
+    notes.forEach((f,i)=>setTimeout(()=>playTone(f,0.2,'sine',0.06),i*100));
+    setTimeout(()=>playTone(1319,0.4,'sine',0.08),500);
+    setTimeout(()=>playNoise(0.3,0.03),400);
+  }
+
+  // 开始新游戏
+  function gameStartSound(){
+    playTone(523,0.1,'triangle',0.05);
+    setTimeout(()=>playTone(659,0.1,'triangle',0.04),80);
+    setTimeout(()=>playTone(784,0.15,'triangle',0.04),160);
+  }
 
   function shuffleArray(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
@@ -536,7 +582,8 @@ function updateCoinDisplay() {
   function onCardClick(idx){
     const el=cardElements[idx];
     if(locked || gameDone || el.classList.contains('fl') || el.classList.contains('mt') || flippedCards.length>=2) return;
-    if(!gameStarted){ gameStarted=true; startTimer(); }
+    if(!gameStarted){ gameStarted=true; startTimer(); gameStartSound(); }
+    flipSound();
     el.classList.add('fl'); flippedCards.push(el);
     if(flippedCards.length===2){
       moves++; mv.textContent=moves; locked=true;
@@ -619,15 +666,18 @@ function updateCoinDisplay() {
   extraStyle.textContent=`@keyframes mf{0%{transform:translateY(0) scale(.5);opacity:0}30%{transform:translateY(-15px) scale(1.2);opacity:1}100%{transform:translateY(-40px) scale(1);opacity:0}}@keyframes xp{0%{transform:scale(.3);opacity:0}40%{transform:scale(1.3);opacity:1}100%{transform:scale(1) translateY(-15px);opacity:0}}`;
   document.head.appendChild(extraStyle);
 
+  // 按钮点击音效
+  function clickSound(){ playTone(800,0.04,'sine',0.02); }
+
   // 绑定事件
-  rsBtn.onclick=()=>{ winStreak=0; restartGame(); };
-  rpBtn.onclick=()=>{ winStreak=0; restartGame(); };
-  hmBtn.onclick=()=>{ if(backFolderBtn) backFolderBtn.click(); else window.location.href='#'; };
-  backFolderBtn.onclick=(e)=>{ e.preventDefault(); window.location.href='wenjianjia.html'; };
+  rsBtn.onclick=()=>{ clickSound(); winStreak=0; restartGame(); };
+  rpBtn.onclick=()=>{ clickSound(); winStreak=0; restartGame(); };
+  hmBtn.onclick=()=>{ clickSound(); if(backFolderBtn) backFolderBtn.click(); else window.location.href='#'; };
+  backFolderBtn.onclick=(e)=>{ clickSound(); e.preventDefault(); window.location.href='wenjianjia.html'; };
   const toGacha = () => { window.location.href='card.html'; };
-  gachaNavBtn.onclick=(e)=>{ e.preventDefault(); toGacha(); };
-  goToGachaBtn.onclick=()=>{ toGacha(); };
-  dcBtns.forEach(btn=>btn.onclick=()=>setLevel(btn.dataset.lv));
+  gachaNavBtn.onclick=(e)=>{ clickSound(); e.preventDefault(); toGacha(); };
+  goToGachaBtn.onclick=()=>{ clickSound(); toGacha(); };
+  dcBtns.forEach(btn=>btn.onclick=()=>{ clickSound(); setLevel(btn.dataset.lv); });
   window.addEventListener('resize',()=>{ if(cardElements.length){ const cols=getLevelConfig(currentLevel).cols; const sz=calcCardSize(cols); document.documentElement.style.setProperty('--cw',sz+'px'); const gapVal=window.innerWidth<=620?'3':'8'; document.documentElement.style.setProperty('--cg',gapVal); } });
   document.addEventListener('keydown',e=>{ if((e.key==='r'||e.key==='R')&&!e.ctrlKey&&!e.metaKey)restartGame(); if(e.key==='1')setLevel('easy'); else if(e.key==='2')setLevel('medium'); else if(e.key==='3')setLevel('hard'); });
 
