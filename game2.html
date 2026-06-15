@@ -10,8 +10,12 @@
    ============================================================ */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;touch-action:none;
-  /* ★ 背景渐变: 橙→白 ★ */
-  background:linear-gradient(180deg,#ffb347 0%,#ffe0b2 30%,#fff8f0 70%,#ffffff 100%);
+  /* ★ 背景: 暖色柔和渐变 + 装饰圆 ★ */
+  background:
+    radial-gradient(ellipse at 60% 20%, rgba(255,179,71,0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 60%, rgba(255,149,45,0.15) 0%, transparent 45%),
+    radial-gradient(ellipse at 70% 80%, rgba(255,183,77,0.12) 0%, transparent 40%),
+    linear-gradient(180deg, #fff7ed 0%, #fffbf6 40%, #ffffff 100%);
   font-family:'PingFang SC','Microsoft YaHei','Noto Sans SC',sans-serif;
   user-select:none;-webkit-user-select:none;
 }
@@ -25,13 +29,13 @@ html,body{width:100%;height:100%;overflow:hidden;touch-action:none;
 }
 
 /* ============================================================
-   地面区域 - ★ 深棕色 #8B4513, 高度为游戏区10% ★
+   地面区域 - ★ 白色 ★
    ============================================================ */
 #groundOverlay{
   position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;
   /* ★ 地面颜色在这里改 ★ */
-  background:linear-gradient(180deg,#8B4513 0%,#6B3410 50%,#5C2D0E 100%);
-  border-top:3px solid #a0522d;
+  background:linear-gradient(180deg,#fafaf9 0%,#f5f5f0 50%,#eeeeea 100%);
+  border-top:2px solid rgba(0,0,0,0.06);
 }
 
 /* ============================================================
@@ -220,7 +224,7 @@ const CONFIG = {
   BALL_FRICTION: 0.95, // 空中水平速度衰减/帧
 
   // ★ 地面颜色 ★
-  GROUND_COLOR: '#8B4513',
+  GROUND_COLOR: '#f5f5f0',
 
   // ★ 警戒线位置（距顶部百分比）★
   DANGER_LINE_PCT: 0.18,
@@ -750,8 +754,8 @@ function render() {
   ctx.fillStyle = CONFIG.GROUND_COLOR;
   ctx.fillRect(0, groundLevel, canvasWidth, canvasHeight - groundLevel);
   // 地面纹理线
-  ctx.strokeStyle = '#a0522d';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
   ctx.moveTo(0, groundLevel);
   ctx.lineTo(canvasWidth, groundLevel);
@@ -794,7 +798,7 @@ function render() {
   }
 
   // 地面装饰文字
-  ctx.fillStyle = 'rgba(255,255,255,0.12)';
+  ctx.fillStyle = 'rgba(0,0,0,0.06)';
   ctx.font = `${Math.max(12, baseRadius*0.5)}px "PingFang SC","Microsoft YaHei",sans-serif`;
   ctx.textAlign = 'center';
   ctx.fillText('合成大然然', canvasWidth/2, groundLevel + (canvasHeight-groundLevel)*0.6);
@@ -820,9 +824,23 @@ function renderBallAt(x, y, r, level) {
   ctx.closePath();
   ctx.clip();
 
-  // 绘制图片或默认色
+  // 绘制图片（cover裁剪，不变形）
   const img = ballImages[level];
-  if (img && img.complete && !img._fallback) {
+  if (img && img.complete && img.naturalWidth && !img._fallback) {
+    const iw = img.naturalWidth;
+    const ih = img.naturalHeight;
+    const d = r * 2; // 目标正方形边长
+    let sx, sy, sw, sh;
+    if (iw / ih > 1) {
+      // 横图：以高为准，左右裁剪
+      sh = ih; sw = ih; sx = (iw - ih) / 2; sy = 0;
+    } else {
+      // 竖图：以宽为准，上下裁剪
+      sw = iw; sh = iw; sx = 0; sy = (ih - iw) / 2;
+    }
+    ctx.drawImage(img, sx, sy, sw, sh, x - r, y - r, d, d);
+  } else if (img && img.complete) {
+    // 回退：直接拉伸
     ctx.drawImage(img, x - r, y - r, r * 2, r * 2);
   } else {
     // 回退：渐变色圆
