@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-<title>✨ 记忆配对 · 心动翻牌 ✨</title>
+<title>然然翻翻乐</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
@@ -287,7 +287,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 </a>
 
 <header class="hd">
-  <div class="ht">🎴 心动翻牌 · 记住<span>TA</span> 的模样 🎴</div>
+  <div class="ht">🎴 然然翻翻乐 🎴</div>
   <div class="hs">翻开卡片，配对成功！考验默契与记忆力✨</div>
 </header>
 
@@ -522,7 +522,7 @@ function updateCoinDisplay() {
       const cardDiv=document.createElement('div');
       cardDiv.className='cd'; cardDiv.dataset.id=card.id;
       const backDiv=document.createElement('div'); backDiv.className='face bk';
-      backDiv.innerHTML='<div class="bk-dots1"></div><div class="bk-dots2"></div><div class="bk-shine"></div><div class="bk-ring"></div><div class="bk-ring2"></div><div class="bk-diamond"></div><div class="bk-inner"><div class="bk-emoji">🌸</div><div class="bk-text">✨ 猜猜是谁 ✨</div></div>';
+      backDiv.innerHTML='<div class="bk-dots1"></div><div class="bk-dots2"></div><div class="bk-shine"></div><div class="bk-ring"></div><div class="bk-ring2"></div><div class="bk-diamond"></div><div class="bk-inner"><div class="bk-emoji">🐷</div><div class="bk-text">✨ TA ✨</div></div>';
       const frontDiv=document.createElement('div'); frontDiv.className='face ft';
       frontDiv.innerHTML=`<div class="fw"><img draggable="false" src="${card.src}" alt="card" loading="lazy"></div>`;
       cardDiv.appendChild(backDiv); cardDiv.appendChild(frontDiv);
@@ -598,7 +598,7 @@ function updateCoinDisplay() {
     }
   }
   function launchConfetti(){
-    const emojis=['🎉','✨','🎊','🌸','💖','💎'];
+    const emojis=['🎉','✨','🎊','🐷','💖','💎'];
     for(let i=0;i<50;i++){
       const piece=document.createElement('div'); piece.className='cp';
       piece.textContent=emojis[Math.floor(Math.random()*emojis.length)];
