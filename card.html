@@ -943,6 +943,8 @@ const RARITY_LABELS = { N:'N·Normal', R:'R·Rare', SR:'SR·Super Rare', SSR:'SS
 const COST_PER_DRAW = 10;
 const COST_PER_TEN = 100;
 const DAILY_REWARD = 20;
+const DUPLICATE_REFUND = { N:5, R:10, SR:20, SSR:30, SP:40, HIDDEN:200 };
+const DUPLICATE_TOASTS = { N:'♻️ 重复N卡分解！获得5🪙', R:'♻️ 重复R卡分解！获得10🪙', SR:'💫 重复SR分解！获得20🪙', SSR:'✨ 重复SSR分解！获得30🪙', SP:'🌟 重复SP分解！获得40🪙', HIDDEN:'💎 重复隐藏分解！获得200🪙 + 称号「天命之人」' };
 
 // ======================================================================
 // STATE
@@ -1042,19 +1044,13 @@ function drawSingle(noAnimation) {
     state.consecutiveNoSSR++;
   }
 
-  // Check duplicate SP
-  const isDuplicateSP = (rarity === 'SP') && state.ownedCards.some(oc => oc.cardId === card.id);
-  if (isDuplicateSP) {
-    state.coins += 50;
-    state.spDuplicateCount++;
-    showToast('🌟 重复SP自动分解！获得50🪙 + 称号「欧皇降临」');
-  }
-
-  // Check duplicate HIDDEN
-  const isDuplicateHidden = (rarity === 'HIDDEN') && state.ownedCards.some(oc => oc.cardId === card.id);
-  if (isDuplicateHidden) {
-    state.coins += 200;
-    showToast('💎 重复隐藏自动分解！获得200🪙 + 称号「天命之人」');
+  // Check duplicate - all rarities
+  const isDuplicate = state.ownedCards.some(oc => oc.cardId === card.id);
+  if (isDuplicate) {
+    const refund = DUPLICATE_REFUND[card.rarity] || 0;
+    state.coins += refund;
+    if (card.rarity === 'SP') state.spDuplicateCount++;
+    showToast(DUPLICATE_TOASTS[card.rarity] || '♻️ 重复卡片已分解');
   }
 
   state.ownedCards.push({ cardId: card.id, timestamp: Date.now() });
@@ -1095,19 +1091,13 @@ function drawTen() {
       state.consecutiveNoSSR++;
     }
 
-    // Check duplicate SP
-    const isDuplicateSP = (rarity === 'SP') && state.ownedCards.some(oc => oc.cardId === card.id);
-    if (isDuplicateSP) {
-      state.coins += 50;
-      state.spDuplicateCount++;
-      showToast('🌟 重复SP自动分解！获得50🪙 + 称号「欧皇降临」');
-    }
-
-    // Check duplicate HIDDEN
-    const isDuplicateHidden = (rarity === 'HIDDEN') && state.ownedCards.some(oc => oc.cardId === card.id);
-    if (isDuplicateHidden) {
-      state.coins += 200;
-      showToast('💎 重复隐藏自动分解！获得200🪙 + 称号「天命之人」');
+    // Check duplicate - all rarities
+    const isDuplicate = state.ownedCards.some(oc => oc.cardId === card.id);
+    if (isDuplicate) {
+      const refund = DUPLICATE_REFUND[card.rarity] || 0;
+      state.coins += refund;
+      if (card.rarity === 'SP') state.spDuplicateCount++;
+      showToast(DUPLICATE_TOASTS[card.rarity] || '♻️ 重复卡片已分解');
     }
 
     state.ownedCards.push({ cardId: card.id, timestamp: Date.now() });
