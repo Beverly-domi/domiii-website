@@ -1,12 +1,10 @@
 # 图片文件夹 - 已迁移到阿里云OSS
-images/
-
-# 其他图片和视频文件夹
-card/
-childhood/
-shiny/
-weibo/
-game/
+/images/
+/card/
+/childhood/
+/shiny/
+/weibo/
+/game/
 
 # 备份文件
 backup/
