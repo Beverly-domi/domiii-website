@@ -324,40 +324,40 @@ const childhoodPhotos = [];
 for (let i = 1; i <= 34; i++) {
     childhoodPhotos.push({
         src: (function(){ const _= [
-  './childhood/背景01.jpg',
-  './childhood/童年1.jpg',
-  './childhood/童年10.jpg',
-  './childhood/童年11.jpg',
-  './childhood/童年12.jpg',
-  './childhood/童年13.jpg',
-  './childhood/童年14.jpg',
-  './childhood/童年15.jpg',
-  './childhood/童年16.jpg',
-  './childhood/童年17.jpg',
-  './childhood/童年18.jpg',
-  './childhood/童年19.jpg',
-  './childhood/童年2.jpg',
-  './childhood/童年20.jpg',
-  './childhood/童年21.jpg',
-  './childhood/童年22.jpg',
-  './childhood/童年23.jpg',
-  './childhood/童年24.jpg',
-  './childhood/童年25.jpg',
-  './childhood/童年26.jpg',
-  './childhood/童年27.jpg',
-  './childhood/童年28.jpg',
-  './childhood/童年29.jpg',
-  './childhood/童年3.jpg',
-  './childhood/童年30.jpg',
-  './childhood/童年31.jpg',
-  './childhood/童年32.jpg',
-  './childhood/童年33.jpg',
-  './childhood/童年34.jpg',
-  './childhood/童年4.jpg',
-  './childhood/童年5.jpg',
-  './childhood/童年6.jpg',
-  './childhood/童年7.jpg',
-  './childhood/童年8.jpg',
+  './photo/childhood/背景01.jpg',
+  './photo/childhood/童年1.jpg',
+  './photo/childhood/童年10.jpg',
+  './photo/childhood/童年11.jpg',
+  './photo/childhood/童年12.jpg',
+  './photo/childhood/童年13.jpg',
+  './photo/childhood/童年14.jpg',
+  './photo/childhood/童年15.jpg',
+  './photo/childhood/童年16.jpg',
+  './photo/childhood/童年17.jpg',
+  './photo/childhood/童年18.jpg',
+  './photo/childhood/童年19.jpg',
+  './photo/childhood/童年2.jpg',
+  './photo/childhood/童年20.jpg',
+  './photo/childhood/童年21.jpg',
+  './photo/childhood/童年22.jpg',
+  './photo/childhood/童年23.jpg',
+  './photo/childhood/童年24.jpg',
+  './photo/childhood/童年25.jpg',
+  './photo/childhood/童年26.jpg',
+  './photo/childhood/童年27.jpg',
+  './photo/childhood/童年28.jpg',
+  './photo/childhood/童年29.jpg',
+  './photo/childhood/童年3.jpg',
+  './photo/childhood/童年30.jpg',
+  './photo/childhood/童年31.jpg',
+  './photo/childhood/童年32.jpg',
+  './photo/childhood/童年33.jpg',
+  './photo/childhood/童年34.jpg',
+  './photo/childhood/童年4.jpg',
+  './photo/childhood/童年5.jpg',
+  './photo/childhood/童年6.jpg',
+  './photo/childhood/童年7.jpg',
+  './photo/childhood/童年8.jpg',
 ]; return _[i-1]; })(),
         caption: `🍬 童年时光 · 珍藏瞬间 ${i}`,
         fallback: `https://picsum.photos/id/${(i*31+150)%400}/400/400`
@@ -681,7 +681,7 @@ init();
 
 // ========================== 背景星星 & 角落PNG ==========================
 (function() {
-    const pngs = ['./childhood/童年9.jpg', './images/pig_happy.png', './images/桃心猪.png'];
+    const pngs = ['./photo/childhood/童年9.jpg', './photo/images/pig_happy.png', './photo/images/桃心猪.png'];
     const el = document.getElementById('cornerPng');
     if (el) {
         el.src = pngs[Math.floor(Math.random() * pngs.length)];
@@ -722,6 +722,7 @@ document.addEventListener('contextmenu',function(e){if(e.target.tagName==='IMG')
 </script>
 </body>
 </html>
+
 
 
 

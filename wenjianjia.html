@@ -193,7 +193,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
   <div class="pig-nest" id="pigNest">
     <div class="pig-zzz">💤</div>
     <div class="pig-house">
-      <img draggable="false" id="pigFaceImg" class="pig-face-img" src="./images/pig_normal.png" alt="小猪">
+      <img draggable="false" id="pigFaceImg" class="pig-face-img" src="./photo/images/pig_normal.png" alt="小猪">
     </div>
   </div>
 </div>
@@ -265,7 +265,7 @@ img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
   document.addEventListener('click', (e) => {
     if (e.target.closest('button,a,input,.df,.pig-nest,.album-back-btn,.gallery-item,.filter-chip,.material-link,.card-link-btn,.random-btn,.weibo-link,.weibo-entry-card,.year-btn,.msg-like,.msg-del,.msg-send-btn')) return;
     const img = document.createElement('img');
-    img.src='./images/pig_happy.png';
+    img.src='./photo/images/pig_happy.png';
     const size = 25 + Math.random() * 40;
     img.style.cssText = `position:fixed;width:${size}px;height:auto;pointer-events:none;z-index:9999;left:${e.clientX - size/2}px;top:${e.clientY - size/2}px;opacity:0.8;animation:pigFloat 1s ease-out forwards`;
     document.body.appendChild(img);
@@ -280,8 +280,8 @@ img{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
   // ☆☆☆ 小猪窝点击特效（爱心 + 祝福语 + 图片切换）☆☆☆
   const pigNest = document.getElementById('pigNest');
   const faceImg = document.getElementById('pigFaceImg');
-  const normalSrc='./images/pig_normal.png';
-  const happySrc='./images/pig_happy.png';
+  const normalSrc='./photo/images/pig_normal.png';
+  const happySrc='./photo/images/pig_happy.png';
   
   pigNest.addEventListener('click', function (e) {
     e.stopPropagation();
@@ -424,5 +424,6 @@ document.addEventListener('contextmenu',function(e){if(e.target.tagName==='IMG')
 </script>
 </body>
 </html>
+
 
 
